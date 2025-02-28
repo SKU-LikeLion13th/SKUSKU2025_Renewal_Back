@@ -31,7 +31,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         // oAuth2User.getAttributes()를 호출하면, Google OAuth에서 받아온 사용자 정보가 Map<String, Object> 형태로 저장됨
         Map<String, Object> attributes = oAuth2User.getAttributes();
-        String email = (String) attributes.get("email"); // Object 타입을 String으로 Type Casting
+        String email = (String) attributes.get("sub"); // Object 타입을 String으로 Type Casting
 
         // 이메일 체크
         if (!email.endsWith("@sungkyul.ac.kr")) {
