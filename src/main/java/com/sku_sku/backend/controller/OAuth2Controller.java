@@ -33,10 +33,15 @@ public class OAuth2Controller {
         Map<String, Object> attributes = oAuth2User.getAttributes();
         String email = (String) attributes.get("sub");
         String name = (String) attributes.get("name");
-        Track track = (Track) attributes.get("name");
-        Role role = (Role) attributes.get("role");
+        Track track = Track.valueOf((String) attributes.get("track"));
+        Role role = Role.valueOf((String) attributes.get("role"));
         // JWT 생성
         String jwt = jwtUtility.generateJwt(email, name, track, role);
+//        String jwt = jwtUtility.generateJwt(
+//                (String) attributes.get("sub"),
+//                (String) attributes.get("name"),
+//                Track.valueOf((String) attributes.get("track")),
+//                Role.valueOf((String) attributes.get("role")));
 
         // JWT를 클라이언트에 반환 (리다이렉트 방식)
         response.sendRedirect("https://sku-sku.com/oauth2/callback?token=" + jwt);
