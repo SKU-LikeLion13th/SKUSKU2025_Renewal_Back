@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -31,7 +32,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         // oAuth2User.getAttributes()를 호출하면, Google OAuth에서 받아온 사용자 정보가 Map<String, Object> 형태로 저장됨
         Map<String, Object> attributes = oAuth2User.getAttributes();
-        String email = (String) attributes.get("sub"); // Object 타입을 String으로 Type Casting
+        String email = (String) attributes.get("email"); // Object 타입을 String으로 Type Casting
 
         // 이메일 체크
         if (!email.endsWith("@sungkyul.ac.kr")) {
@@ -39,14 +40,18 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             throw new OAuth2AuthenticationException("성결대학교 구글 이메일로 로그인해주세요"); // Spring Security가 자동으로 감지해서 401 Unauthorized 응답 반환
         }
 
-        // 사용자 정보 DB 조회
+        // 사용자 조회`
         Lion lion = lionRepository.findByEmail(email)
                 .orElseThrow(() -> new OAuth2AuthenticationException("접근 권한이 없는 유저입니다."));
 
         // JWT 생성
-        String token = jwtUtility.generateJwt(email, lion.getName(), lion.getTrack(), lion.getRole());
+        String jwt = jwtUtility.generateJwt(email, lion.getName(), lion.getTrack(), lion.getRole());
+        Map<String, Object> includeJwtAttributes = new HashMap<>(attributes);
+        includeJwtAttributes.put("jwt", jwt);
 
-        // OAuth2User 반환 (JWT 포함) // role이 하나라 singletonList 사용
-        return new CustomOAuth2User(email, Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + lion.getRole().name())), attributes, token);
+        // OAuth2User 반환
+        return new CustomOAuth2User(
+                Collections.singletonList(new SimpleGrantedAuthority(lion.getRole().name())), // role이 하나라 singletonList 사용
+                includeJwtAttributes);
     }
 }

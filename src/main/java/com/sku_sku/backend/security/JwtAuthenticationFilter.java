@@ -1,24 +1,26 @@
 package com.sku_sku.backend.security;
 
+import com.sku_sku.backend.domain.enums.Role;
+import com.sku_sku.backend.exception.HandleJwtException;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.sku_sku.backend.exception.HandleJwtException;
-import com.sku_sku.backend.repository.LionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
+@Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter { // OncePerRequestFilter를 상속하여 HTTP 요청마다 한 번만 실행되는 필터임을 나타냄
 
@@ -51,18 +53,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { // OncePerRe
 
     // JWT 토큰에서 사용자 인증 정보 생성
     private Authentication getAuthentication(String jwt) {
-        Map<String, Object> claims = jwtUtility.getClaimsFromJwt(jwt);
-        String email = (String) claims.get("sub"); // JWT의 subject
-        String role = (String) claims.get("role");
+        Claims claims = jwtUtility.getClaimsFromJwt(jwt);
+        String email = claims.getSubject();
+        Role role = Role.valueOf(claims.get("role", String.class));
 
-        // OAuth2User 생성 (Google OAuth2 사용자)
-        OAuth2User oAuth2User = new CustomOAuth2User(
-                email,
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role)),
-                claims
-        );
-
-        // OAuth2User 기반 Authentication 객체 생성
-        return new UsernamePasswordAuthenticationToken(oAuth2User, null, oAuth2User.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(email,
+                null,
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name())));
     }
 }

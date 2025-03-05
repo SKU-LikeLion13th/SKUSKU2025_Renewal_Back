@@ -9,10 +9,8 @@ import java.util.Map;
 
 @Getter
 public class CustomOAuth2User extends DefaultOAuth2User {
-    private final String email;
 
-    public CustomOAuth2User(String email, Collection<? extends GrantedAuthority> authorities, Map<String, Object> attributes) {
+    public CustomOAuth2User(Collection<? extends GrantedAuthority> authorities, Map<String, Object> attributes) {
         super(authorities, attributes, "email"); // "email"을 기본 키로 설정
-        this.email = email;
     }
 }
