@@ -8,6 +8,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import java.time.Instant;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -26,20 +27,37 @@ public class JwtUtility {
 
     // JWT 토큰 생성
     public String generateJwt(String email, String name, Track track, Role role) {
+        Instant now = Instant.now();
         return Jwts.builder() // JWT 빌더 초기화
-                .setSubject(email) // 이메일을 JWT 토큰의 주체로 설정
-                .claim("name", name) // JWT 토큰에 이름 추가
-                .claim("track", track.name()) // JWT 토큰에 트랙 추가
-                .claim("role", role.name()) // JWT 토큰에 역할 추가
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // JWT 토큰의 만료시간 설정
-                .signWith(secretKey, SignatureAlgorithm.HS512) // 지정된 알고리즘과 비밀키를 사용하여 JWT 토큰 서명
+                .claims() // Claims 설정
+                .subject(email) // 이메일을 JWT 토큰의 주체로 설정
+                .add("name", name) // JWT 토큰에 이름 설정
+                .add("track", track.name()) // JWT 토큰에 트랙 설정
+                .add("role", role.name()) // JWT 토큰에 역할 설정
+                .issuedAt(Date.from(now)) // JWT 발행 시간 설정
+                .expiration(Date.from(now.plusMillis(expirationTime))) // JWT 만료 시간 설정
+                .and() // claims() 닫기
+                .signWith(secretKey) // 지정된 알고리즘과 비밀키를 사용하여 JWT 토큰 서명
                 .compact(); // JWT 문자열 생성
     }
+//    public String generateJwt(String email, String name, Track track, Role role) {
+//        return Jwts.builder() // JWT 빌더 초기화
+//                .setSubject(email) // 이메일을 JWT 토큰의 주체로 설정
+//                .claim("name", name) // JWT 토큰에 이름 추가
+//                .claim("track", track.name()) // JWT 토큰에 트랙 추가
+//                .claim("role", role.name()) // JWT 토큰에 역할 추가
+//                .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // JWT 토큰의 만료시간 설정
+//                .signWith(secretKey, SignatureAlgorithm.HS512) // 지정된 알고리즘과 비밀키를 사용하여 JWT 토큰 서명
+//                .compact(); // JWT 문자열 생성
+//    }
 
     // JWT 토큰 유효성 검사
     public boolean validateJwt(String token) {
         try {
-            Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token); // 주어진 JWT 토큰 파싱하여 서명을 검증
+            Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token); // 주어진 JWT 토큰 파싱하여 서명을 검증
             return true; // 올바르면 true 반환
         } catch (ExpiredJwtException e) {
             throw new HandleJwtException("만료된 JWT");
@@ -64,9 +82,9 @@ public class JwtUtility {
             NoneBearerJwt = jwt.substring(7); // "Bearer " 부분을 제거
         }
         return Jwts.parser()
-                .setSigningKey(secretKey)
+                .verifyWith(secretKey)
                 .build()
-                .parseClaimsJws(NoneBearerJwt)
-                .getBody();  // JWT의 페이로드에서 클레임 반환
+                .parseSignedClaims(NoneBearerJwt)
+                .getPayload();  // JWT의 페이로드에서 클레임 반환
     }
 }
