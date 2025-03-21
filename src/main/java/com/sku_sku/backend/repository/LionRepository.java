@@ -1,8 +1,8 @@
 package com.sku_sku.backend.repository;
 
 import com.sku_sku.backend.domain.Lion;
-import com.sku_sku.backend.domain.enums.Role;
-import com.sku_sku.backend.domain.enums.Track;
+import com.sku_sku.backend.enums.RoleType;
+import com.sku_sku.backend.enums.TrackType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -15,9 +15,9 @@ public interface LionRepository extends JpaRepository<Lion, Long> {
     List<Lion> findAllLionsByEmail(String email);
 
     // 트랙으로 사자 반환
-    List<Lion> findWritersByTrack(Track track);
+    List<Lion> findWritersByTrackType(TrackType trackType);
 
     // 트랙과 역할로 사자 반환
-    List<Lion> findWritersByTrackAndRole(Track track, Role role);
+    List<Lion> findWritersByTrackTypeAndRoleType(TrackType trackType, RoleType roleType);
 
 }

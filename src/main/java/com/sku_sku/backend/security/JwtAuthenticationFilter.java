@@ -1,6 +1,6 @@
 package com.sku_sku.backend.security;
 
-import com.sku_sku.backend.domain.enums.Role;
+import com.sku_sku.backend.enums.RoleType;
 import com.sku_sku.backend.exception.HandleJwtException;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -12,13 +12,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -55,10 +53,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { // OncePerRe
     private Authentication getAuthentication(String jwt) {
         Claims claims = jwtUtility.getClaimsFromJwt(jwt);
         String email = claims.getSubject();
-        Role role = Role.valueOf(claims.get("role", String.class));
+        RoleType roleType = RoleType.valueOf(claims.get("role", String.class));
 
         return new UsernamePasswordAuthenticationToken(email,
                 null,
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name())));
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + roleType.name())));
     }
 }

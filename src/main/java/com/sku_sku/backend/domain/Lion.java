@@ -1,7 +1,7 @@
 package com.sku_sku.backend.domain;
 
-import com.sku_sku.backend.domain.enums.Role;
-import com.sku_sku.backend.domain.enums.Track;
+import com.sku_sku.backend.enums.RoleType;
+import com.sku_sku.backend.enums.TrackType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,13 +13,31 @@ import lombok.NoArgsConstructor;
 @Entity // 사자
 public class Lion {
     @Id @GeneratedValue
-    private Long lionId; // pk
-    private String name; // 이름
-    private String email; // 이메일
+    private Long id; // pk
+
+    private String name; // 사자 이름
+
+    private String email; // 사자 이메일
 
     @Enumerated(EnumType.STRING)
-    private Track track; // 트랙 BACKEND or FRONTEND or DESIGN
+    private TrackType trackType; // 트랙 BACKEND or FRONTEND or DESIGN
 
     @Enumerated(EnumType.STRING)
-    private Role role; // 권한 ADMIN_LION or BABY_LION or LEGACY_LION
+    private RoleType roleType; // 권한 ADMIN_LION or BABY_LION
+
+    // 생성자
+    public Lion(String name, String email, TrackType trackType, RoleType roleType) {
+        this.name = name;
+        this.email = email;
+        this.trackType = trackType;
+        this.roleType = roleType;
+    }
+
+    // 업데이트
+    public void update(String name, String email, TrackType trackType, RoleType roleType) {
+        this.name = name;
+        this.email = email;
+        this.trackType = trackType;
+        this.roleType = roleType;
+    }
 }

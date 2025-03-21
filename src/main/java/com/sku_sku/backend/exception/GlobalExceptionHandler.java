@@ -19,9 +19,31 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("그 lion 없");
     }
 
+    @ExceptionHandler(InvalidLionException.class)
+    public ResponseEntity<String> invalidLion(InvalidLionException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("이런 Lion 없");
+    }
+
     // Jwt
     @ExceptionHandler(HandleJwtException.class)
     public ResponseEntity<String> handleJwt(HandleJwtException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidIdException.class)
+    public ResponseEntity<String> invalidId(InvalidIdException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("그 id에 해당하는 값 없");
+    }
+
+    // Project
+    @ExceptionHandler(InvalidTitleException.class)
+    public ResponseEntity<String> invalidTitle(InvalidTitleException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("그 title 이미 있");
+    }
+
+    // LectureFile
+    @ExceptionHandler(InvalidLectureFileException.class)
+    public ResponseEntity<String> invalidLectureFile(InvalidLectureFileException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("그 강의자료 없");
     }
 }

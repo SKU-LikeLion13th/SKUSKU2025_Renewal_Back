@@ -1,16 +1,16 @@
 package com.sku_sku.backend.security;
 
 
-import com.sku_sku.backend.domain.enums.Role;
-import com.sku_sku.backend.domain.enums.Track;
+import com.sku_sku.backend.enums.RoleType;
+import com.sku_sku.backend.enums.TrackType;
 import com.sku_sku.backend.exception.HandleJwtException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import java.time.Instant;
 
 import javax.crypto.SecretKey;
+import java.time.Instant;
 import java.util.Date;
 
 @Service
@@ -26,14 +26,14 @@ public class JwtUtility {
     }
 
     // JWT 토큰 생성
-    public String generateJwt(String email, String name, Track track, Role role) {
+    public String generateJwt(String email, String name, TrackType trackType, RoleType roleType) {
         Instant now = Instant.now();
         return Jwts.builder() // JWT 빌더 초기화
                 .claims() // Claims 설정
                 .subject(email) // 이메일을 JWT 토큰의 주체로 설정
                 .add("name", name) // JWT 토큰에 이름 설정
-                .add("track", track.name()) // JWT 토큰에 트랙 설정
-                .add("role", role.name()) // JWT 토큰에 역할 설정
+                .add("track", trackType.name()) // JWT 토큰에 트랙 설정
+                .add("role", roleType.name()) // JWT 토큰에 역할 설정
                 .issuedAt(Date.from(now)) // JWT 발행 시간 설정
                 .expiration(Date.from(now.plusMillis(expirationTime))) // JWT 만료 시간 설정
                 .and() // claims() 닫기
