@@ -3,6 +3,7 @@ package com.sku_sku.backend.domain;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,4 +24,17 @@ public class CalendarEvent {
     private LocalDate endDate; // YYYY-MM-DD // 일정 종료 시점
 
     private String color; // 일정 표시 색상
-}
+
+    public CalendarEvent(String title, LocalDate startDate, LocalDate endDate, String color) {
+        this.title = title;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.color = color;
+    }
+
+    public void update(String title, LocalDate startDate, LocalDate endDate, String color) {
+        this.title = title;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.color = color;
+    }}
