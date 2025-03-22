@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Entity // 과제 피드백
-public class Feedbadk {
+public class Feedback {
     @Id
     @GeneratedValue
     private Long id; // pk
