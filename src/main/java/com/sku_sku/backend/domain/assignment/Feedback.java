@@ -1,6 +1,5 @@
-package com.sku_sku.backend.domain;
+package com.sku_sku.backend.domain.assignment;
 
-import com.sku_sku.backend.domain.assignment.SubmitAssignment;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
