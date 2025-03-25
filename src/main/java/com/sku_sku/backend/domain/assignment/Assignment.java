@@ -1,9 +1,8 @@
 package com.sku_sku.backend.domain.assignment;
 
 import com.sku_sku.backend.enums.QuizType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.sku_sku.backend.enums.TrackType;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +15,9 @@ public class Assignment {
     @Id
     @GeneratedValue
     private Long id; // pk
+
+    @Enumerated(EnumType.STRING)
+    private TrackType trackType; // 트랙 BACKEND or FRONTEND or DESIGN
 
     private String title; // 과제 제목
 

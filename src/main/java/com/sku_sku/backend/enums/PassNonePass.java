@@ -1,6 +1,7 @@
 package com.sku_sku.backend.enums;
 
 public enum PassNonePass {
-    PASS,
-    NONE_PASS
+    PASS, // 통과
+    NONE_PASS, // 보류
+    UNREVIEWED // 미확인
 }

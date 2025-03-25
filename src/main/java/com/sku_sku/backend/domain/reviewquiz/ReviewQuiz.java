@@ -26,5 +26,5 @@ public class ReviewQuiz {
 
     private String answer; // 문제 정답
 
-    private QuizType quizType; // 문제 유형 MULTIPLE_CHOICE or ESSAY_QUESTION or FILE_ATTACHMENT
+    private QuizType quizType; // 문제 유형 MULTIPLE_CHOICE or ESSAY_QUESTION
 }
