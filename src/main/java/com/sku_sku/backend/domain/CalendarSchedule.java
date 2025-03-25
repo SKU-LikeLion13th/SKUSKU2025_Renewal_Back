@@ -3,7 +3,6 @@ package com.sku_sku.backend.domain;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,7 +11,7 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 @Entity // 캘린더 일정
-public class CalendarEvent {
+public class CalendarSchedule {
     @Id
     @GeneratedValue
     private Long id; // pk
@@ -25,7 +24,7 @@ public class CalendarEvent {
 
     private String color; // 일정 표시 색상
 
-    public CalendarEvent(String title, LocalDate startDate, LocalDate endDate, String color) {
+    public CalendarSchedule(String title, LocalDate startDate, LocalDate endDate, String color) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;

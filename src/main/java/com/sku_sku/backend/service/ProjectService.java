@@ -39,7 +39,7 @@ public class ProjectService {
     @Transactional
     public Project updateProject(Long id, String classTh, String title, String subTitle, String url, MultipartFile image) throws IOException {
         Project project = projectRepository.findById(id)
-                .orElseThrow(InvalidIdException::new);
+                .orElseThrow(() -> new InvalidIdException("project"));
         if (image != null && !image.isEmpty()) {
             project.setImage(image);
         }
@@ -58,7 +58,7 @@ public class ProjectService {
     @Transactional
     public void deleteProject(Long id) {
         Project project = projectRepository.findById(id)
-                .orElseThrow(InvalidIdException::new);
+                .orElseThrow(() -> new InvalidIdException("project"));
         projectRepository.delete(project);
     }
 
@@ -85,6 +85,6 @@ public class ProjectService {
                         project.getSubTitle(),
                         project.getUrl(),
                         project.arrayToImage()))
-                .orElseThrow(InvalidIdException::new);
+                .orElseThrow(() -> new InvalidIdException("project"));
     }
 }

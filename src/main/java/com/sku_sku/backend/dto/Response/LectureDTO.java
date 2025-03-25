@@ -1,7 +1,7 @@
 package com.sku_sku.backend.dto.Response;
 
-import com.sku_sku.backend.enums.TrackType;
 import com.sku_sku.backend.dto.Request.JoinLectureFilesDTO;
+import com.sku_sku.backend.enums.TrackType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;

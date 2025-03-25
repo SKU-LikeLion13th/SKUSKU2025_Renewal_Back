@@ -2,9 +2,9 @@ package com.sku_sku.backend.service;
 
 
 import com.sku_sku.backend.domain.Lion;
+import com.sku_sku.backend.dto.Response.LionDTO;
 import com.sku_sku.backend.enums.RoleType;
 import com.sku_sku.backend.enums.TrackType;
-import com.sku_sku.backend.dto.Response.LionDTO;
 import com.sku_sku.backend.exception.InvalidEmailException;
 import com.sku_sku.backend.exception.InvalidIdException;
 import com.sku_sku.backend.exception.InvalidLionException;
@@ -43,7 +43,7 @@ public class LionService {
     @Transactional
     public Lion updateLion(Long id, String name, String email, TrackType track, RoleType role) {
         Lion lion = lionRepository.findById(id)
-                .orElseThrow(InvalidIdException::new);
+                .orElseThrow(() -> new InvalidIdException("lion"));
         String newName = (name != null && !name.isEmpty() ? name : lion.getName());
         String newEmail = (email != null && !email.isEmpty() ? email : lion.getEmail());
         TrackType newTrack = (track != null ? track : lion.getTrackType());
@@ -56,7 +56,7 @@ public class LionService {
     @Transactional
     public void deleteLion(Long id) {
         Lion lion = lionRepository.findById(id)
-                .orElseThrow(InvalidIdException::new);
+                .orElseThrow(() -> new InvalidIdException("lion"));
         lionRepository.delete(lion);
     }
 

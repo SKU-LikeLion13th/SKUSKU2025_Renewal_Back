@@ -2,9 +2,9 @@ package com.sku_sku.backend.service;
 
 
 import com.sku_sku.backend.domain.lecture.Lecture;
-import com.sku_sku.backend.enums.TrackType;
 import com.sku_sku.backend.dto.Request.JoinLectureFilesDTO;
 import com.sku_sku.backend.dto.Request.LectureDTO;
+import com.sku_sku.backend.enums.TrackType;
 import com.sku_sku.backend.exception.InvalidIdException;
 import com.sku_sku.backend.repository.LectureRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,7 @@ public class LectureService {
     public Lecture updateLecture(String bearer, LectureDTO.updateLectureRequest request) throws IOException {
         String newWriter = lionService.tokenToLionName(bearer.substring(7));
         Lecture lecture = lectureRepository.findById(request.getId())
-                .orElseThrow(InvalidIdException::new);
+                .orElseThrow(() -> new InvalidIdException("lecture"));
 
         TrackType newTrack = (request.getTrackType() != null ? request.getTrackType() : lecture.getTrack());
         String newTitle = (request.getTitle() != null && !request.getTitle().isEmpty() ? request.getTitle() : lecture.getTitle());
@@ -70,14 +70,14 @@ public class LectureService {
                                     .map(JoinLectureFilesDTO.CreateJoinLectureFilesRequest::new)
                                     .collect(Collectors.toCollection(ArrayList::new)));
                 })
-                .orElseThrow(InvalidIdException::new);
+                .orElseThrow(() -> new InvalidIdException("lecture"));
     }
 
     // @DeleteMapping("/admin/lecture/delete")
     @Transactional // 강의 안내물 삭제 로직
     public void deleteLecture(Long id) {
         Lecture lecture = lectureRepository.findById(id)
-                .orElseThrow(InvalidIdException::new);
+                .orElseThrow(() -> new InvalidIdException("lecture"));
         lectureRepository.delete(lecture);
     }
 

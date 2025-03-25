@@ -1,7 +1,7 @@
 package com.sku_sku.backend.controller;
 
-import com.sku_sku.backend.enums.TrackType;
 import com.sku_sku.backend.dto.Response.LectureDTO;
+import com.sku_sku.backend.enums.TrackType;
 import com.sku_sku.backend.service.LectureService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

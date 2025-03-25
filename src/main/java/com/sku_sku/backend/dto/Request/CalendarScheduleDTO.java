@@ -5,7 +5,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 
-public class CalendarEventDTO {
+public class CalendarScheduleDTO {
 
     @Data
     public static class AddCalendarEvent {
@@ -45,5 +45,13 @@ public class CalendarEventDTO {
         private LocalDate endDate;
         @Schema(description = "일정 표시 색상", example = "#265EBF")
         private String color;
+    }
+
+    @Data
+    public static class YearAndMonth {
+        @Schema(description = "캘린더 일정 연도", example = "2025")
+        private int year;
+        @Schema(description = "캘린더 일정 월", example = "3")
+        private int month;
     }
 }
