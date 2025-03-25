@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/lecture")
-@Tag(name = "강의자료 관련")
+@Tag(name = "아기사자 기능: 강의자료 관련")
 public class LectureController {
     private final LectureService lectureService;
 

@@ -4,6 +4,7 @@ import com.sku_sku.backend.domain.CalendarSchedule;
 import com.sku_sku.backend.service.CalendarScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import static com.sku_sku.backend.dto.Request.CalendarScheduleDTO.UpdateCalendar
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin/schedule")
+@Tag(name = "관리자 기능: 캘린더 일정 관련")
 public class CalendarScheduleAdminController {
 
     private final CalendarScheduleService calendarScheduleService;

@@ -3,6 +3,7 @@ package com.sku_sku.backend.controller;
 import com.sku_sku.backend.service.CalendarScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +16,13 @@ import static com.sku_sku.backend.dto.Response.CalendarScheduleDTO.MonthlySchedu
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "아기사자 기능: 캘린더 일정 관련")
 public class CalendarScheduleController {
 
     private final CalendarScheduleService calendarScheduleService;
 
     @Operation(summary = "(민규) CalendarSchedule 하나 삭제", description = "Headers에 Bearer token 필요, 쿼리 파라미터로 CalendarSchedule의 year, month 필요",
-            responses = {@ApiResponse(responseCode = "200", description = "삭제 성공"),
-                    @ApiResponse(responseCode = "404", description = "calendarScheduleId로 조회한 결과 없음")})
+            responses = @ApiResponse(responseCode = "200", description = "일정 조회 성공"))
     @GetMapping("/schedules")
     public ResponseEntity<MonthlySchedulesResponse> findMonthlySchedules(@ModelAttribute YearAndMonth req) {
         return ResponseEntity.status(HttpStatus.OK).body(calendarScheduleService.findMonthlySchedules(req));

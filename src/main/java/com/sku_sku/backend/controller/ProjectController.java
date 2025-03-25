@@ -18,8 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/project")
-//@PreAuthorize("hasRole('ADMIN_LION')")
-@Tag(name = "프로젝트 관련")
+@Tag(name = "공개적 기능 : 프로젝트 관련")
 public class ProjectController {
     private final ProjectService projectService;
 
