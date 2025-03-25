@@ -21,7 +21,7 @@ public class CalendarScheduleController {
 
     private final CalendarScheduleService calendarScheduleService;
 
-    @Operation(summary = "(민규) CalendarSchedule 하나 삭제", description = "Headers에 Bearer token 필요, 쿼리 파라미터로 CalendarSchedule의 year, month 필요",
+    @Operation(summary = "(민규) 캘린더 일정 달별로 조회", description = "Headers에 Bearer token 필요, 쿼리 파라미터로 CalendarSchedule의 year, month 필요",
             responses = @ApiResponse(responseCode = "200", description = "일정 조회 성공"))
     @GetMapping("/schedules")
     public ResponseEntity<MonthlySchedulesResponse> findMonthlySchedules(@ModelAttribute YearAndMonth req) {
