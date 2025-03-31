@@ -28,6 +28,7 @@ jobs:
         distribution: 'temurin'
     - name: Decode and move application-build.yml
       run: |
+        mkdir -p src/main/resources
         echo "${{ secrets.APPLICATION_YML }}" | base64 -d > src/main/resources/application-build.yml     
     # - name: Retrieve secrets
     #   env:
