@@ -34,10 +34,10 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2SuccessHandler))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/auth/**").permitAll()
-                        .requestMatchers("/api/me").hasRole("ADMIN_LION")
+//                        .requestMatchers("/api/me").hasRole("ADMIN_LION")
                         .requestMatchers("/oauth2-success.html").permitAll()
                         .requestMatchers("/oauth2/redirect").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

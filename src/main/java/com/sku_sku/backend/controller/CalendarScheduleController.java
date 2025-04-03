@@ -38,5 +38,10 @@ public class CalendarScheduleController {
         ));
     }
 
+    @GetMapping("/testtest")
+    public ResponseEntity<?> me() {
+        return ResponseEntity.ok("ddd");
+    }
+
 
 }
