@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 @Entity // 복습 퀴즈 문제
@@ -27,4 +29,12 @@ public class ReviewQuiz {
     private String answer; // 문제 정답
 
     private QuizType quizType; // 문제 유형 MULTIPLE_CHOICE or ESSAY_QUESTION
+
+    public ReviewQuiz(ReviewWeek reviewWeek, String content, String explanation, String answer, QuizType quizType) {
+        this.reviewWeek = reviewWeek;
+        this.content = content;
+        this.explanation = explanation;
+        this.answer = answer;
+        this.quizType = quizType;
+    }
 }

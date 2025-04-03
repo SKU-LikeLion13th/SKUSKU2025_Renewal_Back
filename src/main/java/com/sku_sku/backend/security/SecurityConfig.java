@@ -37,7 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/me").hasRole("ADMIN_LION")
                         .requestMatchers("/oauth2-success.html").permitAll()
                         .requestMatchers("/oauth2/redirect").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -47,7 +47,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173", "https://sku-sku.com"));
+        config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5500","https://sku-sku.com"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
