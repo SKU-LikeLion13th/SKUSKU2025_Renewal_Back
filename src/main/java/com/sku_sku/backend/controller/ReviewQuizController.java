@@ -3,6 +3,7 @@ package com.sku_sku.backend.controller;
 import com.sku_sku.backend.dto.Request.ReviewQuizDTO;
 import com.sku_sku.backend.dto.Request.ReviewWeekDTO;
 import com.sku_sku.backend.enums.TrackType;
+import com.sku_sku.backend.security.JwtUtility;
 import com.sku_sku.backend.service.ReviewQuizService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReviewQuizController {
     private final ReviewQuizService reviewQuizService;
+    private final JwtUtility jwtUtility;
 
     //주차별 퀴즈 리스트 조회
     @GetMapping("/reviewWeek")
@@ -33,29 +35,21 @@ public class ReviewQuizController {
     @PostMapping("/reviewQuiz/solve")
     public ReviewQuizDTO.SolveAnswerList solveReviewQuiz(HttpServletRequest request,
                                                          @RequestBody ReviewQuizDTO.SolveRequest SolveRequest) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("token".equals(cookie.getName())) { // 쿠키 이름이 'token'일 경우
-                    System.out.println(cookie.getValue());
-                    return reviewQuizService.solveReviewQuiz(cookie.getValue(),SolveRequest);
-                }
-            }
-        }
-        return null; // 토큰이 없으면 null 반환
+        String token = jwtUtility.extractTokenFromCookies(request);
+        return reviewQuizService.solveReviewQuiz(token,SolveRequest);
 
 
     }
 
-    public String extractTokenFromCookies(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("token".equals(cookie.getName())) { // 쿠키 이름이 'token'일 경우
-                    return cookie.getValue();
-                }
-            }
-        }
-        return null; // 토큰이 없으면 null 반환
-    }
+//    public String extractTokenFromCookies(HttpServletRequest request) {
+//        Cookie[] cookies = request.getCookies();
+//        if (cookies != null) {
+//            for (Cookie cookie : cookies) {
+//                if ("token".equals(cookie.getName())) { // 쿠키 이름이 'token'일 경우
+//                    return cookie.getValue();
+//                }
+//            }
+//        }
+//        return null; // 토큰이 없으면 null 반환
+//    }
 }
