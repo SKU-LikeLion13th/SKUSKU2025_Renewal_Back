@@ -24,15 +24,14 @@ public class CalendarScheduleService {
     private final CalendarScheduleRepository calendarScheduleRepository;
 
     @Transactional
-    public CalendarSchedule addCalendarEvent(AddCalendarEvent req) {
+    public void addCalendarEvent(AddCalendarEvent req) {
         CalendarSchedule calendarSchedule = new CalendarSchedule(req.getTitle(), req.getStartDate(), req.getEndDate(), req.getColor());
         calendarScheduleRepository.save(calendarSchedule);
-        return calendarSchedule;
     }
 
     @Transactional
-    public CalendarSchedule updateCalendarEvent(UpdateCalendarEvent req) {
-        CalendarSchedule calendarSchedule = calendarScheduleRepository.findById(req.getCalendarEventId())
+    public void  updateCalendarEvent(UpdateCalendarEvent req) {
+        CalendarSchedule calendarSchedule = calendarScheduleRepository.findById(req.getId())
                 .orElseThrow(() -> new InvalidIdException("calendarEvent"));
 
         String newTitle = ((req.getTitle() != null && !req.getTitle().isEmpty()) ? req.getTitle() : calendarSchedule.getTitle());
@@ -40,8 +39,6 @@ public class CalendarScheduleService {
         LocalDate newEndDate = (req.getEndDate() != null ? req.getEndDate() : calendarSchedule.getEndDate());
         String newColor = ((req.getColor() != null && !req.getColor().isEmpty()) ? req.getColor() : calendarSchedule.getColor());
         calendarSchedule.update(newTitle, newStartDate, newEndDate, newColor);
-
-        return calendarSchedule;
     }
 
     @Transactional

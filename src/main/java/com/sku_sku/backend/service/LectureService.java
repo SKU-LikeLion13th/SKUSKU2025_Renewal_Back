@@ -3,10 +3,15 @@ package com.sku_sku.backend.service;
 
 import com.sku_sku.backend.domain.lecture.Lecture;
 import com.sku_sku.backend.dto.Request.JoinLectureFilesDTO;
+import com.sku_sku.backend.dto.Request.JoinLectureFilesDTO.CreateJoinLectureFilesRequest;
 import com.sku_sku.backend.dto.Request.LectureDTO;
+import com.sku_sku.backend.dto.Response.LectureDTO.ResponseLectureWithoutFiles;
 import com.sku_sku.backend.enums.TrackType;
+import com.sku_sku.backend.exception.EmptyLectureException;
 import com.sku_sku.backend.exception.InvalidIdException;
 import com.sku_sku.backend.repository.LectureRepository;
+import com.sku_sku.backend.security.JwtUtility;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,25 +27,23 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class LectureService {
     private final LectureRepository lectureRepository;
-    private final LionService lionService;
     private final JoinLectureFilesService joinLectureFilesService;
+    private final JwtUtility jwtUtility;
 
     // @PostMapping("/admin/lecture/add")
     @Transactional // 강의 안내물 생성 로직
-    public Lecture createLecture(String bearer, LectureDTO.createLectureRequest request) throws IOException {
-        String writer = lionService.tokenToLionName(bearer.substring(7));
+    public void createLecture(HttpServletRequest header, LectureDTO.createLectureRequest request) throws IOException {
+        String writer = jwtUtility.extractTokenFromCookies(header);
         Lecture lecture = new Lecture(request.getTrackType(), request.getTitle(), writer);
         lectureRepository.save(lecture);
 
         joinLectureFilesService.createJoinLectureFiles(lecture, request.getFiles());
-
-        return lecture;
     }
 
     // @PutMapping("/admin/lecture/update")
     @Transactional // 강의 안내물 업데이트 로직
-    public Lecture updateLecture(String bearer, LectureDTO.updateLectureRequest request) throws IOException {
-        String newWriter = lionService.tokenToLionName(bearer.substring(7));
+    public void updateLecture(HttpServletRequest header, LectureDTO.updateLectureRequest request) throws IOException {
+        String newWriter = jwtUtility.extractTokenFromCookies(header);
         Lecture lecture = lectureRepository.findById(request.getId())
                 .orElseThrow(() -> new InvalidIdException("lecture"));
 
@@ -51,8 +55,6 @@ public class LectureService {
             joinLectureFilesService.deleteByLecture(lecture);
             joinLectureFilesService.createJoinLectureFiles(lecture, request.getFiles());
         }
-
-        return lecture;
     }
 
     @Transactional // 강의 안내물 조회 로직
@@ -67,7 +69,7 @@ public class LectureService {
                             lecture.getWriter(),
                             lecture.getCreateDate(),
                             lecture.getJoinLectureFile().stream()
-                                    .map(JoinLectureFilesDTO.CreateJoinLectureFilesRequest::new)
+                                    .map(CreateJoinLectureFilesRequest::new)
                                     .collect(Collectors.toCollection(ArrayList::new)));
                 })
                 .orElseThrow(() -> new InvalidIdException("lecture"));
@@ -81,22 +83,23 @@ public class LectureService {
         lectureRepository.delete(lecture);
     }
 
-    public List<com.sku_sku.backend.dto.Response.LectureDTO.ResponseLectureWithoutFiles> findAllLectureByTrackOrderByIdDesc(TrackType trackType) {
+    public List<ResponseLectureWithoutFiles> findAllLectureByTrackOrderByIdDesc(TrackType trackType) {
         List<Lecture> lectures = lectureRepository.findByTrackOrderByIdDesc(trackType);
         return lectures.stream()
                 .map(this::convertToDTO)
                 .toList();
     }
 
-    public List<com.sku_sku.backend.dto.Response.LectureDTO.ResponseLectureWithoutFiles> findAllLectureByTrackOrderByCreateDateDesc(TrackType trackType) {
-        List<Lecture> lectures = lectureRepository.findByTrackOrderByCreateDateDesc(trackType);
+    public List<ResponseLectureWithoutFiles> findAllLectureByTrackOrderByCreateDateDesc(TrackType trackType) {
+        List<Lecture> lectures = lectureRepository.findByTrackOrderByCreateDateDesc(trackType)
+                .orElseThrow(EmptyLectureException::new);
         return lectures.stream()
                 .map(this::convertToDTO)
                 .toList();
     }
 
-    private com.sku_sku.backend.dto.Response.LectureDTO.ResponseLectureWithoutFiles convertToDTO(Lecture lecture) {
-        return new com.sku_sku.backend.dto.Response.LectureDTO.ResponseLectureWithoutFiles(
+    private ResponseLectureWithoutFiles convertToDTO(Lecture lecture) {
+        return new ResponseLectureWithoutFiles(
                 lecture.getId(),
                 lecture.getTitle(),
                 lecture.getWriter(),

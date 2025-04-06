@@ -16,7 +16,7 @@ public class LectureDTO {
     public static class ResponseLecture {
         @Schema(description = "강의 안내물 id", example = "1")
         private Long id;
-        @Schema(description = "트랙", example = "BACKEND or FRONTEND or PM_DESIGN")
+        @Schema(description = "트랙", example = "BACKEND or FRONTEND or DESIGN")
         private TrackType trackType;
         @Schema(description = "강의 안내물 제목", example = "백엔드 3주차")
         private String title;

@@ -1,14 +1,10 @@
 package com.sku_sku.backend.domain.assignment;
 
-import com.sku_sku.backend.domain.Lion;
-import com.sku_sku.backend.enums.PassNonePass;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor

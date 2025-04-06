@@ -1,13 +1,11 @@
 package com.sku_sku.backend.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sku_sku.backend.domain.Lion;
 import com.sku_sku.backend.exception.EmptyLionException;
 import com.sku_sku.backend.repository.LionRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -16,8 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor

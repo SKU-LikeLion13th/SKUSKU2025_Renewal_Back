@@ -24,5 +24,5 @@ public interface LectureRepository extends JpaRepository<Lecture, Long> {
     List<Lecture> findByTrackOrderByIdDesc(TrackType trackType);
 
     @EntityGraph(attributePaths = {"joinLectureFiles"})
-    List<Lecture> findByTrackOrderByCreateDateDesc(TrackType trackType);
+    Optional<List<Lecture>> findByTrackOrderByCreateDateDesc(TrackType trackType);
 }

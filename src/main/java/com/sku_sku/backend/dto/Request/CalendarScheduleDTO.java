@@ -22,7 +22,7 @@ public class CalendarScheduleDTO {
     @Data
     public static class UpdateCalendarEvent {
         @Schema(description = "캘린더 일정 id(pk)", example = "1")
-        private Long calendarEventId;
+        private Long id;
         @Schema(description = "캘린더 일정 제목", example = "중앙 해커톤")
         private String title;
         @Schema(description = "일정 시작 시점", example = "YYYY-MM-DD")
@@ -36,7 +36,7 @@ public class CalendarScheduleDTO {
     @Data
     public static class OnlyIdCalendarEvent {
         @Schema(description = "캘린더 일정 id(pk)", example = "1")
-        private Long calendarEventId;
+        private Long id;
         @Schema(description = "캘린더 일정 제목", example = "중앙 해커톤")
         private String title;
         @Schema(description = "일정 시작 시점", example = "YYYY-MM-DD")

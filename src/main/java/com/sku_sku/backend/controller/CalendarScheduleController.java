@@ -24,24 +24,10 @@ public class CalendarScheduleController {
 
     private final CalendarScheduleService calendarScheduleService;
 
-    @Operation(summary = "(민규) 캘린더 일정 달별로 조회", description = "Headers에 Bearer token 필요, 쿼리 파라미터로 CalendarSchedule의 year, month 필요",
+    @Operation(summary = "(민규) 캘린더 일정 달별로 조회", description = "쿼리 파라미터로 CalendarSchedule의 year, month 필요",
             responses = @ApiResponse(responseCode = "200", description = "일정 조회 성공"))
     @GetMapping("/schedules")
     public ResponseEntity<MonthlySchedulesResponse> findMonthlySchedules(@ModelAttribute YearAndMonth req) {
         return ResponseEntity.status(HttpStatus.OK).body(calendarScheduleService.findMonthlySchedules(req));
     }
-
-    @GetMapping("/api/me")
-    public ResponseEntity<?> me(Authentication auth) {
-        return ResponseEntity.ok(Map.of(
-                "message", "Hello, " + auth.getName()
-        ));
-    }
-
-    @GetMapping("/testtest")
-    public ResponseEntity<?> me() {
-        return ResponseEntity.ok("ddd");
-    }
-
-
 }
