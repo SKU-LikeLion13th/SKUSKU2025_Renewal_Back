@@ -15,8 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.sku_sku.backend.dto.Response.ProjectDTO.ResponseIdProjectUpdate;
-import static com.sku_sku.backend.dto.Response.ProjectDTO.ResponseProjectUpdate;
+import static com.sku_sku.backend.dto.Response.ProjectDTO.ProjectAllField;
 
 @Service
 @RequiredArgsConstructor
@@ -26,18 +25,18 @@ public class ProjectService {
 
     // @PostMapping("/admin/project/add")
     @Transactional
-    public Project addProject(String classTh, String title, String subTitle, String url, MultipartFile image) throws IOException {
+    public void addProject(String classTh, String title, String subTitle, String url, MultipartFile image) throws IOException {
         if (projectRepository.findByTitle(title).isPresent()) {
             throw new InvalidTitleException();
         }
         byte[] imageBytes = image.getBytes();
         Project project = new Project(classTh, title, subTitle, url, imageBytes);
-        return projectRepository.save(project);
+        projectRepository.save(project);
     }
 
     // @PutMapping("/admin/project/update")
     @Transactional
-    public Project updateProject(Long id, String classTh, String title, String subTitle, String url, MultipartFile image) throws IOException {
+    public void updateProject(Long id, String classTh, String title, String subTitle, String url, MultipartFile image) throws IOException {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new InvalidIdException("project"));
         if (image != null && !image.isEmpty()) {
@@ -51,7 +50,6 @@ public class ProjectService {
         String newSubTitle = (subTitle != null && !subTitle.isEmpty() ? subTitle : project.getSubTitle());
         String newUrl = (url != null && !url.isEmpty() ? url : project.getUrl());
         project.changeProject(newClassTh, newTitle, newSubTitle, newUrl);
-        return project;
     }
 
     // @DeleteMapping("/admin/project")
@@ -62,11 +60,11 @@ public class ProjectService {
         projectRepository.delete(project);
     }
 
-    public List<ResponseIdProjectUpdate> findProjectAllIdDesc() {
+    public List<ProjectAllField> findProjectAllIdDesc() {
         List<Project> projects = projectRepository.findAllByOrderByIdDesc();
 
         return projects.stream()
-                .map(project -> new ResponseIdProjectUpdate(
+                .map(project -> new ProjectAllField(
                         project.getId(),
                         project.getClassTh(),
                         project.getTitle(),
@@ -77,9 +75,10 @@ public class ProjectService {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public ResponseProjectUpdate findProjectById(Long id) {
+    public ProjectAllField findProjectById(Long id) {
         return projectRepository.findById(id)
-                .map(project -> new ResponseProjectUpdate(
+                .map(project -> new ProjectAllField(
+                        project.getId(),
                         project.getClassTh(),
                         project.getTitle(),
                         project.getSubTitle(),

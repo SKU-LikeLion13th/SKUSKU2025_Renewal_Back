@@ -17,10 +17,10 @@ public class LionDTO {
         @Schema(description = "이메일", example = "alswb0830@sungkyul.ac.kr")
         private String email;
 
-        @Schema(description = "트랙", example = "BACKEND or FRONTEND or PM_DESIGN")
+        @Schema(description = "트랙", example = "BACKEND or FRONTEND or DESIGN")
         private TrackType trackType;
 
-        @Schema(description = "권한", example = "ADMIN_LION or BABY_LION or LEGACY_LION")
+        @Schema(description = "권한", example = "ADMIN_LION or BABY_LION")
         private RoleType roleType;
     }
 }

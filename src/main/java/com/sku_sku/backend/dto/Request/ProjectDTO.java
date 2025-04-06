@@ -9,7 +9,7 @@ public class ProjectDTO {
 
     @Data
     public static class ProjectCreateRequest {
-        @Schema(description = "프로젝트 기수", example = "12th or 11th")
+        @Schema(description = "프로젝트 기수", example = "11 or 12 or 13")
         private String classTh;
         @Schema(description = "프로젝트 제목", example = "스쿠스쿠")
         private String title;
@@ -25,7 +25,7 @@ public class ProjectDTO {
     public static class ProjectUpdateRequest {
         @Schema(description = "프로젝트 아이디", example = "1")
         private Long id;
-        @Schema(description = "프로젝트 기수", example = "12th or 11th")
+        @Schema(description = "프로젝트 기수", example = "11 or 12 or 13")
         private String classTh;
         @Schema(description = "프로젝트 제목", example = "스쿠스쿠")
         private String title;

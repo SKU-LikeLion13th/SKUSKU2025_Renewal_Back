@@ -8,8 +8,8 @@ public class ProjectDTO {
 
     @Data
     @AllArgsConstructor
-    public static class ResponseProjectUpdate {
-        @Schema(description = "프로젝트 기수", example = "12th or 11th")
+    public static class ProjectWithoutId {
+        @Schema(description = "프로젝트 기수", example = "11 or 12 or 13")
         private String classTh;
 
         @Schema(description = "프로젝트 제목", example = "스쿠스쿠")
@@ -27,11 +27,11 @@ public class ProjectDTO {
 
     @Data
     @AllArgsConstructor
-    public static class ResponseIdProjectUpdate {
+    public static class ProjectAllField {
         @Schema(description = "프로젝트 id", example = "1")
         private Long id;
 
-        @Schema(description = "프로젝트 기수", example = "12th or 11th")
+        @Schema(description = "프로젝트 기수", example = "11 or 12 or 13")
         private String classTh;
 
         @Schema(description = "프로젝트 제목", example = "스쿠스쿠")

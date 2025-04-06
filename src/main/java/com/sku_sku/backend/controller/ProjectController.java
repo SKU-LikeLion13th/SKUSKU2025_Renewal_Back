@@ -26,11 +26,11 @@ public class ProjectController {
             responses = {@ApiResponse(responseCode = "200", description = "모든 프로젝트 조회 성공"),
                     @ApiResponse(responseCode = "404", description = "Project 하나도 없")})
     @GetMapping("/all")
-    public ResponseEntity<List<ProjectDTO.ResponseIdProjectUpdate>> findProjectAll() {
-        List<ProjectDTO.ResponseIdProjectUpdate> responseIdProjectUpdate = projectService.findProjectAllIdDesc();
-        if (responseIdProjectUpdate.isEmpty()) {
+    public ResponseEntity<List<ProjectDTO.ProjectAllField>> findProjectAll() {
+        List<ProjectDTO.ProjectAllField> projectAllField = projectService.findProjectAllIdDesc();
+        if (projectAllField.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.status(HttpStatus.OK).body(responseIdProjectUpdate);
+        return ResponseEntity.status(HttpStatus.OK).body(projectAllField);
     }
 }

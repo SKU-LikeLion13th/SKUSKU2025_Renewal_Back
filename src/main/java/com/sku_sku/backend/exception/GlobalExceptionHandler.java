@@ -46,4 +46,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> invalidLectureFile(InvalidLectureFileException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("그 강의자료 없");
     }
+
+    @ExceptionHandler(EmptyLectureException.class)
+    public ResponseEntity<String> emptyLecture(EmptyLectureException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("아무런 강의자료 없");
+    }
 }

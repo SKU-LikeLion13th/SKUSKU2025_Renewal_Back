@@ -21,23 +21,25 @@ public class CalendarScheduleAdminController {
 
     private final CalendarScheduleService calendarScheduleService;
 
-    @Operation(summary = "(민규) CalendarSchedule 추가", description = "Headers에 Bearer token 필요, body에 json로 CalendarSchedule의 title, startDate, eventDate, color 필요",
-            responses = {@ApiResponse(responseCode = "201", description = "생성 성공")})
+    @Operation(summary = "(민규) CalendarSchedule 추가", description = "body에 json으로 CalendarSchedule의 title, startDate, eventDate, color 필요",
+            responses = {@ApiResponse(responseCode = "201", description = "캘린더 일정 생성 성공")})
     @PostMapping("/add")
-    public ResponseEntity<CalendarSchedule> addCalendarEvent(@RequestBody AddCalendarEvent req) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(calendarScheduleService.addCalendarEvent(req));
+    public ResponseEntity<String> addCalendarEvent(@RequestBody AddCalendarEvent req) {
+        calendarScheduleService.addCalendarEvent(req);
+        return ResponseEntity.status(HttpStatus.CREATED).body("캘린더 일정 생성 성공");
     }
 
-    @Operation(summary = "(민규) CalendarSchedule 수정", description = "Headers에 Bearer token 필요, body에 json로 CalendarSchedule의 id, title, startDate, eventDate, color 필요",
-            responses = {@ApiResponse(responseCode = "201", description = "수정 성공"),
+    @Operation(summary = "(민규) CalendarSchedule 수정", description = "body에 json으로 CalendarSchedule의 id, title, startDate, eventDate, color 필요",
+            responses = {@ApiResponse(responseCode = "200", description = "캘린더 일정 수정 성공"),
                     @ApiResponse(responseCode = "404", description = "calendarScheduleId로 조회한 결과 없음")})
     @PutMapping("/update")
-    public ResponseEntity<CalendarSchedule> updateCalendarEvent(@RequestBody UpdateCalendarEvent req) {
-        return ResponseEntity.status(HttpStatus.OK).body(calendarScheduleService.updateCalendarEvent(req));
+    public ResponseEntity<String> updateCalendarEvent(@RequestBody UpdateCalendarEvent req) {
+        calendarScheduleService.updateCalendarEvent(req);
+        return ResponseEntity.status(HttpStatus.OK).body("캘린더 일정 수정 성공");
     }
 
-    @Operation(summary = "(민규) CalendarSchedule 하나 삭제", description = "Headers에 Bearer token 필요, 경로변수에 json로 CalendarSchedule의 id 필요",
-            responses = {@ApiResponse(responseCode = "200", description = "삭제 성공"),
+    @Operation(summary = "(민규) CalendarSchedule 하나 삭제", description = "경로변수로 CalendarSchedule의 id 필요",
+            responses = {@ApiResponse(responseCode = "200"),
                     @ApiResponse(responseCode = "404", description = "calendarScheduleId로 조회한 결과 없음")})
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCalendarEvent(@PathVariable("id") Long calendarEventId) {

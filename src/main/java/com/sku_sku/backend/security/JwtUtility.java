@@ -6,6 +6,8 @@ import com.sku_sku.backend.enums.TrackType;
 import com.sku_sku.backend.exception.HandleJwtException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -86,5 +88,17 @@ public class JwtUtility {
                 .build()
                 .parseSignedClaims(NoneBearerJwt)
                 .getPayload();  // JWT의 페이로드에서 클레임 반환
+    }
+
+    public String extractTokenFromCookies(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("token".equals(cookie.getName())) { // 쿠키 이름이 'token'
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null; // 토큰 없으면 null 반환
     }
 }
