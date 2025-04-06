@@ -19,7 +19,6 @@ public class ReviewQuizAdminController {
     private final ReviewQuizService reviewQuizService;
     @Operation(summary = "(주희)복습퀴즈 출제", description = "Headers에 Bearer token 필요",
             responses = {@ApiResponse(responseCode = "201", description = "생성")})
-                    //@ApiResponse(responseCode = "409", description = "그 title 이미 있")})
     @PostMapping("reviewQuiz/add")
     public ResponseEntity<String> makeReviewQuiz(@ModelAttribute ReviewQuizDTO.AddQuizRequest req) throws IOException {
         reviewQuizService.addQuiz(req.getTitle(),req.getTrackType(),req.getReviewQuizDTOList());

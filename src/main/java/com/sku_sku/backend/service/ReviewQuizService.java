@@ -16,8 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -126,16 +128,61 @@ public class ReviewQuizService  {
 
 
 
-//    //주차별 퀴즈 목록 조회
-//    public List<ReviewWeekDTO.showReviewWeek> getReviewWeek(String token) {
-//        Lion lion = lionService.tokenToLion(token.substring(7));//아기사자 찾기
-//        List<ReviewWeek> reviewWeekList = reviewWeekRepository.findReviewWeekByTrackType(lion.getTrackType());//해당 트랙에 있는 복습퀴즈 조회
-//
-//
-//    }
+    //주차별 퀴즈 목록 조회
+    public List<ReviewWeekDTO.showReviewWeek> getReviewWeek(String token) {
+        Lion lion = lionService.tokenToLion(token);//아기사자 찾기
+        List<ReviewWeek> reviewWeekList = reviewWeekRepository.findReviewWeekByTrackType(lion.getTrackType());//해당 트랙에 있는 복습퀴즈 조회
+        List<ReviewWeekDTO.showReviewWeek> reviewWeekDTOList = new ArrayList<>();
+        String IsSubmit = "미제출";
+        int score = 0;
+        int total = 0;
+        for (ReviewWeek reviewWeek : reviewWeekList) {
+            List<ReviewQuiz> reviewQuizList = reviewQuizRepository.findByReviewWeekId(reviewWeek.getId());
+            List<ReviewQuizResponse> reviewQuizResponseList = reviewQuizResponseRepository.findReviewQuizResponseByLionAndReviewQuizIn(lion, reviewQuizList);
+            if (!reviewQuizResponseList.isEmpty()) {
+                IsSubmit = "제출";
+                for (ReviewQuizResponse reviewQuizResponse : reviewQuizResponseList) {
+                    AnswerStatus answerStatus = reviewQuizResponse.getAnswerStatus();
+                    QuizType quizType = reviewQuizResponse.getQuizType();
+                    if (answerStatus == AnswerStatus.TRUE) {
+                        score += 1;
+                    }
+                    if (quizType == QuizType.MULTIPLE_CHOICE) {
+                        total += 1;
+                    }
+                }
 
-//    //복습 퀴즈 조회
-//    public ReviewQuizDTO.ShowReviewQuizDetails getReviewQuiz(TrackType trackType, Long WeekId) {
-//        reviewWeekRepository
-//    }
+            }
+            ReviewWeekDTO.showReviewWeek reviewWeekDTO = new ReviewWeekDTO.showReviewWeek(reviewWeek.getId(),
+                                                            reviewWeek.getTitle(),IsSubmit, score, total);
+            reviewWeekDTOList.add(reviewWeekDTO);
+        }
+        return reviewWeekDTOList;
+    }
+
+    //복습 퀴즈 조회
+    public List<ReviewQuizDTO.ShowReviewQuizDetails> getReviewQuiz(String token, Long WeekId) {
+        Lion lion = lionService.tokenToLion(token);
+        List<ReviewQuizDTO.ShowReviewQuizDetails> reviewQuizDTOList = new ArrayList<>();
+        reviewQuizRepository.findByTrackTypeAndReviewWeek(lion.getTrackType(),WeekId).forEach(reviewQuiz -> {
+            //보기 리스트 가져오기
+            List<String> answerChoiceContentList = answerChoiceRepository.findByReviewQuiz(reviewQuiz).stream()
+                    .map(AnswerChoice::getContent)
+                    .collect(Collectors.toList());
+
+            //파일 리스트 가져오기
+            List<Long> files = joinReviewQuizFileRepository.findByReviewQuiz(reviewQuiz).stream()
+                    .map(JoinReviewQuizFile::getId)
+                    .toList();
+
+
+            ReviewQuizDTO.ShowReviewQuizDetails showReviewQuizDetails = new ReviewQuizDTO.ShowReviewQuizDetails(reviewQuiz.getId(),
+                    reviewQuiz.getQuizType(), reviewQuiz.getContent(), answerChoiceContentList,files);
+
+            reviewQuizDTOList.add(showReviewQuizDetails);
+        });
+        return reviewQuizDTOList;
+    }
+
+
 }

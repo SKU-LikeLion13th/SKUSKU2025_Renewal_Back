@@ -18,13 +18,13 @@ public class JoinReviewQuizFile {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reviewquiz_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private ReviewQuiz ReviewQuiz; // 과제
+    private ReviewQuiz reviewQuiz; // 복습 퀴즈
 
     @Lob @Column(name = "file", columnDefinition = "LONGBLOB")
     private byte[] file; // 첨부한 파일
 
     public JoinReviewQuizFile(ReviewQuiz reviewQuiz, byte[] file) {
-        this.ReviewQuiz = reviewQuiz;
+        this.reviewQuiz = reviewQuiz;
         this.file = file;
     }
 }

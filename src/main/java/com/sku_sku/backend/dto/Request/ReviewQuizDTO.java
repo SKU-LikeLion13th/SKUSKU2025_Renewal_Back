@@ -3,6 +3,7 @@ package com.sku_sku.backend.dto.Request;
 import com.sku_sku.backend.enums.QuizType;
 import com.sku_sku.backend.enums.TrackType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,6 +47,7 @@ public class ReviewQuizDTO {
     }
 
     @Data
+    @AllArgsConstructor
     public static class ShowReviewQuizDetails {
         @Schema(description = "문제 Id", example = "1")
         private Long id;
@@ -64,7 +66,7 @@ public class ReviewQuizDTO {
                         ]""")
         private List<String> answerChoiceList;
         @Schema(description = "운영진이 추가로 올리는 파일(없으면 빈리스트)", example = "계층구조.png")
-        private List<MultipartFile> files;
+        private List<Long> filesIdList;
     }
 
 

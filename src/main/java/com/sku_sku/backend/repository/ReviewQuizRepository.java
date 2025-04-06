@@ -12,5 +12,8 @@ import java.util.List;
 public interface ReviewQuizRepository extends JpaRepository<ReviewQuiz, Long> {
 
     @Query("SELECT rq FROM ReviewQuiz rq WHERE rq.reviewWeek.trackType = :trackType AND rq.reviewWeek.id = :reviewWeekId")
-    List<ReviewQuiz> findByTrackTypeAndReviewWeek(@Param("trackType") TrackType trackType, @Param("reviewWeekId") Long reviewWeekId);
+    List<ReviewQuiz> findByTrackTypeAndReviewWeek(@Param("trackType") TrackType trackType,
+                                                  @Param("reviewWeekId") Long reviewWeekId);
+
+    List<ReviewQuiz> findByReviewWeekId(Long reviewWeekId);
 }
