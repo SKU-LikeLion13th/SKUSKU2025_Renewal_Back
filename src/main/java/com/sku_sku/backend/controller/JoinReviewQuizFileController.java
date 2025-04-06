@@ -22,8 +22,8 @@ public class JoinReviewQuizFileController {
     private final JoinReviewQuizFileRepository fileRepository;
     private final JwtUtility jwtUtility;
 
-    @Operation(summary = "(주희)복습퀴즈 출제", description = "Headers에 Bearer token 필요",
-            responses = {@ApiResponse(responseCode = "201", description = "생성")})
+    @Operation(summary = "(주희)복습퀴즈 파일 리다이렉팅", description = "Headers에 Bearer token 필요",
+            responses = {@ApiResponse(responseCode = "200", description = "파일 출력")})
     @GetMapping("/api/review-quiz/file/{id}")
     public ResponseEntity<byte[]> getFile(HttpServletRequest request, @PathVariable Long id) {
         String token = jwtUtility.extractTokenFromCookies(request);
