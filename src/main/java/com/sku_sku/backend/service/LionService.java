@@ -31,6 +31,11 @@ public class LionService {
         return lion.getName();
     }
 
+    public Lion tokenToLion(String token) {
+        return lionRepository.findByEmail(jwtUtility.getClaimsFromJwt(token).getSubject())
+                .orElseThrow(InvalidLionException::new);
+    }
+
     @Transactional
     public Lion addLion(String name, String email, TrackType track, RoleType role) {
         if (lionRepository.findByEmail(email).isPresent()) {

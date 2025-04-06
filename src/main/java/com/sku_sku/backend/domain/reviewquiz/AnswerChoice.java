@@ -20,4 +20,9 @@ public class AnswerChoice {
     private ReviewQuiz reviewQuiz; // 해당 복습 퀴즈 문제
 
     private String content; // 보기 내용
+
+    public AnswerChoice(ReviewQuiz reviewQuiz, String content) {
+        this.reviewQuiz = reviewQuiz;
+        this.content = content;
+    }
 }

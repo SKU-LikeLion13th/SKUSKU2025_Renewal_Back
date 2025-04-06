@@ -23,4 +23,17 @@ public class ReviewWeek {
     private LocalDateTime createDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 복습 퀴즈 생성일
 
     private LocalDateTime updateDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 복습 퀴즈 수정일
+
+    public ReviewWeek(TrackType trackType, String title) {
+        this.trackType = trackType;
+        this.title = title;
+        this.createDate = LocalDateTime.now();
+        this.updateDate = this.createDate;
+    }
+
+    public void update(TrackType trackType, String title) {
+        this.trackType = trackType;
+        this.title = title;
+        this.updateDate = LocalDateTime.now();
+    }
 }
