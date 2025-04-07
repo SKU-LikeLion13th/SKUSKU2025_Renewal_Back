@@ -54,12 +54,12 @@ public class JwtUtility {
 //    }
 
     // JWT 토큰 유효성 검사
-    public boolean validateJwt(String token) {
+    public boolean validateJwt(String jwt) {
         try {
             Jwts.parser()
                     .verifyWith(secretKey)
                     .build()
-                    .parseSignedClaims(token); // 주어진 JWT 토큰 파싱하여 서명을 검증
+                    .parseSignedClaims(jwt); // 주어진 JWT 토큰 파싱하여 서명을 검증
             return true; // 올바르면 true 반환
         } catch (ExpiredJwtException e) {
             throw new HandleJwtException("만료된 JWT");
@@ -78,15 +78,15 @@ public class JwtUtility {
 
     // JWT 토큰에서 클레임을 추출하여 반환
     public Claims getClaimsFromJwt(String jwt) {
-        String NoneBearerJwt = jwt;
-        // "Bearer "로 시작하면
-        if (jwt.startsWith("Bearer ")) {
-            NoneBearerJwt = jwt.substring(7); // "Bearer " 부분을 제거
-        }
+//        String NoneBearerJwt = jwt;
+//        // "Bearer "로 시작하면
+//        if (jwt.startsWith("Bearer ")) {
+//            NoneBearerJwt = jwt.substring(7); // "Bearer " 부분을 제거
+//        }
         return Jwts.parser()
                 .verifyWith(secretKey)
                 .build()
-                .parseSignedClaims(NoneBearerJwt)
+                .parseSignedClaims(jwt)
                 .getPayload();  // JWT의 페이로드에서 클레임 반환
     }
 
@@ -94,7 +94,7 @@ public class JwtUtility {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("token".equals(cookie.getName())) { // 쿠키 이름이 'token'
+                if ("access_token".equals(cookie.getName())) { // 쿠키 이름이 'token'
                     return cookie.getValue();
                 }
             }

@@ -94,4 +94,8 @@ public class LionService {
                         lion.getRoleType()))
                 .orElse(null);
     }
+
+    public Lion findByEmail(String email) {
+        return lionRepository.findByEmail(email).orElseThrow(InvalidEmailException::new);
+    }
 }

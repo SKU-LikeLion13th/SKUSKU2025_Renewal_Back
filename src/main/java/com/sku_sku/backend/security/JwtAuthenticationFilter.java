@@ -29,7 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
-            String token = resolveToken(request);
+            String token = jwtUtility.extractTokenFromCookies(request);
             if (token != null && jwtUtility.validateJwt(token)) {
                 Authentication auth = getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(auth);
@@ -41,25 +41,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    // Authorization 헤더 또는 쿠키에서 JWT 토큰 추출
-    private String resolveToken(HttpServletRequest request) {
-        // 1. Authorization 헤더 확인
-        String authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            return authorizationHeader.substring(7); // "Bearer " 제거
-        }
-
-        // 2. Authorization 헤더가 없으면 쿠키 확인
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if ("token".equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
-            }
-        }
-
-        return null;
-    }
+    // 쿠키에서 JWT 토큰 추출
+//    private String resolveToken(HttpServletRequest request) {
+//        String authorizationHeader = request.getHeader("Authorization");
+//        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+//            return authorizationHeader.substring(7); // "Bearer " 제거
+//        }
+//        if (request.getCookies() != null) {
+//            for (Cookie cookie : request.getCookies()) {
+//                if ("token".equals(cookie.getName())) {
+//                    return cookie.getValue();
+//                }
+//            }
+//        }
+//
+//        return null;
+//    }
 
     // JWT 토큰에서 인증 객체 생성
     private Authentication getAuthentication(String jwt) {
