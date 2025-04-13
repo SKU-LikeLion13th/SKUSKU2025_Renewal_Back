@@ -1,7 +1,9 @@
 package com.sku_sku.backend.exception;
 
+import jakarta.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -50,5 +52,29 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EmptyLectureException.class)
     public ResponseEntity<String> emptyLecture(EmptyLectureException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("아무런 강의자료 없");
+    }
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
+    }
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException e) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidAssignmentException.class)
+    public ResponseEntity<String> handleInvalidAssignmentException(InvalidAssignmentException e){
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(e.getMessage());
+    }
+
+    @ExceptionHandler(MailsendFailException.class)
+    public ResponseEntity<String> handleMailSendFailException(MailsendFailException e){
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(e.getMessage());
     }
 }
