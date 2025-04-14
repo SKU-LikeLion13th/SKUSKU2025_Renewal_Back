@@ -1,6 +1,5 @@
 package com.sku_sku.backend.controller.admin;
 
-import com.sku_sku.backend.domain.CalendarSchedule;
 import com.sku_sku.backend.service.CalendarScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

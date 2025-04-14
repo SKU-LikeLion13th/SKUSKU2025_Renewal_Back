@@ -2,15 +2,12 @@ package com.sku_sku.backend.controller;
 
 import com.sku_sku.backend.dto.Request.ReviewQuizDTO;
 import com.sku_sku.backend.dto.Request.ReviewWeekDTO;
-import com.sku_sku.backend.enums.TrackType;
 import com.sku_sku.backend.security.JwtUtility;
 import com.sku_sku.backend.service.ReviewQuizService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController

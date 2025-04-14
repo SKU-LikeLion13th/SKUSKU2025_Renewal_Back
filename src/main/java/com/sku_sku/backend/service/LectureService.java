@@ -2,7 +2,6 @@ package com.sku_sku.backend.service;
 
 
 import com.sku_sku.backend.domain.lecture.Lecture;
-import com.sku_sku.backend.dto.Request.JoinLectureFilesDTO;
 import com.sku_sku.backend.dto.Request.JoinLectureFilesDTO.CreateJoinLectureFilesRequest;
 import com.sku_sku.backend.dto.Request.LectureDTO;
 import com.sku_sku.backend.dto.Response.LectureDTO.ResponseLectureWithoutFiles;
@@ -19,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

@@ -3,7 +3,6 @@ package com.sku_sku.backend.service;
 import com.sku_sku.backend.domain.Lion;
 import com.sku_sku.backend.domain.reviewquiz.*;
 import com.sku_sku.backend.dto.Request.ReviewQuizDTO;
-import com.sku_sku.backend.dto.Request.ReviewWeekDTO;
 import com.sku_sku.backend.enums.AnswerStatus;
 import com.sku_sku.backend.enums.QuizType;
 import com.sku_sku.backend.enums.TrackType;

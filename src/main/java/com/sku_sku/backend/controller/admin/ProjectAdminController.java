@@ -1,7 +1,5 @@
 package com.sku_sku.backend.controller.admin;
 
-import com.sku_sku.backend.domain.Project;
-import com.sku_sku.backend.dto.Request.ProjectDTO;
 import com.sku_sku.backend.dto.Request.ProjectDTO.ProjectCreateRequest;
 import com.sku_sku.backend.dto.Request.ProjectDTO.ProjectUpdateRequest;
 import com.sku_sku.backend.dto.Response.ProjectDTO.ProjectAllField;

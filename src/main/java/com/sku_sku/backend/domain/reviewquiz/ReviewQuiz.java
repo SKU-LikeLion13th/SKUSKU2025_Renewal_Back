@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.util.List;
-
 @Getter
 @NoArgsConstructor
 @Entity // 복습 퀴즈 문제

@@ -1,6 +1,5 @@
 package com.sku_sku.backend.controller.admin;
 
-import com.sku_sku.backend.domain.lecture.Lecture;
 import com.sku_sku.backend.dto.Request.LectureDTO;
 import com.sku_sku.backend.service.LectureService;
 import io.swagger.v3.oas.annotations.Operation;

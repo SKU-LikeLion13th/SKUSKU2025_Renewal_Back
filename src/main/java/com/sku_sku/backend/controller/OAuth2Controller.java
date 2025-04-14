@@ -2,7 +2,6 @@ package com.sku_sku.backend.controller;
 
 import com.sku_sku.backend.domain.Lion;
 import com.sku_sku.backend.security.JwtUtility;
-import com.sku_sku.backend.service.LectureService;
 import com.sku_sku.backend.service.LionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

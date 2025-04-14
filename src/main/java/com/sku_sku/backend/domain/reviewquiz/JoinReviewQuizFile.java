@@ -1,6 +1,5 @@
 package com.sku_sku.backend.domain.reviewquiz;
 
-import com.sku_sku.backend.domain.assignment.Assignment;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

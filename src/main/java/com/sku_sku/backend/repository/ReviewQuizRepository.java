@@ -1,7 +1,6 @@
 package com.sku_sku.backend.repository;
 
 import com.sku_sku.backend.domain.reviewquiz.ReviewQuiz;
-import com.sku_sku.backend.domain.reviewquiz.ReviewWeek;
 import com.sku_sku.backend.enums.TrackType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
