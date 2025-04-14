@@ -21,4 +21,10 @@ public class JoinSubmitAssignmentFile {
 
     @Lob @Column(name = "file", columnDefinition = "LONGBLOB")
     private byte[] file; // 첨부한 파일
+
+    public JoinSubmitAssignmentFile(SubmitAssignment submitAssignment, byte[] file){
+        this.submitAssignment=submitAssignment;
+        this.file=file;
+    }
+
 }

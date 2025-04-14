@@ -16,7 +16,7 @@ public class Feedback {
     @GeneratedValue
     private Long id; // pk
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "submit_assignment_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private SubmitAssignment submitAssignment; // 피드백할 과제
@@ -24,4 +24,14 @@ public class Feedback {
     private String content; // 피드백 내용
 
     private LocalDateTime createDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 피드백 생성일
+
+    public Feedback(SubmitAssignment submitAssignment, String content){
+        this.submitAssignment=submitAssignment;
+        this.content=content;
+        this.createDate=LocalDateTime.now();
+    }
+
+    public void updateFeedback(String content){
+        this.content=content;
+    }
 }

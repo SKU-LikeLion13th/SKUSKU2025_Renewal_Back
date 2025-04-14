@@ -26,4 +26,12 @@ public class Assignment {
     private QuizType quizType; // 과제 제출 유형 // 주관식이랑 파일첨부만 사용 ESSAY_QUESTION or FILE_ATTACHMENT
 
     private LocalDateTime createDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 과제 생성일
+
+    public Assignment(String title, TrackType trackType, String description, QuizType quizType){
+        this.title=title;
+        this.trackType=trackType;
+        this.description=description;
+        this.quizType=quizType;
+        this.createDate=LocalDateTime.now();
+    }
 }
