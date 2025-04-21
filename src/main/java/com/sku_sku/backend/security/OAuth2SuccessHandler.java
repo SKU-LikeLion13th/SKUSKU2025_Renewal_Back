@@ -13,6 +13,8 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -58,15 +60,20 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         response.addHeader("Set-Cookie", cookie.toString());
 
-
         // ADMIN_LION일 경우만 Refresh Token 발급
         if (lion.getRoleType() == RoleType.ADMIN_LION) {
             String refreshToken = UUID.randomUUID().toString();
             redisTemplate.opsForValue().set("refresh:" + email, refreshToken, Duration.ofDays(14));
         }
 
-        // 프론트엔드로 리디렉트
-        response.sendRedirect(frontendRedirectUrl);
-
+        // 유저가 로그인 시도하기 전에 요청했던 URL로 리디렉트
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+        if (savedRequest != null) {
+            String targetUrl = savedRequest.getRedirectUrl();
+            response.sendRedirect(targetUrl);
+        } else {
+            response.sendRedirect(frontendRedirectUrl); // 없으면 기본값
+        }
     }
+
 }
