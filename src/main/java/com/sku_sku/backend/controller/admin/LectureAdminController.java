@@ -49,4 +49,8 @@ public class LectureAdminController {
         return ResponseEntity.status(HttpStatus.OK).body("강의자료 삭제 성공");
     }
 
+    @GetMapping("/api/me")
+    public String test() {
+        return "hello";
+    }
 }

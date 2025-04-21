@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -31,6 +32,12 @@ public class OAuth2Controller {
     private final LionService lionService;
     private final RedisTemplate<String, String> redisTemplate;
     private final JwtUtility jwtUtility;
+
+    @Value("${cookie.secure}")
+    private boolean isSecure;
+
+    @Value("${cookie.sameSite}")
+    private String isSameSite;
 
     @Operation(summary = "(민규) 로그인 상태 조회", description = "로그인한 유저가 있다면 그 유저의 정보를 반환, 로그인이 안 되어 있으면 401 반환",
             responses = {@ApiResponse(responseCode = "200", description = "로그인한 유저 정보 반환"),
@@ -66,10 +73,8 @@ public class OAuth2Controller {
 
         ResponseCookie deleteToken = ResponseCookie.from("access_token", "")
                 .httpOnly(true)
-//                .secure(true) // 로컬에서는 false
-//                .sameSite("None")
-                .secure(false)
-                .sameSite("Lax")
+                .secure(isSecure)
+                .sameSite(isSameSite)
                 .path("/")
                 .maxAge(0)
                 .build();
@@ -101,10 +106,8 @@ public class OAuth2Controller {
 
                 ResponseCookie cookie = ResponseCookie.from("access_token", newAccessToken)
                         .httpOnly(true)
-//                        .secure(true) // 로컬에서는 false
-//                        .sameSite("None")
-                        .secure(false)
-                        .sameSite("Lax")
+                        .secure(isSecure)
+                        .sameSite(isSameSite)
                         .path("/")
                         .maxAge(Duration.ofHours(1))
                         .build();

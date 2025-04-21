@@ -30,6 +30,12 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     @Value("${custom.frontend-url}")
     private String frontendRedirectUrl;
 
+    @Value("${cookie.secure}")
+    private boolean isSecure;
+
+    @Value("${cookie.sameSite}")
+    private String isSameSite;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException {
@@ -44,10 +50,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // JWT를 HttpOnly Cookie에 저장
         ResponseCookie cookie = ResponseCookie.from("access_token", jwt)
                 .httpOnly(true)
-//                .secure(true) // 로컬에서는 false
-//                .sameSite("None")
-                .secure(false)
-                .sameSite("Lax")
+                .secure(isSecure)
+                .sameSite(isSameSite)
                 .path("/")
                 .maxAge(Duration.ofHours(1))
                 .build();
