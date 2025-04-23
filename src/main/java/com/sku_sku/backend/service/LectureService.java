@@ -31,7 +31,7 @@ public class LectureService {
     // @PostMapping("/admin/lecture/add")
     @Transactional // 강의 안내물 생성 로직
     public void createLecture(HttpServletRequest header, LectureDTO.createLectureRequest request) throws IOException {
-        String writer = jwtUtility.extractTokenFromCookies(header);
+        String writer = jwtUtility.getClaimsFromJwt(jwtUtility.extractTokenFromCookies(header)).getSubject();
         Lecture lecture = new Lecture(request.getTrackType(), request.getTitle(), writer);
         lectureRepository.save(lecture);
 
@@ -41,7 +41,7 @@ public class LectureService {
     // @PutMapping("/admin/lecture/update")
     @Transactional // 강의 안내물 업데이트 로직
     public void updateLecture(HttpServletRequest header, LectureDTO.updateLectureRequest request) throws IOException {
-        String newWriter = jwtUtility.extractTokenFromCookies(header);
+        String newWriter = jwtUtility.getClaimsFromJwt(jwtUtility.extractTokenFromCookies(header)).getSubject();
         Lecture lecture = lectureRepository.findById(request.getId())
                 .orElseThrow(() -> new InvalidIdException("lecture"));
 

@@ -37,6 +37,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage() + "Id로 조회한 결과 없음");
     }
 
+    @ExceptionHandler(InvalidLoginlException.class)
+    public ResponseEntity<String> invalidLogin(InvalidLoginlException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 안 되어 있음");
+    }
+
+    @ExceptionHandler(InvalidJwtlException.class)
+    public ResponseEntity<String> invalidJwt(InvalidJwtlException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage() + " token 없음");
+    }
+
     // Project
     @ExceptionHandler(InvalidTitleException.class)
     public ResponseEntity<String> invalidTitle(InvalidTitleException e) {
