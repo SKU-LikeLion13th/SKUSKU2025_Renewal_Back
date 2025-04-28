@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.sku_sku.backend.dto.Response.LectureDTO.*;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -32,7 +34,7 @@ public class LectureService {
     @Transactional // 강의 안내물 생성 로직
     public void createLecture(HttpServletRequest header, LectureDTO.createLectureRequest request) throws IOException {
         String writer = jwtUtility.getClaimsFromJwt(jwtUtility.extractTokenFromCookies(header)).get("name", String.class);
-        Lecture lecture = new Lecture(request.getTrackType(), request.getTitle(), writer);
+        Lecture lecture = new Lecture(request.getTrackType(), request.getTitle(), request.getContent(), writer);
         lectureRepository.save(lecture);
 
         joinLectureFilesService.createJoinLectureFiles(lecture, request.getFiles());
@@ -47,7 +49,8 @@ public class LectureService {
 
         TrackType newTrack = (request.getTrackType() != null ? request.getTrackType() : lecture.getTrack());
         String newTitle = (request.getTitle() != null && !request.getTitle().isEmpty() ? request.getTitle() : lecture.getTitle());
-        lecture.update(newTrack, newTitle, newWriter);
+        String newContnet = (request.getContent() != null && !request.getContent().isEmpty() ? request.getContent() : lecture.getContent());
+        lecture.update(newTrack, newTitle, newContnet, newWriter);
 
         if (request.getFiles() != null && !request.getFiles().isEmpty()) {
             joinLectureFilesService.deleteByLecture(lecture);
@@ -56,14 +59,15 @@ public class LectureService {
     }
 
     @Transactional // 강의 안내물 조회 로직
-    public com.sku_sku.backend.dto.Response.LectureDTO.ResponseLecture finaLectureById(Long lectureId) {
+    public ResponseLecture finaLectureById(Long lectureId) {
         return lectureRepository.findById(lectureId)
                 .map(lecture -> {
                     lectureRepository.save(lecture);
-                    return new com.sku_sku.backend.dto.Response.LectureDTO.ResponseLecture(
+                    return new ResponseLecture(
                             lecture.getId(),
                             lecture.getTrack(),
                             lecture.getTitle(),
+                            lecture.getContent(),
                             lecture.getWriter(),
                             lecture.getCreateDate(),
                             lecture.getJoinLectureFile().stream()
@@ -100,6 +104,7 @@ public class LectureService {
         return new ResponseLectureWithoutFiles(
                 lecture.getId(),
                 lecture.getTitle(),
+                lecture.getContent(),
                 lecture.getWriter(),
                 lecture.getCreateDate()
         );

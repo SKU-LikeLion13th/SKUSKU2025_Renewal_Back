@@ -22,6 +22,8 @@ public class Lecture {
 
     private String title; // 강의 안내물 제목
 
+    private String content; // 강의 안내물 내용
+
     private String writer; // 강의 안내물 작성자
 
     @JsonManagedReference
@@ -31,17 +33,19 @@ public class Lecture {
     private LocalDateTime createDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 강의 안내물 생성일
 
     // 생성자
-    public Lecture(TrackType track, String title, String writer) {
+    public Lecture(TrackType track, String title, String content, String writer) {
         this.track = track;
         this.title = title;
+        this.content = content;
         this.writer = writer;
         this.createDate = LocalDateTime.now(); // 생성 당시 시간
     }
 
     // 업데이트
-    public void update(TrackType track, String title, String writer) {
+    public void update(TrackType track, String title, String content, String writer) {
         this.track = track;
         this.title = title;
+        this.content = content;
         this.writer = writer;
     }
 }

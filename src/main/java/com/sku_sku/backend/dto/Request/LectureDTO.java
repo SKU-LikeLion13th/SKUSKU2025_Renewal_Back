@@ -14,6 +14,8 @@ public class LectureDTO {
         private TrackType trackType;
         @Schema(description = "강의 안내물 제목", example = "백엔드 3주차")
         private String title;
+        @Schema(description = "강의 안내물 내용", example = "오늘은 JPA에 대해서 배워요~")
+        private String content;
         @Schema(description = "강의 안내물 파일", example = "파일 넣으셔")
         private List<MultipartFile> files;
     }
@@ -26,6 +28,8 @@ public class LectureDTO {
         private TrackType trackType;
         @Schema(description = "강의 안내물 제목", example = "백엔드 3주차")
         private String title;
+        @Schema(description = "강의 안내물 내용", example = "오늘은 JPA에 대해서 배워요~")
+        private String content;
         @Schema(description = "강의자료", example = "파일 넣으셔")
         private List<MultipartFile> files;
     }

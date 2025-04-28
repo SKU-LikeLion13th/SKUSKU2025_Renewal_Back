@@ -20,6 +20,8 @@ public class LectureDTO {
         private TrackType trackType;
         @Schema(description = "강의 안내물 제목", example = "백엔드 3주차")
         private String title;
+        @Schema(description = "강의 안내물 내용", example = "오늘은 JPA에 대해서 배워요~")
+        private String content;
         @Schema(description = "강의 안내물 작성자", example = "한민규")
         private String writer;
         @Schema(description = "강의 안내물 작성 시간", example = "YYYY-MM-DD")
@@ -35,6 +37,8 @@ public class LectureDTO {
         private Long id;
         @Schema(description = "강의 안내물 제목", example = "백엔드 3주차")
         private String title;
+        @Schema(description = "강의 안내물 내용", example = "오늘은 JPA에 대해서 배워요~")
+        private String content;
         @Schema(description = "강의 안내물 작성자", example = "한민규")
         private String writer;
         @Schema(description = "강의 안내물 작성 시간", example = "YYYY-MM-DD")
