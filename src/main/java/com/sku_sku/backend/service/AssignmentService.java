@@ -6,7 +6,7 @@ import com.sku_sku.backend.domain.assignment.Feedback;
 import com.sku_sku.backend.domain.assignment.JoinSubmitAssignmentFile;
 import com.sku_sku.backend.domain.assignment.SubmitAssignment;
 import com.sku_sku.backend.dto.Request.AssignmentDTO;
-import com.sku_sku.backend.dto.Response.AssignmentDTO.FeedbackDetailRes;
+import com.sku_sku.backend.dto.Response.AssignmentDTO.*;
 import com.sku_sku.backend.dto.Response.AssignmentDTO.AssignmentRes;
 import com.sku_sku.backend.dto.Response.AssignmentDTO.SubmittedAssignmentLion;
 import com.sku_sku.backend.email.EmailService;
@@ -225,5 +225,19 @@ public class AssignmentService {
         return dto;
     }
 
+    //과제 조회 상세페이지
+    public AssignmentDetail getAssignmentDetail(HttpServletRequest header, Long assignmentId){
+        String token= jwtUtility.extractTokenFromCookies(header);
+        jwtUtility.validateJwt(token);
+
+        Assignment assignment = assignmentRepository.findById(assignmentId)
+                .orElseThrow(()-> new InvalidAssignmentException("해당 과제를 찾을 수 없음"));
+
+        String description = assignment.getDescription();
+        AssignmentDetail dto = new AssignmentDetail();
+        dto.setDescription(description);
+
+        return dto;
+    }
 
 }

@@ -38,4 +38,11 @@ public class AssignmentDTO {
         @Schema(description = "피드백", example = "이 부분은 살짝 부족한거같네요")
         private String feedback;
     }
+
+    @Data
+    public static class AssignmentDetail{
+        @Schema(description = "과제 설명", example = "과제 안내 드려요 스프링 의존성~")
+        private String description;
+    }
+
 }

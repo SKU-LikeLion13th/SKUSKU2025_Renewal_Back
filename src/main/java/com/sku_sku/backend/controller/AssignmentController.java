@@ -1,7 +1,7 @@
 package com.sku_sku.backend.controller;
 
 import com.sku_sku.backend.dto.Request.AssignmentDTO;
-import com.sku_sku.backend.dto.Response.AssignmentDTO.AssignmentRes;
+import com.sku_sku.backend.dto.Response.AssignmentDTO.*;
 import com.sku_sku.backend.enums.TrackType;
 import com.sku_sku.backend.service.AssignmentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,6 +42,16 @@ public class AssignmentController {
     public ResponseEntity<List<AssignmentRes>> getAllAssignmentByTrack(HttpServletRequest header, @PathVariable TrackType trackType){
         List<AssignmentRes> assignmentList = assignmentService.getAssignment(header, trackType);
         return ResponseEntity.status(HttpStatus.OK).body(assignmentList);
+    }
+
+    @Operation(summary = "(오현) 아기사자 트랙별 과제 조회", description = "경로로 트랙타입을 받아서 트랙별 모든 과제 조회",
+            responses = {@ApiResponse(responseCode = "200", description = "조회 성공"),
+                    @ApiResponse(responseCode = "404", description = "해당 과제가 없을 경우"),
+                    @ApiResponse(responseCode = "400", description = "assignmentId가 올바르지 않은 경우")})
+    @GetMapping("/{assignmentId}")
+    public ResponseEntity<AssignmentDetail> getAssignmentDetail(HttpServletRequest header, @PathVariable Long assignmentId){
+        AssignmentDetail assignmentDetail = assignmentService.getAssignmentDetail(header, assignmentId);
+        return ResponseEntity.status(HttpStatus.OK).body(assignmentDetail);
     }
 
 }
