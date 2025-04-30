@@ -83,5 +83,26 @@ public class OAuth2Service {
 
         response.addHeader("Set-Cookie", cookie.toString());
     }
+
+    public void refreshAccessTokenInJwtAuthenticationFilter(String email, HttpServletResponse response) {
+        String redisKey = "refresh:" + email;
+        if (!redisTemplate.hasKey(redisKey)) {
+            throw new InvalidJwtlException("Refresh");
+        }
+
+        Lion lion = lionService.findByEmail(email);
+        String newAccessToken = jwtUtility.generateJwt(email, lion.getName(), lion.getTrackType(), lion.getRoleType());
+
+        ResponseCookie cookie = ResponseCookie.from("access_token", newAccessToken)
+                .httpOnly(true)
+                .secure(isSecure)
+                .sameSite(isSameSite)
+                .path("/")
+                .maxAge(Duration.ofHours(1))
+                .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
+    }
+
 }
 

@@ -40,17 +40,16 @@ public class OAuth2Controller {
         return ResponseEntity.status(HttpStatus.OK).body(oAuth2Service.getLoginStatus(authentication));
     }
 
-    @Operation(summary = "(민규) 강의자료 수정", description = "body에 form-data로 강의자료 id와 수정하고 싶은 값만 넣으면 됨",
-            responses = {@ApiResponse(responseCode = "201", description = "강의자료 수정 성공"),
-                    @ApiResponse(responseCode = "404", description = "그 id에 해당하는 값 없")})
+    @Operation(summary = "(민규) 로그아웃", description = "",
+            responses = {@ApiResponse(responseCode = "200", description = "로그아웃 성공")})
     @PostMapping("/out")
     public ResponseEntity<String> logout(HttpServletResponse response, Authentication auth) {
         oAuth2Service.logout(response, auth.getName());
         return ResponseEntity.status(HttpStatus.OK).body("로그아웃 성공");
     }
 
-    @Operation(summary = "(민규) 강의자료 수정", description = "body에 form-data로 강의자료 id와 수정하고 싶은 값만 넣으면 됨",
-            responses = {@ApiResponse(responseCode = "201", description = "강의자료 수정 성공"),
+    @Operation(summary = "(민규) access_token 재발급 테스트용",
+            responses = {@ApiResponse(responseCode = "200", description = "Access token 재발급 완료"),
                     @ApiResponse(responseCode = "404", description = "그 id에 해당하는 값 없")})
     @PostMapping("/refresh")
     public ResponseEntity<String> refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
