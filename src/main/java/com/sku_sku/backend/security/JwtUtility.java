@@ -42,16 +42,6 @@ public class JwtUtility {
                 .signWith(secretKey) // 지정된 알고리즘과 비밀키를 사용하여 JWT 토큰 서명
                 .compact(); // JWT 문자열 생성
     }
-//    public String generateJwt(String email, String name, Track track, Role role) {
-//        return Jwts.builder() // JWT 빌더 초기화
-//                .setSubject(email) // 이메일을 JWT 토큰의 주체로 설정
-//                .claim("name", name) // JWT 토큰에 이름 추가
-//                .claim("track", track.name()) // JWT 토큰에 트랙 추가
-//                .claim("role", role.name()) // JWT 토큰에 역할 추가
-//                .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // JWT 토큰의 만료시간 설정
-//                .signWith(secretKey, SignatureAlgorithm.HS512) // 지정된 알고리즘과 비밀키를 사용하여 JWT 토큰 서명
-//                .compact(); // JWT 문자열 생성
-//    }
 
     // JWT 토큰 유효성 검사
     public boolean validateJwt(String jwt) {
@@ -78,11 +68,6 @@ public class JwtUtility {
 
     // JWT 토큰에서 클레임을 추출하여 반환
     public Claims getClaimsFromJwt(String jwt) {
-//        String NoneBearerJwt = jwt;
-//        // "Bearer "로 시작하면
-//        if (jwt.startsWith("Bearer ")) {
-//            NoneBearerJwt = jwt.substring(7); // "Bearer " 부분을 제거
-//        }
         return Jwts.parser()
                 .verifyWith(secretKey)
                 .build()
@@ -100,5 +85,10 @@ public class JwtUtility {
             }
         }
         return null; // 토큰 없으면 null 반환
+    }
+
+    public Claims getClaimsFromCookies(HttpServletRequest request) {
+        String jwt = extractTokenFromCookies(request);
+        return getClaimsFromJwt(jwt);
     }
 }

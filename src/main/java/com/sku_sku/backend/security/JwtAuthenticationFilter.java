@@ -40,23 +40,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    // 쿠키에서 JWT 토큰 추출
-//    private String resolveToken(HttpServletRequest request) {
-//        String authorizationHeader = request.getHeader("Authorization");
-//        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-//            return authorizationHeader.substring(7); // "Bearer " 제거
-//        }
-//        if (request.getCookies() != null) {
-//            for (Cookie cookie : request.getCookies()) {
-//                if ("token".equals(cookie.getName())) {
-//                    return cookie.getValue();
-//                }
-//            }
-//        }
-//
-//        return null;
-//    }
-
     // JWT 토큰에서 인증 객체 생성
     private Authentication getAuthentication(String jwt) {
         Claims claims = jwtUtility.getClaimsFromJwt(jwt);
