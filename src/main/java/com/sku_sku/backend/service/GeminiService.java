@@ -207,12 +207,6 @@ public class GeminiService {
                 return true;
             }
             
-            // 응답이 완전히 동일한 경우
-            if (response.equals("@SpringBootApplication 애노테이션은 @Configuration, @EnableAutoConfiguration, @ComponentScan 애노테이션을 조합한 복합 애노테이션이다.")) {
-                System.out.println("직접 비교로 정답 판정");
-                return true;
-            }
-            
             System.out.println("정답 판정 실패, 오답으로 처리");
             return false;
         } catch (Exception e) {
