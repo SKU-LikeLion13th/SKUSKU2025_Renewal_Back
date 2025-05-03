@@ -49,6 +49,11 @@ dependencies {
 
 	// Mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	
+	// Google Cloud AI Gemini
+	implementation 'com.google.cloud:google-cloud-aiplatform:3.53.0'
+	implementation 'com.google.cloud:google-cloud-core:2.40.0'
+	implementation 'com.google.code.gson:gson:2.10.1'
 }
 
 tasks.named('test') {
