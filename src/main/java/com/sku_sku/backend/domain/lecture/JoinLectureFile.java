@@ -25,8 +25,7 @@ public class JoinLectureFile {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Lecture lecture; // 해당 강의 안내물
 
-    @Lob @Column(name = "file", columnDefinition = "LONGBLOB")
-    private byte[] file; // 강의 자료
+    private String fileUrl; // 강의 자료 // CDN URL
 
     private String fileName; // 강의 자료 이름
 
@@ -37,17 +36,12 @@ public class JoinLectureFile {
     private LocalDateTime createDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 강의 자료 생성일
 
     // 생성자
-    public JoinLectureFile(Lecture lecture, MultipartFile file) throws IOException {
+    public JoinLectureFile(Lecture lecture, String fileName, String fileUrl, String fileType, Long fileSize) {
         this.lecture = lecture;
-        this.fileName = file.getOriginalFilename();
-        this.fileType = file.getContentType();
-        this.fileSize = file.getSize();
-        this.file = file.getBytes();
+        this.fileName = fileName;
+        this.fileUrl = fileUrl;
+        this.fileType = fileType;
+        this.fileSize = fileSize;
         this.createDate = LocalDateTime.now(); // 생성 당시 시간
-    }
-
-    // 강의자료 인코딩
-    public String arrayToFile() {
-        return FileUtility.encodeFile(this.file);
     }
 }

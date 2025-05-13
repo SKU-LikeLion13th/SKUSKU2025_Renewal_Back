@@ -1,0 +1,30 @@
+package com.sku_sku.backend.controller;
+
+import com.sku_sku.backend.dto.Request.S3DTO;
+import com.sku_sku.backend.service.S3PresignedService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URL;
+import java.util.Map;
+
+@RestController
+@RequiredArgsConstructor
+public class S3Controller {
+    private final S3PresignedService s3PresignedService;
+
+    @Operation(summary = "(민규) Presigned URL + CDN URL 요청", description = "body에 파일 이름, 파일 MIME 타입 필요",
+            responses = {@ApiResponse(responseCode = "200", description = "URL들 발급 성공"),
+                    @ApiResponse(responseCode = "200", description = "허용되지 않은 MIME 타입입니다.")})
+    @PostMapping("/s3/presigned-url")
+    public ResponseEntity<?> getPresignedUrl(@RequestBody S3DTO.PresignedUrlRequest req) {
+        return ResponseEntity.status(HttpStatus.OK).body(s3PresignedService.issuePresignedAndCdnUrl(req));
+    }
+
+
+}
+

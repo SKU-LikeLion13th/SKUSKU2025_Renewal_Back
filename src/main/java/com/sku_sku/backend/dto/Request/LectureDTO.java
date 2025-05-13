@@ -7,6 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static com.sku_sku.backend.dto.Request.JoinLectureFilesDTO.*;
+
 public class LectureDTO {
     @Data
     public static class createLectureRequest {
@@ -16,8 +18,8 @@ public class LectureDTO {
         private String title;
         @Schema(description = "강의 안내물 내용", example = "오늘은 JPA에 대해서 배워요~")
         private String content;
-        @Schema(description = "강의 안내물 파일", example = "파일 넣으셔")
-        private List<MultipartFile> files;
+        @Schema(description = "강의자료 List", example = "파일들 넣으셔")
+        private List<LectureFileDTO> files;
     }
 
     @Data
@@ -30,7 +32,7 @@ public class LectureDTO {
         private String title;
         @Schema(description = "강의 안내물 내용", example = "오늘은 JPA에 대해서 배워요~")
         private String content;
-        @Schema(description = "강의자료", example = "파일 넣으셔")
-        private List<MultipartFile> files;
+        @Schema(description = "강의자료 List", example = "파일들 넣으셔")
+        private List<LectureFileDTO> files;
     }
 }

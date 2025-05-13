@@ -87,4 +87,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleMailSendFailException(MailsendFailException e){
         return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(e.getMessage());
     }
+
+    @ExceptionHandler(NotAllowedFileTypeException.class)
+    public ResponseEntity<String> invalidLectureFile(NotAllowedFileTypeException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("허용되지 않은 MIME 타입입니다.");
+    }
 }

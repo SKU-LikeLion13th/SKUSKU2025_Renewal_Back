@@ -3,6 +3,7 @@ package com.sku_sku.backend.service;
 
 import com.sku_sku.backend.domain.lecture.JoinLectureFile;
 import com.sku_sku.backend.domain.lecture.Lecture;
+import com.sku_sku.backend.dto.Request.JoinLectureFilesDTO;
 import com.sku_sku.backend.repository.JoinLectureFilesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,15 +21,22 @@ public class JoinLectureFilesService {
     private final JoinLectureFilesRepository joinLectureFilesRepository;
 
     @Transactional
-    public List<JoinLectureFile> createJoinLectureFiles(Lecture lecture, List<MultipartFile> files) throws IOException {
-        List<JoinLectureFile> joinLectureFileList = new ArrayList<>();
-        for (MultipartFile file : files) {
-            JoinLectureFile joinLectureFile = new JoinLectureFile(lecture, file);
-            joinLectureFileList.add(joinLectureFile);
-        }
+    public List<JoinLectureFile> createJoinLectureFiles(Lecture lecture, List<JoinLectureFilesDTO.LectureFileDTO> files) {
+        List<JoinLectureFile> joinLectureFileList = files.stream()
+                .map(dto -> new JoinLectureFile(
+                        lecture,
+                        dto.getFileName(),
+                        dto.getFileUrl(),
+                        dto.getFileType(),
+                        dto.getFileSize()
+                ))
+                .toList();
+
         joinLectureFilesRepository.saveAll(joinLectureFileList);
         return joinLectureFileList;
     }
+
+
 
     @Transactional
     public void deleteByLecture(Lecture lecture) {

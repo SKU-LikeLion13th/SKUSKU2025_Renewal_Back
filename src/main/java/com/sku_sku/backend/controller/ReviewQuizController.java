@@ -4,8 +4,12 @@ import com.sku_sku.backend.dto.Request.ReviewQuizDTO;
 import com.sku_sku.backend.dto.Request.ReviewWeekDTO;
 import com.sku_sku.backend.security.JwtUtility;
 import com.sku_sku.backend.service.ReviewQuizService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +21,7 @@ public class ReviewQuizController {
     private final JwtUtility jwtUtility;
 
     //주차별 퀴즈 리스트 조회
+
     @GetMapping("/reviewWeek")
     public List<ReviewWeekDTO.showReviewWeek> reviewWeekView(@RequestHeader("Authorization") String bearer){
         return null;
@@ -28,12 +33,14 @@ public class ReviewQuizController {
         return null;
     }
 
-    //복습 퀴즈 풀기
+    @Operation(summary = "(주희)복습 퀴즈 풀기", description = "",
+            responses = {@ApiResponse(responseCode = "200", description = "성공")})
+    //@ApiResponse(responseCode = "409", description = "그 title 이미 있")})
     @PostMapping("/reviewQuiz/solve")
-    public ReviewQuizDTO.SolveAnswerList solveReviewQuiz(HttpServletRequest request,
-                                                         @RequestBody ReviewQuizDTO.SolveRequest SolveRequest) {
+    public ResponseEntity<ReviewQuizDTO.SolveAnswerList> solveReviewQuiz(HttpServletRequest request,
+                                                                         @RequestBody ReviewQuizDTO.SolveRequest SolveRequest) {
         String token = jwtUtility.extractTokenFromCookies(request);
-        return reviewQuizService.solveReviewQuiz(token,SolveRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(reviewQuizService.solveReviewQuiz(token,SolveRequest));
 
 
     }

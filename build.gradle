@@ -54,6 +54,9 @@ dependencies {
 	implementation 'com.google.cloud:google-cloud-aiplatform:3.53.0'
 	implementation 'com.google.cloud:google-cloud-core:2.40.0'
 	implementation 'com.google.code.gson:gson:2.10.1'
+
+	// AWS SDK
+	implementation 'software.amazon.awssdk:s3:2.31.35'
 }
 
 tasks.named('test') {
