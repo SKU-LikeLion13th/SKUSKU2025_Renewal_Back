@@ -21,8 +21,8 @@ public class ProjectDTO {
         @Schema(description = "프로젝트 url", example = "https://sku-sku.com")
         private String url;
 
-        @Schema(description = "프로젝트 사진", example = "")
-        private String image;
+        @Schema(description = "프로젝트 사진 CDN URL", example = "")
+        private String imageUrl;
     }
 
     @Data

@@ -3,12 +3,16 @@ package com.sku_sku.backend.service;
 import com.sku_sku.backend.dto.Request.S3DTO;
 import com.sku_sku.backend.enums.AllowedFileType;
 import com.sku_sku.backend.exception.NotAllowedFileTypeException;
+import com.sku_sku.backend.exception.S3PresignedException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
@@ -22,17 +26,25 @@ import java.util.Map;
 public class S3PresignedService {
     private final S3Presigner s3Presigner;
     private final String bucketName;
+    private final S3Client s3Client;
+
 
     public S3PresignedService(
             @Value("${cloud.aws.credentials.access-key}") String accessKey,
             @Value("${cloud.aws.credentials.secret-key}") String secretKey,
             @Value("${cloud.aws.bucket}") String bucketName
     ) {
+        AwsBasicCredentials credentials = AwsBasicCredentials.create(accessKey, secretKey);
+
         this.bucketName = bucketName;
         this.s3Presigner = S3Presigner.builder()
                 .region(Region.AP_NORTHEAST_2)
-                .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create(accessKey, secretKey)))
+                .credentialsProvider(StaticCredentialsProvider.create(credentials))
+                .build();
+
+        this.s3Client = S3Client.builder()
+                .region(Region.AP_NORTHEAST_2)
+                .credentialsProvider(StaticCredentialsProvider.create(credentials))
                 .build();
     }
 
@@ -70,5 +82,21 @@ public class S3PresignedService {
         PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
         return presignedRequest.url();
     }
+
+    public void deleteFile(String key) {
+        try {
+            DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build();
+
+            s3Client.deleteObject(deleteRequest);
+        } catch (S3Exception e) {
+            throw new S3PresignedException("파일 삭제 중 오류가 발생했습니다.");
+        } catch (Exception e) {
+            throw new S3PresignedException("파일 삭제 실패");
+        }
+    }
+
 }
 

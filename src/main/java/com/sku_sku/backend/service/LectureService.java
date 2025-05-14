@@ -30,33 +30,36 @@ public class LectureService {
     private final JoinLectureFilesService joinLectureFilesService;
     private final JwtUtility jwtUtility;
 
-    // @PostMapping("/admin/lecture/add")
     @Transactional // 강의 안내물 생성 로직
-    public void createLecture(HttpServletRequest header, LectureDTO.createLectureRequest request) throws IOException {
+    public void createLecture(HttpServletRequest header, LectureDTO.createLectureRequest req) throws IOException {
         String writer = jwtUtility.getClaimsFromCookies(header).get("name", String.class);
-        Lecture lecture = new Lecture(request.getTrackType(), request.getTitle(), request.getContent(), writer);
+        Lecture lecture = new Lecture(req.getTrackType(), req.getTitle(), req.getContent(), writer);
         lectureRepository.save(lecture);
 
-        joinLectureFilesService.createJoinLectureFiles(lecture, request.getFiles());
+        joinLectureFilesService.createJoinLectureFiles(lecture, req.getFiles());
     }
 
-    // @PutMapping("/admin/lecture/update")
     @Transactional // 강의 안내물 업데이트 로직
-    public void updateLecture(HttpServletRequest header, LectureDTO.updateLectureRequest request) throws IOException {
+    public void updateLecture(HttpServletRequest header, LectureDTO.updateLectureRequest req) throws IOException {
         String newWriter = jwtUtility.getClaimsFromCookies(header).get("name", String.class);
-        Lecture lecture = lectureRepository.findById(request.getId())
+        Lecture lecture = lectureRepository.findById(req.getId())
                 .orElseThrow(() -> new InvalidIdException("lecture"));
 
-        TrackType newTrack = (request.getTrackType() != null ? request.getTrackType() : lecture.getTrack());
-        String newTitle = (request.getTitle() != null && !request.getTitle().isEmpty() ? request.getTitle() : lecture.getTitle());
-        String newContnet = (request.getContent() != null && !request.getContent().isEmpty() ? request.getContent() : lecture.getContent());
-        lecture.update(newTrack, newTitle, newContnet, newWriter);
+        TrackType newTrack = getOrDefault(req.getTrackType(), lecture.getTrack());
+        String newTitle = getOrDefault(req.getTitle(), lecture.getTitle());
+        String newContent = getOrDefault(req.getContent(), lecture.getContent());
+        lecture.update(newTrack, newTitle, newContent, newWriter);
 
-        if (request.getFiles() != null && !request.getFiles().isEmpty()) {
+        if (req.getFiles() != null && !req.getFiles().isEmpty()) {
             joinLectureFilesService.deleteByLecture(lecture);
-            joinLectureFilesService.createJoinLectureFiles(lecture, request.getFiles());
+            joinLectureFilesService.createJoinLectureFiles(lecture, req.getFiles());
         }
     }
+
+    private <T> T getOrDefault(T newOne, T previousOne) {
+        return newOne != null ? newOne : previousOne;
+    }
+
 
     @Transactional // 강의 안내물 조회 로직
     public ResponseLecture finaLectureById(Long lectureId) {
@@ -77,7 +80,6 @@ public class LectureService {
                 .orElseThrow(() -> new InvalidIdException("lecture"));
     }
 
-    // @DeleteMapping("/admin/lecture/delete")
     @Transactional // 강의 안내물 삭제 로직
     public void deleteLecture(Long id) {
         Lecture lecture = lectureRepository.findById(id)

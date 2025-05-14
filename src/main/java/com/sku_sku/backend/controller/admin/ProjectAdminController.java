@@ -29,12 +29,7 @@ public class ProjectAdminController {
                     @ApiResponse(responseCode = "409", description = "그 title 이미 있")})
     @PostMapping("/add")
     public ResponseEntity<String> addProject(ProjectCreateRequest request) throws IOException {
-            projectService.addProject(
-                    request.getClassTh(),
-                    request.getTitle(),
-                    request.getSubTitle(),
-                    request.getUrl(),
-                    request.getImage());
+            projectService.addProject(request);
             return ResponseEntity.status(HttpStatus.CREATED).body("프로젝트 생성 성공");
     }
 
@@ -44,13 +39,7 @@ public class ProjectAdminController {
                     @ApiResponse(responseCode = "404", description = "그 id에 해당하는 값 없")})
     @PutMapping("/update")
     public ResponseEntity<String> updateProject(ProjectUpdateRequest request) throws IOException {
-            projectService.updateProject(
-                    request.getId(),
-                    request.getClassTh(),
-                    request.getTitle(),
-                    request.getSubTitle(),
-                    request.getUrl(),
-                    request.getImage());
+            projectService.updateProject(request);
             return ResponseEntity.status(HttpStatus.OK).body("프로젝트 수정 성공");
     }
 

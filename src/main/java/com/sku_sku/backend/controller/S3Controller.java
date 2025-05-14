@@ -19,12 +19,20 @@ public class S3Controller {
 
     @Operation(summary = "(민규) Presigned URL + CDN URL 요청", description = "body에 파일 이름, 파일 MIME 타입 필요",
             responses = {@ApiResponse(responseCode = "200", description = "URL들 발급 성공"),
-                    @ApiResponse(responseCode = "200", description = "허용되지 않은 MIME 타입입니다.")})
+                    @ApiResponse(responseCode = "400", description = "허용되지 않은 MIME 타입입니다.")})
     @PostMapping("/s3/presigned-url")
     public ResponseEntity<?> getPresignedUrl(@RequestBody S3DTO.PresignedUrlRequest req) {
         return ResponseEntity.status(HttpStatus.OK).body(s3PresignedService.issuePresignedAndCdnUrl(req));
     }
 
+    @Operation(summary = "(민규) FileKey로 삭제", description = "쿼리 파라미터로 key 필요",
+            responses = {@ApiResponse(responseCode = "204", description = "성공"),
+                    @ApiResponse(responseCode = "400", description = "1.파일 삭제 중 오류가 발생했습니다.<br>2.파일 삭제 실패")})
+    @DeleteMapping("/s3")
+    public ResponseEntity<Void> deleteFile(@RequestParam String key) {
+        s3PresignedService.deleteFile(key);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 
 }
 

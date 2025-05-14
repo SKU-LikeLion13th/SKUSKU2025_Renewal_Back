@@ -17,8 +17,8 @@ public class ProjectDTO {
         private String subTitle;
         @Schema(description = "프로젝트 url", example = "https://sku-sku.com")
         private String url;
-        @Schema(description = "프로젝트 사진", example = "파일을 넣으면 됨")
-        private MultipartFile image;
+        @Schema(description = "프로젝트 사진 CDN URL", example = "")
+        private String imageUrl;
     }
 
     @Data
@@ -34,7 +34,7 @@ public class ProjectDTO {
         @Schema(description = "프로젝트 url", example = "https://sku-sku.com")
         private String url;
         @Nullable
-        @Schema(description = "프로젝트 이미지(생략가능)", example = "파일을 넣으면 됨")
-        private MultipartFile image;
+        @Schema(description = "프로젝트 사진 CDN URL", example = "")
+        private String imageUrl;
     }
 }

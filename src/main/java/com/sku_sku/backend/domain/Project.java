@@ -23,33 +23,33 @@ public class Project {
 
     private String url; // 프로젝트 url
 
-    @Lob @Column(name = "image", columnDefinition = "MEDIUMBLOB")
-    private byte[] image; // 프로젝트 이미지
+    private String imageUrl; // 프로젝트 이미지 // CDN URL
 
     // 생성자
-    public Project(String classTh, String title, String subTitle, String url, byte[] image) {
+    public Project(String classTh, String title, String subTitle, String url, String imageUrl) {
         this.classTh = classTh;
         this.title = title;
         this.subTitle = subTitle;
         this.url = url;
-        this.image = image;
+        this.imageUrl = imageUrl;
     }
 
-    // 업데이트 (이미지 제외)
-    public void changeProject(String classTh, String title, String subTitle, String url) {
+    // 업데이트 (이미지 포함)
+    public void changeProject(String classTh, String title, String subTitle, String url, String imageUrl) {
         this.classTh = classTh;
         this.title = title;
         this.subTitle = subTitle;
         this.url = url;
+        this.imageUrl = imageUrl;
     }
 
-    // 프로젝트 이미지 인코딩
-    public String arrayToImage() {
-        return FileUtility.encodeFile(this.image);
-    }
-
-    // 이미지 업데이트
-    public void setImage(MultipartFile image) throws IOException {
-        this.image = image.getBytes();
-    }
+//    // 프로젝트 이미지 인코딩
+//    public String arrayToImage() {
+//        return FileUtility.encodeFile(this.image);
+//    }
+//
+//    // 이미지 업데이트
+//    public void setImage(MultipartFile image) throws IOException {
+//        this.image = image.getBytes();
+//    }
 }

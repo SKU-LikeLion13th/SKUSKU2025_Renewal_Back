@@ -2,12 +2,14 @@ package com.sku_sku.backend.service;
 
 
 import com.sku_sku.backend.domain.Project;
+import com.sku_sku.backend.dto.Request.ProjectDTO;
 import com.sku_sku.backend.exception.InvalidIdException;
 import com.sku_sku.backend.exception.InvalidTitleException;
 import com.sku_sku.backend.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -23,36 +25,34 @@ import static com.sku_sku.backend.dto.Response.ProjectDTO.ProjectAllField;
 public class ProjectService {
     private final ProjectRepository projectRepository;
 
-    // @PostMapping("/admin/project/add")
     @Transactional
-    public void addProject(String classTh, String title, String subTitle, String url, MultipartFile image) throws IOException {
-        if (projectRepository.findByTitle(title).isPresent()) {
-            throw new InvalidTitleException();
-        }
-        byte[] imageBytes = image.getBytes();
-        Project project = new Project(classTh, title, subTitle, url, imageBytes);
+    public void addProject(ProjectDTO.ProjectCreateRequest request) {
+        Project project = new Project(request.getClassTh(),
+                request.getTitle(),
+                request.getSubTitle(),
+                request.getUrl(),
+                request.getImageUrl());
         projectRepository.save(project);
     }
 
-    // @PutMapping("/admin/project/update")
     @Transactional
-    public void updateProject(Long id, String classTh, String title, String subTitle, String url, MultipartFile image) throws IOException {
-        Project project = projectRepository.findById(id)
+    public void updateProject(ProjectDTO.ProjectUpdateRequest req) {
+        Project project = projectRepository.findById(req.getId())
                 .orElseThrow(() -> new InvalidIdException("project"));
-        if (image != null && !image.isEmpty()) {
-            project.setImage(image);
-        }
-        String newClassTh = (classTh != null && !classTh.isEmpty() ? classTh : project.getClassTh());
-        String newTitle = (title != null && !title.isEmpty() ? title : project.getTitle());
-        if (!newTitle.equals(project.getTitle()) && projectRepository.findByTitle(title).isPresent()) {
-            throw new InvalidTitleException();
-        }
-        String newSubTitle = (subTitle != null && !subTitle.isEmpty() ? subTitle : project.getSubTitle());
-        String newUrl = (url != null && !url.isEmpty() ? url : project.getUrl());
-        project.changeProject(newClassTh, newTitle, newSubTitle, newUrl);
+
+        String newClassTh = getOrDefault(req.getClassTh(), project.getClassTh());
+        String newTitle = getOrDefault(req.getTitle(), project.getTitle());
+        String newSubTitle = getOrDefault(req.getSubTitle(), project.getSubTitle());
+        String newUrl = getOrDefault(req.getUrl(), project.getUrl());
+        String newImageUrl = getOrDefault(req.getImageUrl(), project.getImageUrl());
+
+        project.changeProject(newClassTh, newTitle, newSubTitle, newUrl, newImageUrl);
     }
 
-    // @DeleteMapping("/admin/project")
+    private <T> T getOrDefault(T newOne, T previousOne) {
+        return newOne != null ? newOne : previousOne;
+    }
+
     @Transactional
     public void deleteProject(Long id) {
         Project project = projectRepository.findById(id)
@@ -70,7 +70,7 @@ public class ProjectService {
                         project.getTitle(),
                         project.getSubTitle(),
                         project.getUrl(),
-                        project.arrayToImage() // 이미지 바이트 배열을 Base64 문자열로 변환
+                        project.getImageUrl()
                 ))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
@@ -83,7 +83,7 @@ public class ProjectService {
                         project.getTitle(),
                         project.getSubTitle(),
                         project.getUrl(),
-                        project.arrayToImage()))
+                        project.getImageUrl()))
                 .orElseThrow(() -> new InvalidIdException("project"));
     }
 }
