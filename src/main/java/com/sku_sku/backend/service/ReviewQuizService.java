@@ -2,6 +2,7 @@ package com.sku_sku.backend.service;
 
 import com.sku_sku.backend.domain.Lion;
 import com.sku_sku.backend.domain.reviewquiz.*;
+import com.sku_sku.backend.dto.Request.JoinReviewQuizFileDTO;
 import com.sku_sku.backend.dto.Request.ReviewQuizDTO;
 import com.sku_sku.backend.enums.AnswerStatus;
 import com.sku_sku.backend.enums.QuizType;
@@ -19,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.sku_sku.backend.dto.Request.JoinReviewQuizFileDTO.*;
+import static com.sku_sku.backend.dto.Request.ReviewQuizDTO.*;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -34,15 +38,26 @@ public class ReviewQuizService  {
     private final GeminiService geminiService;
 
     @Transactional
-    public void addQuiz(String title, TrackType trackType, List<ReviewQuizDTO.reviewQuizDTO> quizList) throws IOException {
-        ReviewWeek reviewWeek = new ReviewWeek(trackType,title);
+    public void addQuiz(AddQuizRequest req) {
+        ReviewWeek reviewWeek = new ReviewWeek(req.getTrackType(), req.getTitle());
         reviewWeekRepository.save(reviewWeek);
-        for (ReviewQuizDTO.reviewQuizDTO reviewQuizDTO : quizList) {
-            ReviewQuiz reviewQuiz = new ReviewQuiz(reviewWeek,reviewQuizDTO.getContent(),reviewQuizDTO.getExplanation(),reviewQuizDTO.getAnswer(),reviewQuizDTO.getQuizType());
+        for (reviewQuizDTO reviewQuizDTO : req.getReviewQuizDTOList()) {
+            ReviewQuiz reviewQuiz = new ReviewQuiz(
+                    reviewWeek,
+                    reviewQuizDTO.getContent(),
+                    reviewQuizDTO.getExplanation(),
+                    reviewQuizDTO.getAnswer(),
+                    reviewQuizDTO.getQuizType());
             reviewQuizRepository.save(reviewQuiz);
+
             if (reviewQuizDTO.getFiles()!=null) {
-                for (MultipartFile file : reviewQuizDTO.getFiles()) {
-                    JoinReviewQuizFile joinReviewQuizFile = new JoinReviewQuizFile(reviewQuiz, file.getBytes());
+                for (JoinReviewQuizFileField file : reviewQuizDTO.getFiles()) {
+                    JoinReviewQuizFile joinReviewQuizFile = new JoinReviewQuizFile(
+                            reviewQuiz,
+                            file.getFileUrl(),
+                            file.getFileName(),
+                            file.getFileType(),
+                            file.getFileSize());
                     joinReviewQuizFileRepository.save(joinReviewQuizFile);
                 }
             }
@@ -56,16 +71,16 @@ public class ReviewQuizService  {
     }
 
     @Transactional
-    public ReviewQuizDTO.SolveAnswerList solveReviewQuiz(String token, ReviewQuizDTO.SolveRequest solveRequest) {
+    public SolveAnswerList solveReviewQuiz(String token, SolveRequest solveRequest) {
         Lion lion = lionService.tokenToLion(token);
         System.out.println("트랙타입: " + lion.getTrackType());
         System.out.println(solveRequest.getReviewWeekId());
 
         List<ReviewQuiz> reviewQuizzes = reviewQuizRepository.findByTrackTypeAndReviewWeek(lion.getTrackType(),solveRequest.getReviewWeekId());
-        List<ReviewQuizDTO.QuizResponse> userAnswers = solveRequest.getQuizResponseList();
+        List<QuizResponse> userAnswers = solveRequest.getQuizResponseList();
         System.out.println(reviewQuizzes.size());
 
-        ReviewQuizDTO.SolveAnswerList solveAnswerList = new ReviewQuizDTO.SolveAnswerList();
+        SolveAnswerList solveAnswerList = new SolveAnswerList();
         solveAnswerList.setQuizAnswerList(new ArrayList<>());
 
         int correctCount = 0;
@@ -73,7 +88,7 @@ public class ReviewQuizService  {
 
         for (int i = 0; i < reviewQuizzes.size(); i++) {
             ReviewQuiz quiz = reviewQuizzes.get(i);
-            ReviewQuizDTO.QuizResponse lionAnswerDTO = userAnswers.get(i);
+            QuizResponse lionAnswerDTO = userAnswers.get(i);
 
             ReviewQuizResponse existingResponse = reviewQuizResponseRepository.findReviewQuizResponseByLionAndReviewQuiz(lion, quiz);
             System.out.println(existingResponse);
@@ -128,7 +143,7 @@ public class ReviewQuizService  {
                 response.setCount(response.getCount() + 1);
             }
             //정답과 해설 세팅
-            ReviewQuizDTO.QuizAnswerList quizAnswerList = new ReviewQuizDTO.QuizAnswerList();
+            QuizAnswerList quizAnswerList = new QuizAnswerList();
             quizAnswerList.setQuizId(quiz.getId());
             quizAnswerList.setAnswer(quiz.getAnswer());
             quizAnswerList.setExplanation(quiz.getExplanation());

@@ -8,12 +8,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+
+import static com.sku_sku.backend.dto.Request.ReviewQuizDTO.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,8 +24,8 @@ public class ReviewQuizAdminController {
             responses = {@ApiResponse(responseCode = "201", description = "생성")})
                     //@ApiResponse(responseCode = "409", description = "그 title 이미 있")})
     @PostMapping("reviewQuiz/add")
-    public ResponseEntity<String> makeReviewQuiz(@ModelAttribute ReviewQuizDTO.AddQuizRequest req) throws IOException {
-        reviewQuizService.addQuiz(req.getTitle(),req.getTrackType(),req.getReviewQuizDTOList());
+    public ResponseEntity<String> makeReviewQuiz(@RequestBody AddQuizRequest req) throws IOException {
+        reviewQuizService.addQuiz(req);
         return ResponseEntity.status(HttpStatus.CREATED).body("복습퀴즈 생성 완료");
     }
 

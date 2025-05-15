@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URL;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -17,20 +17,24 @@ import java.util.Map;
 public class S3Controller {
     private final S3PresignedService s3PresignedService;
 
-    @Operation(summary = "(민규) Presigned URL + CDN URL 요청", description = "body에 파일 이름, 파일 MIME 타입 필요",
+    @Operation(summary = "(민규) Presigned URL + CDN URL 요청", description = "body에 리스트로 파일 이름, 파일 MIME 타입 필요",
             responses = {@ApiResponse(responseCode = "200", description = "URL들 발급 성공"),
                     @ApiResponse(responseCode = "400", description = "허용되지 않은 MIME 타입입니다.")})
-    @PostMapping("/s3/presigned-url")
-    public ResponseEntity<?> getPresignedUrl(@RequestBody S3DTO.PresignedUrlRequest req) {
-        return ResponseEntity.status(HttpStatus.OK).body(s3PresignedService.issuePresignedAndCdnUrl(req));
+    @PostMapping("/s3/presigned-urls")
+    public ResponseEntity<?> getPresignedUrls(@RequestBody List<S3DTO.PresignedUrlRequest> requests) {
+        List<Map<String, String>> response = requests.stream()
+                .map(s3PresignedService::issuePresignedAndCdnUrl)
+                .toList();
+        return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "(민규) FileKey로 삭제", description = "쿼리 파라미터로 key 필요",
-            responses = {@ApiResponse(responseCode = "204", description = "성공"),
+
+    @Operation(summary = "(민규) FileKey로 삭제", description = "body에 리스트로 key 필요",
+            responses = {@ApiResponse(responseCode = "204", description = "파일 삭제 성공"),
                     @ApiResponse(responseCode = "400", description = "1.파일 삭제 중 오류가 발생했습니다.<br>2.파일 삭제 실패")})
     @DeleteMapping("/s3")
-    public ResponseEntity<Void> deleteFile(@RequestParam String key) {
-        s3PresignedService.deleteFile(key);
+    public ResponseEntity<Void> deleteFile(@RequestBody List<String> keys) {
+        s3PresignedService.deleteFiles(keys);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

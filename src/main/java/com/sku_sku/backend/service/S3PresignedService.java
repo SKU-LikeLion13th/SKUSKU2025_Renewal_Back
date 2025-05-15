@@ -1,6 +1,5 @@
 package com.sku_sku.backend.service;
 
-import com.sku_sku.backend.dto.Request.S3DTO;
 import com.sku_sku.backend.enums.AllowedFileType;
 import com.sku_sku.backend.exception.NotAllowedFileTypeException;
 import com.sku_sku.backend.exception.S3PresignedException;
@@ -19,15 +18,17 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 
 import java.net.URL;
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
+
+import static com.sku_sku.backend.dto.Request.S3DTO.*;
 
 
 @Service
 public class S3PresignedService {
     private final S3Presigner s3Presigner;
-    private final String bucketName;
     private final S3Client s3Client;
-
+    private final String bucketName;
 
     public S3PresignedService(
             @Value("${cloud.aws.credentials.access-key}") String accessKey,
@@ -48,7 +49,7 @@ public class S3PresignedService {
                 .build();
     }
 
-    public Map<String, String> issuePresignedAndCdnUrl(S3DTO.PresignedUrlRequest req) {
+    public Map<String, String> issuePresignedAndCdnUrl(PresignedUrlRequest req) {
         if (!AllowedFileType.isAllowedMimeType(req.getMimeType())) {
             throw new IllegalArgumentException("허용되지 않은 MIME 타입입니다.");
         }
@@ -74,8 +75,9 @@ public class S3PresignedService {
                 .contentType(mimeType)
                 .build();
 
+        // 임시 Presigned URL 발급
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
-                .signatureDuration(Duration.ofMinutes(5))
+                .signatureDuration(Duration.ofMinutes(5)) // 5분간만 유효
                 .putObjectRequest(putRequest)
                 .build();
 
@@ -83,18 +85,20 @@ public class S3PresignedService {
         return presignedRequest.url();
     }
 
-    public void deleteFile(String key) {
-        try {
-            DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(key)
-                    .build();
+    public void deleteFiles(List<String> keys) {
+        for (String key : keys) {
+            try {
+                DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .build();
 
-            s3Client.deleteObject(deleteRequest);
-        } catch (S3Exception e) {
-            throw new S3PresignedException("파일 삭제 중 오류가 발생했습니다.");
-        } catch (Exception e) {
-            throw new S3PresignedException("파일 삭제 실패");
+                s3Client.deleteObject(deleteRequest);
+            } catch (S3Exception e) {
+                throw new S3PresignedException("파일 삭제 중 오류가 발생했습니다. key: " + key);
+            } catch (Exception e) {
+                throw new S3PresignedException("파일 삭제 실패. key: " + key);
+            }
         }
     }
 

@@ -19,11 +19,19 @@ public class JoinReviewQuizFile {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ReviewQuiz ReviewQuiz; // 과제
 
-    @Lob @Column(name = "file", columnDefinition = "LONGBLOB")
-    private byte[] file; // 첨부한 파일
+    private String fileUrl; // 퀴즈 첨부 자료 // CDN URL
 
-    public JoinReviewQuizFile(ReviewQuiz reviewQuiz, byte[] file) {
+    private String fileName; // 퀴즈 첨부 자료 이름
+
+    private String fileType; // 퀴즈 첨부 자료 타입
+
+    private Long fileSize; // 퀴즈 첨부 자료 사이즈
+
+    public JoinReviewQuizFile(ReviewQuiz reviewQuiz, String fileUrl, String fileName, String fileType, Long fileSize) {
         this.ReviewQuiz = reviewQuiz;
-        this.file = file;
+        this.fileUrl = fileUrl;
+        this.fileName = fileName;
+        this.fileType = fileType;
+        this.fileSize = fileSize;
     }
 }
