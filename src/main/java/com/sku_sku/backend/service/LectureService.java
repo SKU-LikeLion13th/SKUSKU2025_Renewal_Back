@@ -31,7 +31,7 @@ public class LectureService {
     private final JwtUtility jwtUtility;
 
     @Transactional // 강의 안내물 생성 로직
-    public void createLecture(HttpServletRequest header, LectureDTO.createLectureRequest req) throws IOException {
+    public void createLecture(HttpServletRequest header, LectureDTO.createLectureRequest req) {
         String writer = jwtUtility.getClaimsFromCookies(header).get("name", String.class);
         Lecture lecture = new Lecture(req.getTrackType(), req.getTitle(), req.getContent(), writer);
         lectureRepository.save(lecture);
@@ -40,7 +40,7 @@ public class LectureService {
     }
 
     @Transactional // 강의 안내물 업데이트 로직
-    public void updateLecture(HttpServletRequest header, LectureDTO.updateLectureRequest req) throws IOException {
+    public void updateLecture(HttpServletRequest header, LectureDTO.updateLectureRequest req) {
         String newWriter = jwtUtility.getClaimsFromCookies(header).get("name", String.class);
         Lecture lecture = lectureRepository.findById(req.getId())
                 .orElseThrow(() -> new InvalidIdException("lecture"));
@@ -85,13 +85,6 @@ public class LectureService {
         Lecture lecture = lectureRepository.findById(id)
                 .orElseThrow(() -> new InvalidIdException("lecture"));
         lectureRepository.delete(lecture);
-    }
-
-    public List<ResponseLectureWithoutFiles> findAllLectureByTrackOrderByIdDesc(TrackType trackType) {
-        List<Lecture> lectures = lectureRepository.findByTrackOrderByIdDesc(trackType);
-        return lectures.stream()
-                .map(this::convertToDTO)
-                .toList();
     }
 
     public List<ResponseLectureWithoutFiles> findAllLectureByTrackOrderByCreateDateDesc(TrackType trackType) {

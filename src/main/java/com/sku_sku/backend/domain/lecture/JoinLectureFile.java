@@ -33,15 +33,18 @@ public class JoinLectureFile {
 
     private Long fileSize; // 강의 자료 사이즈
 
+    private String filekey; // 강의 자료 저장된 경로
+
     private LocalDateTime createDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 강의 자료 생성일
 
     // 생성자
-    public JoinLectureFile(Lecture lecture, String fileName, String fileUrl, String fileType, Long fileSize) {
+    public JoinLectureFile(Lecture lecture, String fileName, String fileUrl, String fileType, Long fileSize, String filekey) {
         this.lecture = lecture;
         this.fileName = fileName;
         this.fileUrl = fileUrl;
         this.fileType = fileType;
         this.fileSize = fileSize;
+        this.filekey = filekey;
         this.createDate = LocalDateTime.now(); // 생성 당시 시간
     }
 }

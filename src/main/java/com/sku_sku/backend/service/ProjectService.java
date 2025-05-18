@@ -26,12 +26,13 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
 
     @Transactional
-    public void addProject(ProjectDTO.ProjectCreateRequest request) {
-        Project project = new Project(request.getClassTh(),
-                request.getTitle(),
-                request.getSubTitle(),
-                request.getUrl(),
-                request.getImageUrl());
+    public void addProject(ProjectDTO.ProjectCreateRequest req) {
+        Project project = new Project(req.getClassTh(),
+                req.getTitle(),
+                req.getSubTitle(),
+                req.getUrl(),
+                req.getImageUrl(),
+                req.getImageKey());
         projectRepository.save(project);
     }
 
@@ -45,8 +46,9 @@ public class ProjectService {
         String newSubTitle = getOrDefault(req.getSubTitle(), project.getSubTitle());
         String newUrl = getOrDefault(req.getUrl(), project.getUrl());
         String newImageUrl = getOrDefault(req.getImageUrl(), project.getImageUrl());
+        String newImageKey = getOrDefault(req.getImageKey(), project.getImageKey());
 
-        project.changeProject(newClassTh, newTitle, newSubTitle, newUrl, newImageUrl);
+        project.changeProject(newClassTh, newTitle, newSubTitle, newUrl, newImageUrl, newImageKey);
     }
 
     private <T> T getOrDefault(T newOne, T previousOne) {
@@ -70,7 +72,8 @@ public class ProjectService {
                         project.getTitle(),
                         project.getSubTitle(),
                         project.getUrl(),
-                        project.getImageUrl()
+                        project.getImageUrl(),
+                        project.getImageKey()
                 ))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
@@ -83,7 +86,8 @@ public class ProjectService {
                         project.getTitle(),
                         project.getSubTitle(),
                         project.getUrl(),
-                        project.getImageUrl()))
+                        project.getImageUrl(),
+                        project.getImageKey()))
                 .orElseThrow(() -> new InvalidIdException("project"));
     }
 }

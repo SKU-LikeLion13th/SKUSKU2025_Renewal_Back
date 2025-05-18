@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.io.IOException;
 
@@ -25,22 +26,26 @@ public class Project {
 
     private String imageUrl; // 프로젝트 이미지 // CDN URL
 
+    private String imageKey; // 프로젝트 이미지 저장된 경로
+
     // 생성자
-    public Project(String classTh, String title, String subTitle, String url, String imageUrl) {
+    public Project(String classTh, String title, String subTitle, String url, String imageUrl, String imageKey) {
         this.classTh = classTh;
         this.title = title;
         this.subTitle = subTitle;
         this.url = url;
         this.imageUrl = imageUrl;
+        this.imageKey = imageKey;
     }
 
     // 업데이트 (이미지 포함)
-    public void changeProject(String classTh, String title, String subTitle, String url, String imageUrl) {
+    public void changeProject(String classTh, String title, String subTitle, String url, String imageUrl, String imageKey) {
         this.classTh = classTh;
         this.title = title;
         this.subTitle = subTitle;
         this.url = url;
         this.imageUrl = imageUrl;
+        this.imageKey = imageKey;
     }
 
 //    // 프로젝트 이미지 인코딩

@@ -19,6 +19,8 @@ public class ProjectDTO {
         private String url;
         @Schema(description = "프로젝트 사진 CDN URL", example = "")
         private String imageUrl;
+        @Schema(description = "프로젝트 사진 저장된 경로", example = "uploads/uuid.png")
+        private String imageKey;
     }
 
     @Data
@@ -36,5 +38,7 @@ public class ProjectDTO {
         @Nullable
         @Schema(description = "프로젝트 사진 CDN URL", example = "")
         private String imageUrl;
+        @Schema(description = "프로젝트 사진 저장된 경로", example = "uploads/uuid.png")
+        private String imageKey;
     }
 }

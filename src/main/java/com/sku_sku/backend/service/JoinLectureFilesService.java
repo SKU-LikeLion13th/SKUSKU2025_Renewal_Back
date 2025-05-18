@@ -28,7 +28,8 @@ public class JoinLectureFilesService {
                         dto.getFileName(),
                         dto.getFileUrl(),
                         dto.getFileType(),
-                        dto.getFileSize()
+                        dto.getFileSize(),
+                        dto.getFileKey()
                 ))
                 .toList();
 

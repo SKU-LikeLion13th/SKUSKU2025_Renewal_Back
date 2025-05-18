@@ -16,6 +16,8 @@ public class JoinLectureFilesDTO {
         private String fileType;
         @Schema(description = "강의자료 사이즈", example = "65362")
         private Long fileSize;
+        @Schema(description = "프로젝트 사진 저장된 경로", example = "uploads/uuid.png")
+        private String fileKey;
     }
 
     @Data
@@ -30,6 +32,8 @@ public class JoinLectureFilesDTO {
         private String fileType;
         @Schema(description = "강의자료 사이즈", example = "65362")
         private Long fileSize;
+        @Schema(description = "프로젝트 사진 저장된 경로", example = "uploads/uuid.png")
+        private String fileKey;
 
         public CreateJoinLectureFilesRequest(JoinLectureFile joinLectureFile) {
             this.lectureId = joinLectureFile.getId();
@@ -37,6 +41,7 @@ public class JoinLectureFilesDTO {
             this.fileName = joinLectureFile.getFileName();
             this.fileType = joinLectureFile.getFileType();
             this.fileSize = joinLectureFile.getFileSize();
+            this.fileKey = joinLectureFile.getFilekey();
         }
     }
 }
