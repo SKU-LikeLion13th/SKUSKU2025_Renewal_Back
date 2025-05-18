@@ -22,10 +22,10 @@ public class S3Controller {
                     @ApiResponse(responseCode = "400", description = "허용되지 않은 MIME 타입입니다.")})
     @PostMapping("/s3/presigned-urls")
     public ResponseEntity<?> getPresignedUrls(@RequestBody List<S3DTO.PresignedUrlRequest> requests) {
-        List<Map<String, String>> response = requests.stream()
+        List<S3DTO.PresignedUrlResponse> response = requests.stream()
                 .map(s3PresignedService::issuePresignedAndCdnUrl)
                 .toList();
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 

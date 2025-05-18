@@ -20,6 +20,8 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 import static com.sku_sku.backend.dto.Request.S3DTO.*;
 
@@ -29,6 +31,9 @@ public class S3PresignedService {
     private final S3Presigner s3Presigner;
     private final S3Client s3Client;
     private final String bucketName;
+
+    @Value("${cloud.aws.cdn}")
+    private String cdnDomain;
 
     public S3PresignedService(
             @Value("${cloud.aws.credentials.access-key}") String accessKey,
@@ -49,19 +54,28 @@ public class S3PresignedService {
                 .build();
     }
 
-    public Map<String, String> issuePresignedAndCdnUrl(PresignedUrlRequest req) {
+    public PresignedUrlResponse issuePresignedAndCdnUrl(PresignedUrlRequest req) {
         if (!AllowedFileType.isAllowedMimeType(req.getMimeType())) {
             throw new IllegalArgumentException("허용되지 않은 MIME 타입입니다.");
         }
 
-        String key = "uploads/" + req.getFileName();
-        URL presignedUrl = generatePresignedPutUrl(key, req.getMimeType());
-        String cdnUrl = "https://d1gawugnyki65m.cloudfront.net/" + key;
+        // 확장자 추출
+        String ext = Optional.ofNullable(req.getFileName())
+                .filter(f -> f.contains("."))
+                .map(f -> f.substring(f.lastIndexOf(".")))
+                .orElse("");
 
-        return Map.of(
-                "uploadUrl", presignedUrl.toString(),
-                "cdnUrl", cdnUrl
-        );
+        // UUID로 안전한 파일 키 생성
+        String key = "uploads/" + UUID.randomUUID() + ext;
+
+        URL presignedUrl = generatePresignedPutUrl(key, req.getMimeType());
+        String cdnUrl = cdnDomain + key;
+
+        return PresignedUrlResponse.builder()
+                .uploadUrl(presignedUrl.toString())
+                .cdnUrl(cdnUrl)
+                .key(key)
+                .build();
     }
 
     private URL generatePresignedPutUrl(String key, String mimeType) {
