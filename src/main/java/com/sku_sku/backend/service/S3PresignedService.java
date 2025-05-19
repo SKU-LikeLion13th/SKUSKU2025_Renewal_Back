@@ -19,7 +19,6 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 import java.net.URL;
 import java.time.Duration;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,17 +31,17 @@ public class S3PresignedService {
     private final S3Client s3Client;
     private final String bucketName;
 
-    @Value("${cloud.aws.cdn}")
-    private String cdnDomain;
+    @Value("${cloud.aws.cloudfront}")
+    private String cloudfrontDomain;
 
     public S3PresignedService(
             @Value("${cloud.aws.credentials.access-key}") String accessKey,
             @Value("${cloud.aws.credentials.secret-key}") String secretKey,
-            @Value("${cloud.aws.bucket}") String bucketName
+            @Value("${cloud.aws.s3}") String s3Name
     ) {
         AwsBasicCredentials credentials = AwsBasicCredentials.create(accessKey, secretKey);
 
-        this.bucketName = bucketName;
+        this.bucketName = s3Name;
         this.s3Presigner = S3Presigner.builder()
                 .region(Region.AP_NORTHEAST_2)
                 .credentialsProvider(StaticCredentialsProvider.create(credentials))
@@ -69,7 +68,7 @@ public class S3PresignedService {
         String key = "uploads/" + UUID.randomUUID() + ext;
 
         URL presignedUrl = generatePresignedPutUrl(key, req.getMimeType());
-        String cdnUrl = cdnDomain + key;
+        String cdnUrl = cloudfrontDomain + key;
 
         return PresignedUrlResponse.builder()
                 .uploadUrl(presignedUrl.toString())
