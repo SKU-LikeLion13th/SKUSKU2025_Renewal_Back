@@ -4,6 +4,7 @@ package com.sku_sku.backend.service;
 import com.sku_sku.backend.domain.lecture.JoinLectureFile;
 import com.sku_sku.backend.domain.lecture.Lecture;
 import com.sku_sku.backend.dto.Request.JoinLectureFilesDTO;
+import com.sku_sku.backend.dto.Request.LectureFileDTO;
 import com.sku_sku.backend.repository.JoinLectureFilesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class JoinLectureFilesService {
     private final JoinLectureFilesRepository joinLectureFilesRepository;
 
     @Transactional
-    public List<JoinLectureFile> createJoinLectureFiles(Lecture lecture, List<JoinLectureFilesDTO.LectureFileDTO> files) {
+    public List<JoinLectureFile> createJoinLectureFiles(Lecture lecture, List<LectureFileDTO> files) {
         List<JoinLectureFile> joinLectureFileList = files.stream()
                 .map(dto -> new JoinLectureFile(
                         lecture,
