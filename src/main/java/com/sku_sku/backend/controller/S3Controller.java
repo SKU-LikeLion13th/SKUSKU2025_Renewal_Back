@@ -1,7 +1,7 @@
 package com.sku_sku.backend.controller;
 
 import com.sku_sku.backend.dto.Request.S3DTO;
-import com.sku_sku.backend.service.S3PresignedService;
+import com.sku_sku.backend.service.S3Service;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -10,12 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 public class S3Controller {
-    private final S3PresignedService s3PresignedService;
+    private final S3Service s3PresignedService;
 
     @Operation(summary = "(민규) Presigned URL + CDN URL 요청", description = "body에 리스트로 파일 이름, 파일 MIME 타입 필요",
             responses = {@ApiResponse(responseCode = "200", description = "URL들 발급 성공"),

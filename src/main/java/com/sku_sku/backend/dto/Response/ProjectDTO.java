@@ -19,7 +19,7 @@ public class ProjectDTO {
         private String subTitle;
 
         @Schema(description = "프로젝트 url", example = "https://sku-sku.com")
-        private String url;
+        private String projectUrl;
 
         @Schema(description = "프로젝트 사진 CDN URL", example = "")
         private String imageUrl;
@@ -30,7 +30,7 @@ public class ProjectDTO {
 
     @Data
     @AllArgsConstructor
-    public static class ProjectAllField {
+    public static class ProjectRes {
         @Schema(description = "프로젝트 id", example = "1")
         private Long id;
 
@@ -44,10 +44,16 @@ public class ProjectDTO {
         private String subTitle;
 
         @Schema(description = "프로젝트 url", example = "https://sku-sku.com")
-        private String url;
+        private String projectUrl;
 
         @Schema(description = "프로젝트 사진 CDN URL", example = "")
         private String imageUrl;
+
+        @Schema(description = "프로젝트 사진 이름", example = "스쿠스쿠 로고")
+        private String imageName;
+
+        @Schema(description = "프로젝트 사진 타입", example = "skusku/png")
+        private String imageType;
 
         @Schema(description = "프로젝트 사진 저장된 경로", example = "uploads/uuid.png")
         private String imageKey;

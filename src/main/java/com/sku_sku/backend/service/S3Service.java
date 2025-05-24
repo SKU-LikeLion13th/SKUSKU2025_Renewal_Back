@@ -26,7 +26,7 @@ import static com.sku_sku.backend.dto.Request.S3DTO.*;
 
 
 @Service
-public class S3PresignedService {
+public class S3Service {
     private final S3Presigner s3Presigner;
     private final S3Client s3Client;
     private final String bucketName;
@@ -34,7 +34,7 @@ public class S3PresignedService {
     @Value("${cloud.aws.cloudfront}")
     private String cloudfrontDomain;
 
-    public S3PresignedService(
+    public S3Service(
             @Value("${cloud.aws.credentials.access-key}") String accessKey,
             @Value("${cloud.aws.credentials.secret-key}") String secretKey,
             @Value("${cloud.aws.s3}") String s3Name

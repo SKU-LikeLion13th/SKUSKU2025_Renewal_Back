@@ -4,33 +4,32 @@ package com.sku_sku.backend.service;
 import com.sku_sku.backend.domain.Project;
 import com.sku_sku.backend.dto.Request.ProjectDTO;
 import com.sku_sku.backend.exception.InvalidIdException;
-import com.sku_sku.backend.exception.InvalidTitleException;
 import com.sku_sku.backend.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.sku_sku.backend.dto.Response.ProjectDTO.ProjectAllField;
+import static com.sku_sku.backend.dto.Response.ProjectDTO.ProjectRes;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProjectService {
     private final ProjectRepository projectRepository;
+    private final S3Service s3Service;
 
     @Transactional
     public void addProject(ProjectDTO.ProjectCreateRequest req) {
         Project project = new Project(req.getClassTh(),
                 req.getTitle(),
                 req.getSubTitle(),
-                req.getUrl(),
+                req.getProjectUrl(),
+                req.getImageName(),
+                req.getImageType(),
                 req.getImageUrl(),
                 req.getImageKey());
         projectRepository.save(project);
@@ -44,11 +43,18 @@ public class ProjectService {
         String newClassTh = getOrDefault(req.getClassTh(), project.getClassTh());
         String newTitle = getOrDefault(req.getTitle(), project.getTitle());
         String newSubTitle = getOrDefault(req.getSubTitle(), project.getSubTitle());
-        String newUrl = getOrDefault(req.getUrl(), project.getUrl());
+        String newProjectUrl = getOrDefault(req.getProjectUrl(), project.getProjectUrl());
+        String newImageName = getOrDefault(req.getImageName(), project.getImageName());
+        String newImageType = getOrDefault(req.getImageType(), project.getImageType());
         String newImageUrl = getOrDefault(req.getImageUrl(), project.getImageUrl());
         String newImageKey = getOrDefault(req.getImageKey(), project.getImageKey());
 
-        project.changeProject(newClassTh, newTitle, newSubTitle, newUrl, newImageUrl, newImageKey);
+        // 이전 이미지와 다를 경우 기존 S3 이미지 삭제
+        if (!newImageKey.equals(project.getImageKey())) {
+            s3Service.deleteFiles(List.of(project.getImageKey()));
+        }
+
+        project.changeProject(newClassTh, newTitle, newSubTitle, newProjectUrl, newImageName, newImageType,newImageUrl, newImageKey);
     }
 
     private <T> T getOrDefault(T newOne, T previousOne) {
@@ -59,35 +65,46 @@ public class ProjectService {
     public void deleteProject(Long id) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new InvalidIdException("project"));
+
+        // S3 이미지 삭제
+        if (project.getImageKey() != null && !project.getImageKey().isBlank()) {
+            s3Service.deleteFiles(List.of(project.getImageKey()));
+        }
+
         projectRepository.delete(project);
     }
 
-    public List<ProjectAllField> findProjectAllIdDesc() {
+    public List<ProjectRes> findProjectAllIdDesc() {
         List<Project> projects = projectRepository.findAllByOrderByIdDesc();
 
         return projects.stream()
-                .map(project -> new ProjectAllField(
+                .map(project -> new ProjectRes(
                         project.getId(),
                         project.getClassTh(),
                         project.getTitle(),
                         project.getSubTitle(),
-                        project.getUrl(),
+                        project.getProjectUrl(),
+                        project.getImageName(),
+                        project.getImageType(),
                         project.getImageUrl(),
                         project.getImageKey()
                 ))
-                .collect(Collectors.toCollection(ArrayList::new));
+                .toList();
     }
 
-    public ProjectAllField findProjectById(Long id) {
+    public ProjectRes findProjectById(Long id) {
         return projectRepository.findById(id)
-                .map(project -> new ProjectAllField(
+                .map(project -> new ProjectRes(
                         project.getId(),
                         project.getClassTh(),
                         project.getTitle(),
                         project.getSubTitle(),
-                        project.getUrl(),
+                        project.getProjectUrl(),
+                        project.getImageName(),
+                        project.getImageType(),
                         project.getImageUrl(),
-                        project.getImageKey()))
+                        project.getImageKey()
+                ))
                 .orElseThrow(() -> new InvalidIdException("project"));
     }
 }

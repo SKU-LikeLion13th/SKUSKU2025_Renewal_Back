@@ -2,7 +2,7 @@ package com.sku_sku.backend.controller.admin;
 
 import com.sku_sku.backend.dto.Request.ProjectDTO.ProjectCreateRequest;
 import com.sku_sku.backend.dto.Request.ProjectDTO.ProjectUpdateRequest;
-import com.sku_sku.backend.dto.Response.ProjectDTO.ProjectAllField;
+import com.sku_sku.backend.dto.Response.ProjectDTO.ProjectRes;
 import com.sku_sku.backend.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 
 @RestController
@@ -28,7 +26,7 @@ public class ProjectAdminController {
             responses = {@ApiResponse(responseCode = "201", description = "프로젝트 생성 성공"),
                     @ApiResponse(responseCode = "409", description = "그 title 이미 있")})
     @PostMapping("/add")
-    public ResponseEntity<String> addProject(ProjectCreateRequest request) {
+    public ResponseEntity<String> addProject(@RequestBody ProjectCreateRequest request) {
             projectService.addProject(request);
             return ResponseEntity.status(HttpStatus.CREATED).body("프로젝트 생성 성공");
     }
@@ -38,7 +36,7 @@ public class ProjectAdminController {
                     @ApiResponse(responseCode = "409", description = "그 title 이미 있"),
                     @ApiResponse(responseCode = "404", description = "그 id에 해당하는 값 없")})
     @PutMapping("/update")
-    public ResponseEntity<String> updateProject(ProjectUpdateRequest request) {
+    public ResponseEntity<String> updateProject(@RequestBody ProjectUpdateRequest request) {
             projectService.updateProject(request);
             return ResponseEntity.status(HttpStatus.OK).body("프로젝트 수정 성공");
     }
@@ -47,8 +45,8 @@ public class ProjectAdminController {
             responses = {@ApiResponse(responseCode = "200", description = "조회를 하면 프로젝트 id, 제목, 프로젝트 부제목, 프로젝트 사진이 출력."),
                     @ApiResponse(responseCode = "404", description = "그 id에 해당하는 값 없")})
     @GetMapping("/{id}")
-    public ResponseEntity<ProjectAllField> findProjectById(@PathVariable("id") Long projectId) {
-        ProjectAllField projectAllField = projectService.findProjectById(projectId);
+    public ResponseEntity<ProjectRes> findProjectById(@PathVariable("id") Long projectId) {
+        ProjectRes projectAllField = projectService.findProjectById(projectId);
             return ResponseEntity.status(HttpStatus.OK).body(projectAllField);
     }
 

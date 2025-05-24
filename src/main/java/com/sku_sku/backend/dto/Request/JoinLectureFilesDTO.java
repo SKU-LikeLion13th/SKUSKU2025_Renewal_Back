@@ -8,7 +8,7 @@ public class JoinLectureFilesDTO {
 
     @Data
     public static class LectureFileDTO {
-        @Schema(description = "강의자료 CDN URL", example = "https://~~~~")
+        @Schema(description = "강의자료 CDN URL", example = "https://~~~")
         private String fileUrl;
         @Schema(description = "강의자료 이름", example = "Spring.pdf")
         private String fileName;
@@ -24,7 +24,7 @@ public class JoinLectureFilesDTO {
     public static class CreateJoinLectureFilesRequest {
         @Schema(description = "강의 안내물 id", example = "1")
         private Long lectureId;
-        @Schema(description = "강의자료 CDN URL", example = "")
+        @Schema(description = "강의자료 CDN URL", example = "https://~~~")
         private String fileUrl;
         @Schema(description = "강의자료 이름", example = "Spring.pdf")
         private String fileName;
