@@ -34,8 +34,9 @@ public class LectureService {
     public void createLecture(HttpServletRequest header, LectureDTO.createLectureRequest req) {
         String writer = jwtUtility.getClaimsFromCookies(header).get("name", String.class);
         Lecture lecture = new Lecture(req.getTrackType(), req.getTitle(), req.getContent(), writer);
+        System.out.println(req.getTitle() + req.getContent() + req.getTrackType() + writer);
         lectureRepository.save(lecture);
-
+        System.out.println(req.getFiles());
         joinLectureFilesService.createJoinLectureFiles(lecture, req.getFiles());
     }
 
