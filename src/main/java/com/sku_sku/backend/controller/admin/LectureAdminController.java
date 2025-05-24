@@ -25,7 +25,7 @@ public class LectureAdminController {
             responses = {@ApiResponse(responseCode = "201", description = "강의자료 생성 성공")})
     @PostMapping("/add")
     public ResponseEntity<String> uploadFiles(HttpServletRequest header,
-                                               LectureDTO.createLectureRequest request) throws IOException {
+                                               @RequestBody LectureDTO.createLectureRequest request) throws IOException {
         lectureService.createLecture(header, request);
         return ResponseEntity.status(HttpStatus.CREATED).body("강의자료 생성 성공");
     }
@@ -35,7 +35,7 @@ public class LectureAdminController {
                     @ApiResponse(responseCode = "404", description = "그 id에 해당하는 값 없")})
     @PutMapping("/update")
     public ResponseEntity<String> updateLecture(HttpServletRequest header,
-                                                 LectureDTO.updateLectureRequest request) throws IOException {
+                                                @RequestBody LectureDTO.updateLectureRequest request) throws IOException {
         lectureService.updateLecture(header, request);
         return ResponseEntity.status(HttpStatus.CREATED).body("강의자료 수정 성공");
     }
