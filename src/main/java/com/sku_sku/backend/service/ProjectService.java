@@ -3,6 +3,7 @@ package com.sku_sku.backend.service;
 
 import com.sku_sku.backend.domain.Project;
 import com.sku_sku.backend.dto.Request.ProjectDTO;
+import com.sku_sku.backend.enums.AllowedFileType;
 import com.sku_sku.backend.exception.InvalidIdException;
 import com.sku_sku.backend.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class ProjectService {
                 req.getProjectUrl(),
                 req.getImageName(),
                 req.getImageType(),
+                req.getFileSize(),
                 req.getImageUrl(),
                 req.getImageKey());
         projectRepository.save(project);
@@ -44,8 +46,10 @@ public class ProjectService {
         String newTitle = getOrDefault(req.getTitle(), project.getTitle());
         String newSubTitle = getOrDefault(req.getSubTitle(), project.getSubTitle());
         String newProjectUrl = getOrDefault(req.getProjectUrl(), project.getProjectUrl());
+
         String newImageName = getOrDefault(req.getImageName(), project.getImageName());
-        String newImageType = getOrDefault(req.getImageType(), project.getImageType());
+        AllowedFileType newImageType = getOrDefault(req.getImageType(), project.getImageType());
+        Long newImageSize = getOrDefault(req.getFileSize(), project.getImageSize());
         String newImageUrl = getOrDefault(req.getImageUrl(), project.getImageUrl());
         String newImageKey = getOrDefault(req.getImageKey(), project.getImageKey());
 
@@ -54,7 +58,7 @@ public class ProjectService {
             s3Service.deleteFiles(List.of(project.getImageKey()));
         }
 
-        project.changeProject(newClassTh, newTitle, newSubTitle, newProjectUrl, newImageName, newImageType,newImageUrl, newImageKey);
+        project.changeProject(newClassTh, newTitle, newSubTitle, newProjectUrl, newImageName, newImageType, newImageSize, newImageUrl, newImageKey);
     }
 
     private <T> T getOrDefault(T newOne, T previousOne) {
@@ -86,6 +90,7 @@ public class ProjectService {
                         project.getProjectUrl(),
                         project.getImageName(),
                         project.getImageType(),
+                        project.getImageSize(),
                         project.getImageUrl(),
                         project.getImageKey()
                 ))
@@ -102,6 +107,7 @@ public class ProjectService {
                         project.getProjectUrl(),
                         project.getImageName(),
                         project.getImageType(),
+                        project.getImageSize(),
                         project.getImageUrl(),
                         project.getImageKey()
                 ))

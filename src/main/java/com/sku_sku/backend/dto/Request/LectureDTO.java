@@ -3,11 +3,10 @@ package com.sku_sku.backend.dto.Request;
 import com.sku_sku.backend.enums.TrackType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import static com.sku_sku.backend.dto.Request.JoinLectureFilesDTO.*;
+import static com.sku_sku.backend.dto.Request.JoinLectureFileDTO.*;
 
 public class LectureDTO {
     @Data

@@ -3,7 +3,7 @@ package com.sku_sku.backend.service;
 
 import com.sku_sku.backend.domain.lecture.JoinLectureFile;
 import com.sku_sku.backend.domain.lecture.Lecture;
-import com.sku_sku.backend.dto.Request.JoinLectureFilesDTO.LectureFileDTOWithoutFileKey;
+import com.sku_sku.backend.dto.Response.JoinLectureFileDTO.LectureFileDTOWithoutFileKey;
 import com.sku_sku.backend.dto.Request.LectureDTO;
 import com.sku_sku.backend.dto.Response.LectureDTO.ResponseLectureWithoutFiles;
 import com.sku_sku.backend.enums.FileStatusType;
@@ -18,11 +18,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static com.sku_sku.backend.dto.Request.JoinLectureFilesDTO.*;
+import static com.sku_sku.backend.dto.Request.JoinLectureFileDTO.*;
 import static com.sku_sku.backend.dto.Response.LectureDTO.*;
 
 @Service
@@ -101,14 +99,15 @@ public class LectureService {
     // 강의 안내물 조회 로직
     public ResponseLecture findLectureById(Long lectureId) {
         Lecture lecture = lectureRepository.findById(lectureId)
-                .orElseThrow(() -> new InvalidIdException("Lecture"));
+                .orElseThrow(() -> new InvalidIdException("lecture"));
 
         List<LectureFileDTOWithoutFileKey> fileDTOs = joinLectureFilesRepository.findByLecture(lecture).stream()
                 .map(file -> LectureFileDTOWithoutFileKey.builder()
-                        .fileUrl(file.getFileUrl())
                         .fileName(file.getFileName())
                         .fileType(file.getFileType())
                         .fileSize(file.getFileSize())
+                        .fileUrl(file.getFileUrl())
+                        .fileKey(file.getFileKey())
                         .build())
                 .toList();
 

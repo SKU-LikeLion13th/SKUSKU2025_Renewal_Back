@@ -1,6 +1,5 @@
 package com.sku_sku.backend.dto.Response;
 
-import com.sku_sku.backend.dto.Request.JoinLectureFilesDTO;
 import com.sku_sku.backend.enums.TrackType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -28,7 +27,7 @@ public class LectureDTO {
         @Schema(description = "강의 안내물 작성 시간", example = "YYYY-MM-DD")
         private LocalDateTime createDateTime;
         @Schema(description = "강의자료", example = "")
-        private List<JoinLectureFilesDTO.LectureFileDTOWithoutFileKey> joinLectureFiles;
+        private List<JoinLectureFileDTO.LectureFileDTOWithoutFileKey> joinLectureFiles;
     }
 
     @Data

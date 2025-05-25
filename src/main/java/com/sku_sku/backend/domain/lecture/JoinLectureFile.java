@@ -1,6 +1,7 @@
 package com.sku_sku.backend.domain.lecture;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.sku_sku.backend.enums.AllowedFileType;
 import com.sku_sku.backend.service.FileUtility;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -27,7 +28,7 @@ public class JoinLectureFile {
 
     private String fileName; // 강의 자료 이름
 
-    private String fileType; // 강의 자료 타입
+    private AllowedFileType fileType; // 강의 자료 타입
 
     private Long fileSize; // 강의 자료 사이즈
 
@@ -38,7 +39,7 @@ public class JoinLectureFile {
     private LocalDateTime createDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 강의 자료 생성일
 
     // 생성자
-    public JoinLectureFile(Lecture lecture, String fileName, String fileType, Long fileSize, String fileUrl, String fileKey) {
+    public JoinLectureFile(Lecture lecture, String fileName, AllowedFileType fileType, Long fileSize, String fileUrl, String fileKey) {
         this.lecture = lecture;
         this.fileName = fileName;
         this.fileType = fileType;

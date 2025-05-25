@@ -1,5 +1,6 @@
 package com.sku_sku.backend.dto.Request;
 
+import com.sku_sku.backend.enums.AllowedFileType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import lombok.Data;
@@ -21,16 +22,19 @@ public class ProjectDTO {
         @Schema(description = "프로젝트 url", example = "https://sku-sku.com")
         private String projectUrl;
 
-        @Schema(description = "프로젝트 사진 이름", example = "스쿠스쿠 로고")
+        @Schema(description = "프로젝트 이미지 이름", example = "스쿠스쿠 로고")
         private String imageName;
 
-        @Schema(description = "프로젝트 사진 타입", example = "skusku/png")
-        private String imageType;
+        @Schema(description = "프로젝트 이미지 타입", example = "skusku/png")
+        private AllowedFileType imageType;
 
-        @Schema(description = "프로젝트 사진 CDN URL", example = "https://~~~")
+        @Schema(description = "프로젝트 이미지 사이즈", example = "65362")
+        private Long fileSize;
+
+        @Schema(description = "프로젝트 이미지 CDN URL", example = "https://~~~")
         private String imageUrl;
 
-        @Schema(description = "프로젝트 사진 저장된 경로", example = "uploads/uuid.png")
+        @Schema(description = "프로젝트 이미지 저장된 경로", example = "uploads/uuid.png")
         private String imageKey;
     }
 
@@ -51,16 +55,19 @@ public class ProjectDTO {
         @Schema(description = "프로젝트 url", example = "https://sku-sku.com")
         private String projectUrl;
 
-        @Schema(description = "프로젝트 사진 이름", example = "스쿠스쿠 로고")
+        @Schema(description = "프로젝트 이미지 이름", example = "스쿠스쿠 로고")
         private String imageName;
 
-        @Schema(description = "프로젝트 사진 타입", example = "skusku/png")
-        private String imageType;
+        @Schema(description = "프로젝트 이미지 타입", example = "skusku/png")
+        private AllowedFileType imageType;
 
-        @Schema(description = "프로젝트 사진 CDN URL", example = "https://~~~")
+        @Schema(description = "프로젝트 이미지 사이즈", example = "65362")
+        private Long fileSize;
+
+        @Schema(description = "프로젝트 이미지 CDN URL", example = "https://~~~")
         private String imageUrl;
 
-        @Schema(description = "프로젝트 사진 저장된 경로", example = "uploads/uuid.png")
+        @Schema(description = "프로젝트 이미지 저장된 경로", example = "uploads/uuid.png")
         private String imageKey;
     }
 }
