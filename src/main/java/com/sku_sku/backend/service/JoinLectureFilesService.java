@@ -18,7 +18,7 @@ public class JoinLectureFilesService {
     private final JoinLectureFilesRepository joinLectureFilesRepository;
 
     @Transactional
-    public List<JoinLectureFile> createJoinLectureFiles(Lecture lecture, List<JoinLectureFilesDTO.LectureFileDTO> files) {
+    public void createJoinLectureFiles(Lecture lecture, List<JoinLectureFilesDTO.LectureFileDTO> files) {
         List<JoinLectureFile> joinLectureFileList = files.stream()
                 .map(dto -> new JoinLectureFile(
                         lecture,
@@ -31,13 +31,26 @@ public class JoinLectureFilesService {
                 .toList();
 
         joinLectureFilesRepository.saveAll(joinLectureFileList);
-        return joinLectureFileList;
     }
 
-
-
     @Transactional
-    public void deleteByLecture(Lecture lecture) {
-        joinLectureFilesRepository.deleteByLecture(lecture);
+    public void updateJoinLectureFiles(Lecture lecture, List<JoinLectureFilesDTO.UpdateLectureFileDTO> files) {
+        List<JoinLectureFile> joinLectureFileList = files.stream()
+                .map(dto -> new JoinLectureFile(
+                        lecture,
+                        dto.getFileName(),
+                        dto.getFileUrl(),
+                        dto.getFileType(),
+                        dto.getFileSize(),
+                        dto.getFileKey()
+                ))
+                .toList();
+
+        joinLectureFilesRepository.saveAll(joinLectureFileList);
+    }
+
+    public void deleteFilesByKeyList(Lecture lecture, List<String> keysToDelete) {
+        if (keysToDelete == null || keysToDelete.isEmpty()) return;
+        joinLectureFilesRepository.deleteAllByLectureAndFileKeyIn(lecture, keysToDelete);
     }
 }

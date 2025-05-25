@@ -1,13 +1,16 @@
 package com.sku_sku.backend.service;
 
 
+import com.sku_sku.backend.domain.lecture.JoinLectureFile;
 import com.sku_sku.backend.domain.lecture.Lecture;
 import com.sku_sku.backend.dto.Request.JoinLectureFilesDTO.CreateJoinLectureFilesRequest;
 import com.sku_sku.backend.dto.Request.LectureDTO;
 import com.sku_sku.backend.dto.Response.LectureDTO.ResponseLectureWithoutFiles;
+import com.sku_sku.backend.enums.FileStatusType;
 import com.sku_sku.backend.enums.TrackType;
 import com.sku_sku.backend.exception.EmptyLectureException;
 import com.sku_sku.backend.exception.InvalidIdException;
+import com.sku_sku.backend.repository.JoinLectureFilesRepository;
 import com.sku_sku.backend.repository.LectureRepository;
 import com.sku_sku.backend.security.JwtUtility;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,11 +18,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.sku_sku.backend.dto.Request.JoinLectureFilesDTO.*;
 import static com.sku_sku.backend.dto.Response.LectureDTO.*;
 
 @Service
@@ -27,35 +30,50 @@ import static com.sku_sku.backend.dto.Response.LectureDTO.*;
 @Transactional(readOnly = true)
 public class LectureService {
     private final LectureRepository lectureRepository;
+    private final JoinLectureFilesRepository joinLectureFilesRepository;
     private final JoinLectureFilesService joinLectureFilesService;
     private final JwtUtility jwtUtility;
+    private final S3Service s3Service;
 
     @Transactional // 강의 안내물 생성 로직
     public void createLecture(HttpServletRequest header, LectureDTO.createLectureRequest req) {
         String writer = jwtUtility.getClaimsFromCookies(header).get("name", String.class);
         Lecture lecture = new Lecture(req.getTrackType(), req.getTitle(), req.getContent(), writer);
-        System.out.println(req.getTitle() + req.getContent() + req.getTrackType() + writer);
         lectureRepository.save(lecture);
-        System.out.println(req.getFiles());
         joinLectureFilesService.createJoinLectureFiles(lecture, req.getFiles());
     }
 
-    @Transactional // 강의 안내물 업데이트 로직
+    @Transactional
     public void updateLecture(HttpServletRequest header, LectureDTO.updateLectureRequest req) {
         String newWriter = jwtUtility.getClaimsFromCookies(header).get("name", String.class);
         Lecture lecture = lectureRepository.findById(req.getId())
                 .orElseThrow(() -> new InvalidIdException("lecture"));
 
-        TrackType newTrack = getOrDefault(req.getTrackType(), lecture.getTrack());
-        String newTitle = getOrDefault(req.getTitle(), lecture.getTitle());
-        String newContent = getOrDefault(req.getContent(), lecture.getContent());
-        lecture.update(newTrack, newTitle, newContent, newWriter);
+        lecture.update(
+                getOrDefault(req.getTrackType(), lecture.getTrack()),
+                getOrDefault(req.getTitle(), lecture.getTitle()),
+                getOrDefault(req.getContent(), lecture.getContent()),
+                newWriter
+        );
 
-        if (req.getFiles() != null && !req.getFiles().isEmpty()) {
-            joinLectureFilesService.deleteByLecture(lecture);
-            joinLectureFilesService.createJoinLectureFiles(lecture, req.getFiles());
+        List<UpdateLectureFileDTO> files = req.getFiles();
+        if (files != null && !files.isEmpty()) {
+
+            // 삭제 대상 파일 삭제
+            List<String> keysToDelete = files.stream()
+                    .filter(f -> f.getStatus() == FileStatusType.DELETE)
+                    .map(UpdateLectureFileDTO::getFileKey)
+                    .toList();
+            joinLectureFilesService.deleteFilesByKeyList(lecture, keysToDelete);
+
+            // 새로 추가할 파일만 저장
+            List<UpdateLectureFileDTO> newFiles = files.stream()
+                    .filter(f -> f.getStatus() == FileStatusType.NEW)
+                    .toList();
+            joinLectureFilesService.updateJoinLectureFiles(lecture, newFiles);
         }
     }
+
 
     private <T> T getOrDefault(T newOne, T previousOne) {
         return newOne != null ? newOne : previousOne;
@@ -73,7 +91,7 @@ public class LectureService {
                             lecture.getTitle(),
                             lecture.getContent(),
                             lecture.getWriter(),
-                            lecture.getCreateDate(),
+                            lecture.getCreateDateTime(),
                             lecture.getJoinLectureFile().stream()
                                     .map(CreateJoinLectureFilesRequest::new)
                                     .collect(Collectors.toCollection(ArrayList::new)));
@@ -85,6 +103,18 @@ public class LectureService {
     public void deleteLecture(Long id) {
         Lecture lecture = lectureRepository.findById(id)
                 .orElseThrow(() -> new InvalidIdException("lecture"));
+
+        // 연관된 S3 파일 키 목록 조회
+        List<String> fileKeys = joinLectureFilesRepository.findByLecture(lecture).stream()
+                .map(JoinLectureFile::getFileKey)
+                .filter(key -> key != null && !key.isBlank())
+                .toList();
+
+        // S3에서 파일 삭제
+        if (!fileKeys.isEmpty()) {
+            s3Service.deleteFiles(fileKeys);
+        }
+
         lectureRepository.delete(lecture);
     }
 
@@ -102,7 +132,7 @@ public class LectureService {
                 lecture.getTitle(),
                 lecture.getContent(),
                 lecture.getWriter(),
-                lecture.getCreateDate()
+                lecture.getCreateDateTime()
         );
     }
 }

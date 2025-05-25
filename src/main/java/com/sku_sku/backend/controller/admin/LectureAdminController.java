@@ -21,7 +21,7 @@ import java.io.IOException;
 public class LectureAdminController {
     private final LectureService lectureService;
 
-    @Operation(summary = "(민규) 강의자료 추가", description = "body에 form-data로 강의자료의 trackType, title, files 필요",
+    @Operation(summary = "(민규) 강의자료 추가", description = "",
             responses = {@ApiResponse(responseCode = "201", description = "강의자료 생성 성공")})
     @PostMapping("/add")
     public ResponseEntity<String> uploadFiles(HttpServletRequest header,
@@ -30,7 +30,7 @@ public class LectureAdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body("강의자료 생성 성공");
     }
 
-    @Operation(summary = "(민규) 강의자료 수정", description = "body에 form-data로 강의자료 id와 수정하고 싶은 값만 넣으면 됨",
+    @Operation(summary = "(민규) 강의자료 수정", description = "",
             responses = {@ApiResponse(responseCode = "201", description = "강의자료 수정 성공"),
                     @ApiResponse(responseCode = "404", description = "그 id에 해당하는 값 없")})
     @PutMapping("/update")

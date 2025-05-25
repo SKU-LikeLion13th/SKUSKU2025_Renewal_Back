@@ -1,14 +1,11 @@
 package com.sku_sku.backend.domain.lecture;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sku_sku.backend.enums.TrackType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -26,11 +23,7 @@ public class Lecture {
 
     private String writer; // 강의 안내물 작성자
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<JoinLectureFile> joinLectureFile = new ArrayList<>(); // 강의 자료
-
-    private LocalDateTime createDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 강의 안내물 생성일
+    private LocalDateTime createDateTime; // YYYY-MM-DD HH:MM:SS.nnnnnn // 강의 안내물 생성일
 
     // 생성자
     public Lecture(TrackType track, String title, String content, String writer) {
@@ -38,7 +31,7 @@ public class Lecture {
         this.title = title;
         this.content = content;
         this.writer = writer;
-        this.createDate = LocalDateTime.now(); // 생성 당시 시간
+        this.createDateTime = LocalDateTime.now(); // 생성 당시 시간
     }
 
     // 업데이트

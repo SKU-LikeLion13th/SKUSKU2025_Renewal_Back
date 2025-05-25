@@ -33,6 +33,6 @@ public class LectureDTO {
         @Schema(description = "강의 안내물 내용", example = "오늘은 JPA에 대해서 배워요~")
         private String content;
         @Schema(description = "강의자료 List", example = "파일들 넣으셔")
-        private List<LectureFileDTO> files;
+        private List<UpdateLectureFileDTO> files;
     }
 }
