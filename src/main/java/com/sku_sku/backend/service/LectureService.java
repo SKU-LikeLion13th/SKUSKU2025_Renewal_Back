@@ -3,7 +3,7 @@ package com.sku_sku.backend.service;
 
 import com.sku_sku.backend.domain.lecture.JoinLectureFile;
 import com.sku_sku.backend.domain.lecture.Lecture;
-import com.sku_sku.backend.dto.Request.JoinLectureFilesDTO.CreateJoinLectureFilesRequest;
+import com.sku_sku.backend.dto.Request.JoinLectureFilesDTO.LectureFileDTOWithoutFileKey;
 import com.sku_sku.backend.dto.Request.LectureDTO;
 import com.sku_sku.backend.dto.Response.LectureDTO.ResponseLectureWithoutFiles;
 import com.sku_sku.backend.enums.FileStatusType;
@@ -79,26 +79,6 @@ public class LectureService {
         return newOne != null ? newOne : previousOne;
     }
 
-
-    @Transactional // 강의 안내물 조회 로직
-    public ResponseLecture finaLectureById(Long lectureId) {
-        return lectureRepository.findById(lectureId)
-                .map(lecture -> {
-                    lectureRepository.save(lecture);
-                    return new ResponseLecture(
-                            lecture.getId(),
-                            lecture.getTrack(),
-                            lecture.getTitle(),
-                            lecture.getContent(),
-                            lecture.getWriter(),
-                            lecture.getCreateDateTime(),
-                            lecture.getJoinLectureFile().stream()
-                                    .map(CreateJoinLectureFilesRequest::new)
-                                    .collect(Collectors.toCollection(ArrayList::new)));
-                })
-                .orElseThrow(() -> new InvalidIdException("lecture"));
-    }
-
     @Transactional // 강의 안내물 삭제 로직
     public void deleteLecture(Long id) {
         Lecture lecture = lectureRepository.findById(id)
@@ -118,17 +98,43 @@ public class LectureService {
         lectureRepository.delete(lecture);
     }
 
-    public List<ResponseLectureWithoutFiles> findAllLectureByTrackOrderByCreateDateDesc(TrackType trackType) {
-        List<Lecture> lectures = lectureRepository.findByTrackOrderByCreateDateDesc(trackType)
+    // 강의 안내물 조회 로직
+    public ResponseLecture findLectureById(Long lectureId) {
+        Lecture lecture = lectureRepository.findById(lectureId)
+                .orElseThrow(() -> new InvalidIdException("Lecture"));
+
+        List<LectureFileDTOWithoutFileKey> fileDTOs = joinLectureFilesRepository.findByLecture(lecture).stream()
+                .map(file -> LectureFileDTOWithoutFileKey.builder()
+                        .fileUrl(file.getFileUrl())
+                        .fileName(file.getFileName())
+                        .fileType(file.getFileType())
+                        .fileSize(file.getFileSize())
+                        .build())
+                .toList();
+
+        return ResponseLecture.builder()
+                .id(lecture.getId())
+                .trackType(lecture.getTrack())
+                .title(lecture.getTitle())
+                .content(lecture.getContent())
+                .writer(lecture.getWriter())
+                .createDateTime(lecture.getCreateDateTime())
+                .joinLectureFiles(fileDTOs)
+                .build();
+    }
+
+    public List<ResponseLectureWithoutFiles> findAllLectureByTrack(TrackType trackType) {
+        List<Lecture> lectures = lectureRepository.findByTrackOrderByCreateDateTimeDesc(trackType)
                 .orElseThrow(EmptyLectureException::new);
         return lectures.stream()
-                .map(this::convertToDTO)
+                .map(this::convertToResponseLectureWithoutFilesDTO)
                 .toList();
     }
 
-    private ResponseLectureWithoutFiles convertToDTO(Lecture lecture) {
+    private ResponseLectureWithoutFiles convertToResponseLectureWithoutFilesDTO(Lecture lecture) {
         return new ResponseLectureWithoutFiles(
                 lecture.getId(),
+                lecture.getTrack(),
                 lecture.getTitle(),
                 lecture.getContent(),
                 lecture.getWriter(),

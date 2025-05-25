@@ -30,7 +30,7 @@ public class LectureController {
                     @ApiResponse(responseCode = "404", description = "그 id에 해당하는 값 없")})
     @GetMapping("/{id}")
     public ResponseEntity<ResponseLecture> findLectureById(@PathVariable("id") Long lectureId) {
-        ResponseLecture responseLecture = lectureService.finaLectureById(lectureId);
+        ResponseLecture responseLecture = lectureService.findLectureById(lectureId);
         return ResponseEntity.status(HttpStatus.OK).body(responseLecture);
     }
 
@@ -39,7 +39,7 @@ public class LectureController {
                     @ApiResponse(responseCode = "404", description = "강의 자료 하나도 없")})
     @GetMapping("/all/{track}")
     public ResponseEntity<List<ResponseLectureWithoutFiles>> getAllLectureByTrack(@PathVariable("track") TrackType track) {
-        List<ResponseLectureWithoutFiles> lectureFiles = lectureService.findAllLectureByTrackOrderByCreateDateDesc(track);
+        List<ResponseLectureWithoutFiles> lectureFiles = lectureService.findAllLectureByTrack(track);
         return ResponseEntity.ok(lectureFiles);
     }
 }

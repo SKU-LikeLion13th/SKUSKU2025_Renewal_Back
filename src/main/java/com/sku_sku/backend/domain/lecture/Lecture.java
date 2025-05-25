@@ -25,6 +25,8 @@ public class Lecture {
 
     private LocalDateTime createDateTime; // YYYY-MM-DD HH:MM:SS.nnnnnn // 강의 안내물 생성일
 
+    private LocalDateTime updateDateTime; // YYYY-MM-DD HH:MM:SS.nnnnnn // 강의 안내물 수정일
+
     // 생성자
     public Lecture(TrackType track, String title, String content, String writer) {
         this.track = track;
@@ -32,6 +34,7 @@ public class Lecture {
         this.content = content;
         this.writer = writer;
         this.createDateTime = LocalDateTime.now(); // 생성 당시 시간
+        this.updateDateTime = null;
     }
 
     // 업데이트
@@ -40,5 +43,6 @@ public class Lecture {
         this.title = title;
         this.content = content;
         this.writer = writer;
+        this.updateDateTime = LocalDateTime.now(); // 수정 당시 시간
     }
 }

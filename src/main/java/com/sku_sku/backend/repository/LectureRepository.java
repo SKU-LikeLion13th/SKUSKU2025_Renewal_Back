@@ -16,13 +16,10 @@ public interface LectureRepository extends JpaRepository<Lecture, Long> {
     Optional<Lecture> findById(Long id);
 
     // 전체 강의 안내물 리스트 반환 (강의자료를 제외한)
-    @EntityGraph(attributePaths = {"joinLectureFile"})
     List<Lecture> findAll();
 
     // 트랙별 강의 안내물 리스트 내림차순 반환 (강의자료를 제외한)
-    @EntityGraph(attributePaths = {"joinLectureFile"})
     List<Lecture> findByTrackOrderByIdDesc(TrackType trackType);
 
-    @EntityGraph(attributePaths = {"joinLectureFile"})
-    Optional<List<Lecture>> findByTrackOrderByCreateDateDesc(TrackType trackType);
+    Optional<List<Lecture>> findByTrackOrderByCreateDateTimeDesc(TrackType trackType);
 }

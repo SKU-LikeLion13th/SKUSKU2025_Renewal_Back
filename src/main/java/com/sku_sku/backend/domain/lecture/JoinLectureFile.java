@@ -25,25 +25,25 @@ public class JoinLectureFile {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Lecture lecture; // 해당 강의 안내물
 
-    private String fileUrl; // 강의 자료 // CDN URL
-
     private String fileName; // 강의 자료 이름
 
     private String fileType; // 강의 자료 타입
 
     private Long fileSize; // 강의 자료 사이즈
 
+    private String fileUrl; // 강의 자료 // CDN URL
+
     private String fileKey; // 강의 자료 저장된 경로
 
     private LocalDateTime createDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 강의 자료 생성일
 
     // 생성자
-    public JoinLectureFile(Lecture lecture, String fileName, String fileUrl, String fileType, Long fileSize, String fileKey) {
+    public JoinLectureFile(Lecture lecture, String fileName, String fileType, Long fileSize, String fileUrl, String fileKey) {
         this.lecture = lecture;
         this.fileName = fileName;
-        this.fileUrl = fileUrl;
         this.fileType = fileType;
         this.fileSize = fileSize;
+        this.fileUrl = fileUrl;
         this.fileKey = fileKey;
         this.createDate = LocalDateTime.now(); // 생성 당시 시간
     }
