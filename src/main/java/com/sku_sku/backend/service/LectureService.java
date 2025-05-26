@@ -62,6 +62,7 @@ public class LectureService {
                     .filter(f -> f.getStatus() == FileStatusType.DELETE)
                     .map(UpdateLectureFileDTO::getFileKey)
                     .toList();
+            s3Service.deleteFiles(keysToDelete);
             joinLectureFilesService.deleteFilesByKeyList(lecture, keysToDelete);
 
             // 새로 추가할 파일만 저장
@@ -71,7 +72,6 @@ public class LectureService {
             joinLectureFilesService.updateJoinLectureFiles(lecture, newFiles);
         }
     }
-
 
     private <T> T getOrDefault(T newOne, T previousOne) {
         return newOne != null ? newOne : previousOne;

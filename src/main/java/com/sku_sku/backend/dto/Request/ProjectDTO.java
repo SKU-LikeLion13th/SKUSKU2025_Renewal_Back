@@ -58,7 +58,7 @@ public class ProjectDTO {
         @Schema(description = "프로젝트 이미지 이름", example = "스쿠스쿠 로고")
         private String imageName;
 
-        @Schema(description = "프로젝트 이미지 타입", example = "skusku/png")
+        @Schema(description = "프로젝트 이미지 타입", example = "PNG")
         private AllowedFileType imageType;
 
         @Schema(description = "프로젝트 이미지 사이즈", example = "65362")
@@ -67,7 +67,7 @@ public class ProjectDTO {
         @Schema(description = "프로젝트 이미지 CDN URL", example = "https://~~~")
         private String imageUrl;
 
-        @Schema(description = "프로젝트 이미지 저장된 경로", example = "uploads/uuid.png")
+        @Schema(description = "프로젝트 이미지 저장된 경로", example = "uploads/{uuid}.png")
         private String imageKey;
     }
 }

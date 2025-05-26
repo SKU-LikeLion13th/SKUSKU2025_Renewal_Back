@@ -12,7 +12,7 @@ public class JoinLectureFileDTO {
     public static class LectureFileDTO {
         @Schema(description = "강의자료 이름", example = "Spring.pdf")
         private String fileName;
-        @Schema(description = "강의자료 유형", example = "application/pdf")
+        @Schema(description = "강의자료 유형", example = "PDF")
         private AllowedFileType fileType;
         @Schema(description = "강의자료 사이즈", example = "65362")
         private Long fileSize;
@@ -26,7 +26,7 @@ public class JoinLectureFileDTO {
     public static class UpdateLectureFileDTO {
         @Schema(description = "강의자료 이름", example = "Spring.pdf")
         private String fileName;
-        @Schema(description = "강의자료 유형", example = "application/pdf")
+        @Schema(description = "강의자료 유형", example = "PDF")
         private AllowedFileType fileType;
         @Schema(description = "강의자료 사이즈", example = "65362")
         private Long fileSize;
