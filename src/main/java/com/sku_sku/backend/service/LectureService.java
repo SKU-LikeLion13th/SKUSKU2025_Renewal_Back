@@ -101,7 +101,7 @@ public class LectureService {
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new InvalidIdException("lecture"));
 
-        List<LectureFileDTOWithoutFileKey> fileDTOs = joinLectureFilesRepository.findByLecture(lecture).stream()
+        List<LectureFileDTOWithoutFileKey> fileDTOs = joinLectureFilesRepository.findByLectureId(lectureId).stream()
                 .map(file -> LectureFileDTOWithoutFileKey.builder()
                         .fileName(file.getFileName())
                         .fileType(file.getFileType())
