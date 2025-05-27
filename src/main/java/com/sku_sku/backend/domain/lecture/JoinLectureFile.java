@@ -20,7 +20,6 @@ public class JoinLectureFile {
     @Id @GeneratedValue
     private Long id; // pk
 
-    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id")
     @OnDelete(action = OnDeleteAction.CASCADE)

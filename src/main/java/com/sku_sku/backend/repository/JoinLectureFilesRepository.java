@@ -14,8 +14,6 @@ public interface JoinLectureFilesRepository extends JpaRepository<JoinLectureFil
 
     List<JoinLectureFile> findByLecture(Lecture lecture);
 
-    List<JoinLectureFile> findByLectureId(Long lectureId);
-
     void deleteAllByLectureAndFileKeyIn(Lecture lecture, List<String> fileKeys);
 
 
