@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -37,6 +38,8 @@ public class JoinLectureFile {
 
     private LocalDateTime createDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 강의 자료 생성일
 
+    private LocalDateTime updateDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 강의 자료 수정일
+
     // 생성자
     public JoinLectureFile(Lecture lecture, String fileName, AllowedFileType fileType, Long fileSize, String fileUrl, String fileKey) {
         this.lecture = lecture;
@@ -46,5 +49,15 @@ public class JoinLectureFile {
         this.fileUrl = fileUrl;
         this.fileKey = fileKey;
         this.createDate = LocalDateTime.now(); // 생성 당시 시간
+    }
+
+    public void updateJoinLectureFile(Lecture lecture, String fileName, AllowedFileType fileType, Long fileSize, String fileUrl, String fileKey) {
+        this.lecture = lecture;
+        this.fileName = fileName;
+        this.fileType = fileType;
+        this.fileSize = fileSize;
+        this.fileUrl = fileUrl;
+        this.fileKey = fileKey;
+        this.updateDate = LocalDateTime.now(); // 수정 당시 시간
     }
 }
