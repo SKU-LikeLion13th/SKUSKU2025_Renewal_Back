@@ -46,6 +46,9 @@ public class JoinLectureFilesService {
                             dto.getFileUrl(),
                             dto.getFileKey()
                     );
+                    System.out.println("파일 타입: " + dto.getFileType());
+                    System.out.println("파일 URL: " + dto.getFileUrl());
+                    System.out.println("파일 키: " + dto.getFileKey());
                     return joinLectureFile;
                 })
                 .toList();
