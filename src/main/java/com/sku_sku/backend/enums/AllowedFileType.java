@@ -1,5 +1,8 @@
 package com.sku_sku.backend.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.util.Arrays;
 
 public enum AllowedFileType {
@@ -35,17 +38,37 @@ public enum AllowedFileType {
         return mimeType;
     }
 
-    // 확장자 또는 MIME 타입 기준 검사
-    public static boolean isAllowedExtension(String ext) {
-        return Arrays.stream(values()).anyMatch(type -> type.extension.equalsIgnoreCase(ext));
+    @JsonCreator
+    public static AllowedFileType from(String input) {
+        if (input == null) return null;
+
+        return Arrays.stream(values())
+                .filter(type ->
+                        type.name().equalsIgnoreCase(input) ||
+                                type.extension.equalsIgnoreCase(input) ||
+                                type.mimeType.equalsIgnoreCase(input))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("허용되지 않은 파일 타입: " + input));
+    }
+
+    @JsonValue
+    public String toValue() {
+        return name();
     }
 
     public static boolean isAllowedMimeType(String mime) {
-        return Arrays.stream(values()).anyMatch(type -> type.mimeType.equalsIgnoreCase(mime));
+        return Arrays.stream(values())
+                .anyMatch(type -> type.mimeType.equalsIgnoreCase(mime));
+    }
+
+    public static boolean isAllowedExtension(String ext) {
+        return Arrays.stream(values())
+                .anyMatch(type -> type.extension.equalsIgnoreCase(ext));
     }
 
     public static boolean isAllowed(String ext, String mime) {
-        return Arrays.stream(values()).anyMatch(type ->
-                type.extension.equalsIgnoreCase(ext) && type.mimeType.equalsIgnoreCase(mime));
+        return Arrays.stream(values())
+                .anyMatch(type -> type.extension.equalsIgnoreCase(ext)
+                        && type.mimeType.equalsIgnoreCase(mime));
     }
 }
