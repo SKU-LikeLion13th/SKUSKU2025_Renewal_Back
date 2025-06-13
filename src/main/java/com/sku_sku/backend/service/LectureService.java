@@ -53,7 +53,10 @@ public class LectureService {
                 getOrDefault(req.getContent(), lecture.getContent()),
                 newWriter
         );
-
+        System.out.println("파일 트랙타입: " + req.getTrackType());
+        System.out.println("파일 타이틀: " + req.getTitle());
+        System.out.println("파일 내용: " + req.getContent());
+        System.out.println("파일 리스트: " + req.getFiles());
         List<UpdateLectureFileDTO> files = req.getFiles();
         if (files != null && !files.isEmpty()) {
 
