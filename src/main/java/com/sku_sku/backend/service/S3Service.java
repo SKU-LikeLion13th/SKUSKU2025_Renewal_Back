@@ -57,7 +57,8 @@ public class S3Service {
         if (!AllowedFileType.isAllowedMimeType(req.getMimeType())) {
             throw new IllegalArgumentException("허용되지 않은 MIME 타입입니다.");
         }
-
+        System.out.println("FileName: " + req.getFileName());
+        System.out.println("MimeType: " + req.getMimeType());
         // 확장자 추출
         String ext = Optional.ofNullable(req.getFileName())
                 .filter(f -> f.contains("."))
