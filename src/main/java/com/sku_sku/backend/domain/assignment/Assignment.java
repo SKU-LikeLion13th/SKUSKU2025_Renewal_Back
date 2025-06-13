@@ -27,11 +27,21 @@ public class Assignment {
 
     private LocalDateTime createDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 과제 생성일
 
+    private LocalDateTime updateDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 과제 수정일
+
     public Assignment(String title, TrackType trackType, String description, QuizType quizType){
-        this.title=title;
-        this.trackType=trackType;
-        this.description=description;
-        this.quizType=quizType;
-        this.createDate=LocalDateTime.now();
+        this.title = title;
+        this.trackType = trackType;
+        this.description = description;
+        this.quizType = quizType;
+        this.createDate = LocalDateTime.now();
+    }
+
+    public void updateAssignment(String title, TrackType trackType, String description, QuizType quizType){
+        this.title = title;
+        this.trackType = trackType;
+        this.description = description;
+        this.quizType = quizType;
+        this.updateDate = LocalDateTime.now();
     }
 }

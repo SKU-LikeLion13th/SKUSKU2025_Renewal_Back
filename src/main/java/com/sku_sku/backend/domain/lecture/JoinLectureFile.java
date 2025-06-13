@@ -28,6 +28,7 @@ public class JoinLectureFile {
 
     private String fileName; // 강의 자료 이름
 
+    @Enumerated(EnumType.STRING)
     private AllowedFileType fileType; // 강의 자료 타입
 
     private Long fileSize; // 강의 자료 사이즈

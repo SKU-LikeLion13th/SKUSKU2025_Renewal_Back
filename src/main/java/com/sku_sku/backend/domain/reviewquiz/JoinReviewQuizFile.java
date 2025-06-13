@@ -1,5 +1,6 @@
 package com.sku_sku.backend.domain.reviewquiz;
 
+import com.sku_sku.backend.enums.AllowedFileType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,11 +24,12 @@ public class JoinReviewQuizFile {
 
     private String fileName; // 퀴즈 첨부 자료 이름
 
-    private String fileType; // 퀴즈 첨부 자료 타입
+    @Enumerated(EnumType.STRING)
+    private AllowedFileType fileType; // 퀴즈 첨부 자료 타입
 
     private Long fileSize; // 퀴즈 첨부 자료 사이즈
 
-    public JoinReviewQuizFile(ReviewQuiz reviewQuiz, String fileUrl, String fileName, String fileType, Long fileSize) {
+    public JoinReviewQuizFile(ReviewQuiz reviewQuiz, String fileUrl, String fileName, AllowedFileType fileType, Long fileSize) {
         this.ReviewQuiz = reviewQuiz;
         this.fileUrl = fileUrl;
         this.fileName = fileName;

@@ -5,6 +5,7 @@ import com.sku_sku.backend.domain.assignment.Assignment;
 import com.sku_sku.backend.domain.assignment.Feedback;
 import com.sku_sku.backend.domain.assignment.JoinSubmitAssignmentFile;
 import com.sku_sku.backend.domain.assignment.SubmitAssignment;
+import com.sku_sku.backend.domain.lecture.JoinLectureFile;
 import com.sku_sku.backend.dto.Request.AssignmentDTO;
 import com.sku_sku.backend.dto.Response.AssignmentDTO.*;
 import com.sku_sku.backend.dto.Response.AssignmentDTO.AssignmentRes;
@@ -47,39 +48,44 @@ public class AssignmentService {
     private final JwtUtility jwtUtility;
     private final EmailService emailService;
 
-    //과제 제출
+    //과제 제출 // 고민 필요함
     @Transactional
-    public void saveSubmittedAssignment(HttpServletRequest header, AssignmentDTO.SubmitAssignment request) throws IOException {
+    public void saveSubmittedAssignment(HttpServletRequest header, AssignmentDTO.SubmitAssignment req) throws IOException {
         String token = jwtUtility.extractTokenFromCookies(header);
         jwtUtility.validateJwt(token);
-        Lion lion=lionService.tokenToLion(token);
+        Lion lion = lionService.tokenToLion(token);
 
-        Assignment assignment=assignmentRepository.findById(request.getAssignmentId())
+        Assignment assignment = assignmentRepository.findById(req.getAssignmentId())
                 .orElseThrow(()-> new InvalidAssignmentException("해당 과제가 없습니다."));
 
         Optional<SubmitAssignment> existing = submitAssignmentRepository.findByAssignmentAndLionId(assignment, lion.getId());
 
         SubmitAssignment submitAssignment;
 
-        if(existing.isPresent()){
-            submitAssignment=existing.get();
-            submitAssignment.updateSubmitAssignment(request.getContent());
+        if(existing.isPresent()) {
+            submitAssignment = existing.get();
+            submitAssignment.updateSubmitAssignment(req.getContent());
 
             joinSubmitAssignmentFileRepository.deleteAllBySubmitAssignment(submitAssignment);
-        }else{
-            submitAssignment=new SubmitAssignment(assignment, lion, request.getContent());
+        } else {
+            submitAssignment=new SubmitAssignment(assignment, lion, req.getContent());
         }
 
         submitAssignmentRepository.save(submitAssignment);
 
-        if(request.getFiles() != null){
-            for(MultipartFile multipartFile : request.getFiles()){
-                if(!multipartFile.isEmpty()){
-                    JoinSubmitAssignmentFile joinSubmitAssignmentFile = new JoinSubmitAssignmentFile(submitAssignment, multipartFile.getBytes());
+        if(req.getFiles() != null){
+            List<JoinSubmitAssignmentFile> joinSubmitAssignmentFiles = req.getFiles().stream()
+                    .map(dto -> new JoinSubmitAssignmentFile(
+                            submitAssignment,
+                            dto.getFileName(),
+                            dto.getFileType(),
+                            dto.getFileSize(),
+                            dto.getFileUrl(),
+                            dto.getFileKey()
+                    ))
+                    .toList();
 
-                    joinSubmitAssignmentFileRepository.save(joinSubmitAssignmentFile);
-                }
-            }
+            joinSubmitAssignmentFileRepository.saveAll(joinSubmitAssignmentFiles);
         }
     }
 
@@ -101,7 +107,6 @@ public class AssignmentService {
                 request.getDescription(),
                 request.getQuizType()
         );
-
         assignmentRepository.save(assignment);
     }
 
@@ -239,5 +244,4 @@ public class AssignmentService {
 
         return dto;
     }
-
 }

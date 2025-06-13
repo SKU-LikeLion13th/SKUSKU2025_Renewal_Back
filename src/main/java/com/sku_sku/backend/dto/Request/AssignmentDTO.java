@@ -18,7 +18,7 @@ public class AssignmentDTO {
         @Schema(description = "과제 작성 내용", example = "주관식 답변")
         private String content;
         @Schema(description = "파일", example = "[스프링 의존성.java, 캡쳐.jpg]")
-        private List<MultipartFile> files;
+        private List<JoinSubmitAssignmentFileDTO.submitAssignmentFileDTO> files;
     }
 
 

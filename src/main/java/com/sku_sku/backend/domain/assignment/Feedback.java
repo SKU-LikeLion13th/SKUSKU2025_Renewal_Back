@@ -25,13 +25,16 @@ public class Feedback {
 
     private LocalDateTime createDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 피드백 생성일
 
+    private LocalDateTime updateDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 피드백 수정일
+
     public Feedback(SubmitAssignment submitAssignment, String content){
-        this.submitAssignment=submitAssignment;
-        this.content=content;
-        this.createDate=LocalDateTime.now();
+        this.submitAssignment = submitAssignment;
+        this.content = content;
+        this.createDate = LocalDateTime.now();
     }
 
     public void updateFeedback(String content){
-        this.content=content;
+        this.content = content;
+        this.updateDate = LocalDateTime.now();
     }
 }
