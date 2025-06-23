@@ -3,7 +3,7 @@ package com.sku_sku.backend.controller;
 import com.sku_sku.backend.dto.Request.ReviewQuizDTO;
 import com.sku_sku.backend.dto.Request.ReviewWeekDTO;
 import com.sku_sku.backend.security.JwtUtility;
-import com.sku_sku.backend.service.ReviewQuizService;
+import com.sku_sku.backend.service.reviewquiz.ReviewQuizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;

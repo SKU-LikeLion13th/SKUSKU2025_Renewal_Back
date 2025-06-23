@@ -1,8 +1,7 @@
 package com.sku_sku.backend.controller.admin;
 
 
-import com.sku_sku.backend.dto.Request.ReviewQuizDTO;
-import com.sku_sku.backend.service.ReviewQuizService;
+import com.sku_sku.backend.service.reviewquiz.ReviewQuizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;

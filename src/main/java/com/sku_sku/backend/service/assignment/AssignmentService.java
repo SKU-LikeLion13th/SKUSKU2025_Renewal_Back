@@ -1,11 +1,10 @@
-package com.sku_sku.backend.service;
+package com.sku_sku.backend.service.assignment;
 
 import com.sku_sku.backend.domain.Lion;
 import com.sku_sku.backend.domain.assignment.Assignment;
 import com.sku_sku.backend.domain.assignment.Feedback;
 import com.sku_sku.backend.domain.assignment.JoinSubmitAssignmentFile;
 import com.sku_sku.backend.domain.assignment.SubmitAssignment;
-import com.sku_sku.backend.domain.lecture.JoinLectureFile;
 import com.sku_sku.backend.dto.Request.AssignmentDTO;
 import com.sku_sku.backend.dto.Response.AssignmentDTO.*;
 import com.sku_sku.backend.dto.Response.AssignmentDTO.AssignmentRes;
@@ -21,13 +20,12 @@ import com.sku_sku.backend.repository.FeedbackRepository;
 import com.sku_sku.backend.repository.JoinSubmitAssignmentFileRepository;
 import com.sku_sku.backend.repository.SubmitAssignmentRepository;
 import com.sku_sku.backend.security.JwtUtility;
+import com.sku_sku.backend.service.LionService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;

@@ -1,20 +1,18 @@
-package com.sku_sku.backend.service;
+package com.sku_sku.backend.service.reviewquiz;
 
 import com.sku_sku.backend.domain.Lion;
 import com.sku_sku.backend.domain.reviewquiz.*;
-import com.sku_sku.backend.dto.Request.JoinReviewQuizFileDTO;
 import com.sku_sku.backend.dto.Request.ReviewQuizDTO;
 import com.sku_sku.backend.enums.AnswerStatus;
 import com.sku_sku.backend.enums.QuizType;
-import com.sku_sku.backend.enums.TrackType;
 import com.sku_sku.backend.repository.*;
+import com.sku_sku.backend.service.GeminiService;
+import com.sku_sku.backend.service.LionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +29,7 @@ public class ReviewQuizService  {
 
     private final ReviewWeekRepository reviewWeekRepository;
     private final ReviewQuizRepository reviewQuizRepository;
-    private final JoinReviewQuizFileRepository joinReviewQuizFileRepository;
+    private final JoinReviewQuizFileService joinReviewQuizFileService;
     private final AnswerChoiceRepository answerChoiceRepository;
     private final LionService lionService;
     private final ReviewQuizResponseRepository reviewQuizResponseRepository;
@@ -51,16 +49,9 @@ public class ReviewQuizService  {
             reviewQuizRepository.save(reviewQuiz);
 
             if (reviewQuizDTO.getFiles()!=null) {
-                for (JoinReviewQuizFileField file : reviewQuizDTO.getFiles()) {
-                    JoinReviewQuizFile joinReviewQuizFile = new JoinReviewQuizFile(
-                            reviewQuiz,
-                            file.getFileUrl(),
-                            file.getFileName(),
-                            file.getFileType(),
-                            file.getFileSize());
-                    joinReviewQuizFileRepository.save(joinReviewQuizFile);
-                }
+                joinReviewQuizFileService.createJoinReviewQuizFiles(reviewQuiz, reviewQuizDTO.getFiles());
             }
+
             if (reviewQuizDTO.getQuizType()== QuizType.MULTIPLE_CHOICE){
                 for(String StringAnswerChoice : reviewQuizDTO.getAnswerChoiceList()){
                     AnswerChoice answerChoice = new AnswerChoice(reviewQuiz, StringAnswerChoice);
@@ -69,6 +60,39 @@ public class ReviewQuizService  {
             }
         }
     }
+
+//    @Transactional
+//    public void addQuiz(AddQuizRequest req) {
+//        ReviewWeek reviewWeek = new ReviewWeek(req.getTrackType(), req.getTitle());
+//        reviewWeekRepository.save(reviewWeek);
+//        for (reviewQuizDTO reviewQuizDTO : req.getReviewQuizDTOList()) {
+//            ReviewQuiz reviewQuiz = new ReviewQuiz(
+//                    reviewWeek,
+//                    reviewQuizDTO.getContent(),
+//                    reviewQuizDTO.getExplanation(),
+//                    reviewQuizDTO.getAnswer(),
+//                    reviewQuizDTO.getQuizType());
+//            reviewQuizRepository.save(reviewQuiz);
+//
+//            if (reviewQuizDTO.getFiles()!=null) {
+//                for (JoinReviewQuizFileField file : reviewQuizDTO.getFiles()) {
+//                    JoinReviewQuizFile joinReviewQuizFile = new JoinReviewQuizFile(
+//                            reviewQuiz,
+//                            file.getFileUrl(),
+//                            file.getFileName(),
+//                            file.getFileType(),
+//                            file.getFileSize());
+//                    joinReviewQuizFileRepository.save(joinReviewQuizFile);
+//                }
+//            }
+//            if (reviewQuizDTO.getQuizType()== QuizType.MULTIPLE_CHOICE){
+//                for(String StringAnswerChoice : reviewQuizDTO.getAnswerChoiceList()){
+//                    AnswerChoice answerChoice = new AnswerChoice(reviewQuiz, StringAnswerChoice);
+//                    answerChoiceRepository.save(answerChoice);
+//                }
+//            }
+//        }
+//    }
 
     @Transactional
     public SolveAnswerList solveReviewQuiz(String token, SolveRequest solveRequest) {

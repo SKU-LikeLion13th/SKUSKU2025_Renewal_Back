@@ -1,11 +1,7 @@
-package com.sku_sku.backend.service;
+package com.sku_sku.backend.service.assignment;
 
-import com.sku_sku.backend.domain.assignment.Assignment;
 import com.sku_sku.backend.domain.assignment.JoinSubmitAssignmentFile;
 import com.sku_sku.backend.domain.assignment.SubmitAssignment;
-import com.sku_sku.backend.domain.lecture.JoinLectureFile;
-import com.sku_sku.backend.domain.lecture.Lecture;
-import com.sku_sku.backend.dto.Request.JoinLectureFileDTO;
 import com.sku_sku.backend.dto.Request.JoinSubmitAssignmentFileDTO;
 import com.sku_sku.backend.repository.JoinSubmitAssignmentFileRepository;
 import lombok.RequiredArgsConstructor;

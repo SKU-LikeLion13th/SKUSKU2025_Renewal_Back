@@ -1,4 +1,4 @@
-package com.sku_sku.backend.service;
+package com.sku_sku.backend.service.lecture;
 
 
 import com.sku_sku.backend.domain.lecture.JoinLectureFile;

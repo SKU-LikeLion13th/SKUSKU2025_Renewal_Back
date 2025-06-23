@@ -3,7 +3,7 @@ package com.sku_sku.backend.controller;
 import com.sku_sku.backend.dto.Request.AssignmentDTO;
 import com.sku_sku.backend.dto.Response.AssignmentDTO.*;
 import com.sku_sku.backend.enums.TrackType;
-import com.sku_sku.backend.service.AssignmentService;
+import com.sku_sku.backend.service.assignment.AssignmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

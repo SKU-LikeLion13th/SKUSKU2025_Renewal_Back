@@ -1,4 +1,4 @@
-package com.sku_sku.backend.service;
+package com.sku_sku.backend.service.lecture;
 
 
 import com.sku_sku.backend.domain.lecture.JoinLectureFile;
@@ -13,6 +13,7 @@ import com.sku_sku.backend.exception.InvalidIdException;
 import com.sku_sku.backend.repository.JoinLectureFilesRepository;
 import com.sku_sku.backend.repository.LectureRepository;
 import com.sku_sku.backend.security.JwtUtility;
+import com.sku_sku.backend.service.S3Service;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

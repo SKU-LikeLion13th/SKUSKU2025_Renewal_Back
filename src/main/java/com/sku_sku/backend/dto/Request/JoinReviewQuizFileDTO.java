@@ -8,13 +8,15 @@ public class JoinReviewQuizFileDTO {
 
     @Data
     public static class JoinReviewQuizFileField{
-        @Schema(description = "퀴즈 첨부 자료 CDN URL", example = "")
-        private String fileUrl;
-        @Schema(description = "퀴즈 첨부 자료 이름", example = "Spring.pdf")
+        @Schema(description = "퀴즈 첨부 파일 이름", example = "Spring.pdf")
         private String fileName;
-        @Schema(description = "퀴즈 첨부 자료 유형", example = "application/pdf")
+        @Schema(description = "퀴즈 첨부 파일 유형", example = "PDF")
         private AllowedFileType fileType;
-        @Schema(description = "퀴즈 첨부 자료 사이즈", example = "65362")
+        @Schema(description = "퀴즈 첨부 파일 사이즈", example = "65362")
         private Long fileSize;
+        @Schema(description = "퀴즈 첨부 파일 CDN URL", example = "https://~~~")
+        private String fileUrl;
+        @Schema(description = "퀴즈 첨부 파일 저장된 경로", example = "uploads/{uuid}.png")
+        private String fileKey;
     }
 }

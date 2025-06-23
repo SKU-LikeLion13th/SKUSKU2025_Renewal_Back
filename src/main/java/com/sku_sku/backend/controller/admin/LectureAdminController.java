@@ -1,7 +1,7 @@
 package com.sku_sku.backend.controller.admin;
 
 import com.sku_sku.backend.dto.Request.LectureDTO;
-import com.sku_sku.backend.service.LectureService;
+import com.sku_sku.backend.service.lecture.LectureService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
