@@ -48,7 +48,7 @@ public class ReviewQuizService  {
                     reviewQuizDTO.getQuizType());
             reviewQuizRepository.save(reviewQuiz);
 
-            if (reviewQuizDTO.getFiles()!=null) {
+            if (reviewQuizDTO.getFiles()!= null) {
                 joinReviewQuizFileService.createJoinReviewQuizFiles(reviewQuiz, reviewQuizDTO.getFiles());
             }
 

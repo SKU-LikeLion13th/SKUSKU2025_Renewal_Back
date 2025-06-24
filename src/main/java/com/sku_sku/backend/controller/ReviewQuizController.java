@@ -21,9 +21,8 @@ public class ReviewQuizController {
     private final JwtUtility jwtUtility;
 
     //주차별 퀴즈 리스트 조회
-
     @GetMapping("/reviewWeek")
-    public List<ReviewWeekDTO.showReviewWeek> reviewWeekView(@RequestHeader("Authorization") String bearer){
+    public List<ReviewWeekDTO.showReviewWeek> reviewWeekView(){
         return null;
     }
 
