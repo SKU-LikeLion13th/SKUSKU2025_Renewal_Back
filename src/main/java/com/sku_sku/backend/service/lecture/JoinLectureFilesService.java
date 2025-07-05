@@ -36,21 +36,14 @@ public class JoinLectureFilesService {
     @Transactional
     public void updateJoinLectureFiles(Lecture lecture, List<JoinLectureFileDTO.UpdateLectureFileDTO> files) {
         List<JoinLectureFile> joinLectureFileList = files.stream()
-                .map(dto -> {
-                    JoinLectureFile joinLectureFile = new JoinLectureFile();
-                    joinLectureFile.updateJoinLectureFile(
+                .map(dto -> new JoinLectureFile(
                             lecture,
                             dto.getFileName(),
                             dto.getFileType(),
                             dto.getFileSize(),
                             dto.getFileUrl(),
                             dto.getFileKey()
-                    );
-                    System.out.println("파일 타입: " + dto.getFileType());
-                    System.out.println("파일 URL: " + dto.getFileUrl());
-                    System.out.println("파일 키: " + dto.getFileKey());
-                    return joinLectureFile;
-                })
+                    ))
                 .toList();
 
         joinLectureFilesRepository.saveAll(joinLectureFileList);
