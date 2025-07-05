@@ -1,7 +1,7 @@
 package com.sku_sku.backend.controller;
 
 import com.sku_sku.backend.dto.Response.LectureDTO.ResponseLecture;
-import com.sku_sku.backend.dto.Response.LectureDTO.ResponseLectureWithoutFiles;
+import com.sku_sku.backend.dto.Response.LectureDTO.ResponseLectureIncludeFileKey;
 import com.sku_sku.backend.enums.TrackType;
 import com.sku_sku.backend.service.lecture.LectureService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,12 +34,12 @@ public class LectureController {
         return ResponseEntity.status(HttpStatus.OK).body(responseLecture);
     }
 
-    @Operation(summary = "(민규) 트랙별 모든 강의자료 조회 without file", description = "경로 변수로 트랙 타입 필요(BACKEND or FRONTEND or DESIGN)",
+    @Operation(summary = "(민규) 트랙별 모든 강의자료 조회 filekey 포함", description = "경로 변수로 트랙 타입 필요(BACKEND or FRONTEND or DESIGN)",
             responses = {@ApiResponse(responseCode = "200", description = "트랙별 모든 강의 조회 성공"),
                     @ApiResponse(responseCode = "404", description = "강의 자료 하나도 없")})
     @GetMapping("/all/{track}")
-    public ResponseEntity<List<ResponseLectureWithoutFiles>> getAllLectureByTrack(@PathVariable("track") TrackType track) {
-        List<ResponseLectureWithoutFiles> lectureFiles = lectureService.findAllLectureByTrack(track);
-        return ResponseEntity.ok(lectureFiles);
+    public ResponseEntity<List<ResponseLectureIncludeFileKey>> getAllLectureByTrack(@PathVariable("track") TrackType track) {
+        List<ResponseLectureIncludeFileKey> lectureFiles = lectureService.findAllLectureByTrack(track);
+        return ResponseEntity.status(HttpStatus.OK).body(lectureFiles);
     }
 }

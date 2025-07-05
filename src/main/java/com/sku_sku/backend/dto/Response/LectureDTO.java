@@ -32,7 +32,7 @@ public class LectureDTO {
 
     @Data
     @AllArgsConstructor
-    public static class ResponseLectureWithoutFiles {
+    public static class ResponseLectureIncludeFileKey {
         @Schema(description = "강의 안내물 id", example = "1")
         private Long id;
         @Schema(description = "트랙", example = "BACKEND or FRONTEND or DESIGN")
@@ -45,5 +45,7 @@ public class LectureDTO {
         private String writer;
         @Schema(description = "강의 안내물 작성 시간", example = "YYYY-MM-DD")
         private LocalDateTime createDateTime;
+        @Schema(description = "프로젝트 사진 저장된 경로", example = "uploads/{uuid}.png")
+        private String fileKey;
     }
 }

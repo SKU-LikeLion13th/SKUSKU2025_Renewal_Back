@@ -5,7 +5,7 @@ import com.sku_sku.backend.domain.lecture.JoinLectureFile;
 import com.sku_sku.backend.domain.lecture.Lecture;
 import com.sku_sku.backend.dto.Response.JoinLectureFileDTO.LectureFileDTOWithoutFileKey;
 import com.sku_sku.backend.dto.Request.LectureDTO;
-import com.sku_sku.backend.dto.Response.LectureDTO.ResponseLectureWithoutFiles;
+import com.sku_sku.backend.dto.Response.LectureDTO.ResponseLectureIncludeFileKey;
 import com.sku_sku.backend.enums.FileStatusType;
 import com.sku_sku.backend.enums.TrackType;
 import com.sku_sku.backend.exception.EmptyLectureException;
@@ -123,7 +123,7 @@ public class LectureService {
                 .build();
     }
 
-    public List<ResponseLectureWithoutFiles> findAllLectureByTrack(TrackType trackType) {
+    public List<ResponseLectureIncludeFileKey> findAllLectureByTrack(TrackType trackType) {
         List<Lecture> lectures = lectureRepository.findByTrackOrderByCreateDateTimeDesc(trackType)
                 .orElseThrow(EmptyLectureException::new);
         return lectures.stream()
@@ -131,14 +131,16 @@ public class LectureService {
                 .toList();
     }
 
-    private ResponseLectureWithoutFiles convertToResponseLectureWithoutFilesDTO(Lecture lecture) {
-        return new ResponseLectureWithoutFiles(
+    private ResponseLectureIncludeFileKey convertToResponseLectureWithoutFilesDTO(Lecture lecture) {
+        String fileKey = joinLectureFilesRepository.findByLecture(lecture).getFirst().getFileKey();
+        return new ResponseLectureIncludeFileKey(
                 lecture.getId(),
                 lecture.getTrack(),
                 lecture.getTitle(),
                 lecture.getContent(),
                 lecture.getWriter(),
-                lecture.getCreateDateTime()
+                lecture.getCreateDateTime(),
+                fileKey
         );
     }
 }
