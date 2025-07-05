@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -26,6 +28,9 @@ public class Lecture {
     private LocalDateTime createDateTime; // YYYY-MM-DD HH:MM:SS.nnnnnn // 강의 안내물 생성일
 
     private LocalDateTime updateDateTime; // YYYY-MM-DD HH:MM:SS.nnnnnn // 강의 안내물 수정일
+
+    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<JoinLectureFile> files = new ArrayList<>();
 
     // 생성자
     public Lecture(TrackType track, String title, String content, String writer) {
