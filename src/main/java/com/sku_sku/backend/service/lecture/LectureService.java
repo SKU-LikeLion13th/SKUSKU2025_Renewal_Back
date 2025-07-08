@@ -16,6 +16,8 @@ import com.sku_sku.backend.security.JwtUtility;
 import com.sku_sku.backend.service.S3Service;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,15 +37,16 @@ public class LectureService {
     private final S3Service s3Service;
 
     @Transactional // 강의 안내물 생성 로직
-    public void createLecture(HttpServletRequest header, LectureDTO.createLectureRequest req) {
-        String writer = jwtUtility.getClaimsFromCookies(header).get("name", String.class);
+    public void createLecture(OAuth2User oAuth2User, LectureDTO.createLectureRequest req) {
+        String writer = oAuth2User.getName();
         Lecture lecture = new Lecture(req.getTrackType(), req.getTitle(), req.getContent(), writer);
-        joinLectureFilesService.createJoinLectureFiles(lectureRepository.save(lecture), req.getFiles());
+        Lecture persistedLecture = lectureRepository.save(lecture);
+        joinLectureFilesService.createJoinLectureFiles(persistedLecture, req.getFiles());
     }
 
     @Transactional
-    public void updateLecture(HttpServletRequest header, LectureDTO.updateLectureRequest req) {
-        String newWriter = jwtUtility.getClaimsFromCookies(header).get("name", String.class);
+    public void updateLecture(OAuth2User oAuth2User, LectureDTO.updateLectureRequest req) {
+        String newWriter = oAuth2User.getName();
         Lecture lecture = lectureRepository.findById(req.getId())
                 .orElseThrow(() -> new InvalidIdException("lecture"));
 

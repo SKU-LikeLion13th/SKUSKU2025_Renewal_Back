@@ -9,6 +9,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -24,9 +27,9 @@ public class LectureAdminController {
     @Operation(summary = "(민규) 강의자료 추가", description = "",
             responses = {@ApiResponse(responseCode = "201", description = "강의자료 생성 성공")})
     @PostMapping("/add")
-    public ResponseEntity<String> uploadFiles(HttpServletRequest header,
+    public ResponseEntity<String> uploadFiles(@AuthenticationPrincipal OAuth2User oAuth2User,
                                                @RequestBody LectureDTO.createLectureRequest request) throws IOException {
-        lectureService.createLecture(header, request);
+        lectureService.createLecture(oAuth2User, request);
         return ResponseEntity.status(HttpStatus.CREATED).body("강의자료 생성 성공");
     }
 
@@ -34,9 +37,9 @@ public class LectureAdminController {
             responses = {@ApiResponse(responseCode = "201", description = "강의자료 수정 성공"),
                     @ApiResponse(responseCode = "404", description = "그 id에 해당하는 값 없")})
     @PutMapping("/update")
-    public ResponseEntity<String> updateLecture(HttpServletRequest header,
+    public ResponseEntity<String> updateLecture(@AuthenticationPrincipal OAuth2User oAuth2User,
                                                 @RequestBody LectureDTO.updateLectureRequest request) throws IOException {
-        lectureService.updateLecture(header, request);
+        lectureService.updateLecture(oAuth2User, request);
         return ResponseEntity.status(HttpStatus.CREATED).body("강의자료 수정 성공");
     }
 
