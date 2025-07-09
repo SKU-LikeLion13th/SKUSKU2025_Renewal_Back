@@ -12,4 +12,6 @@ public interface SubmitAssignmentRepository extends JpaRepository<SubmitAssignme
     Optional<SubmitAssignment> findByAssignmentAndLionId(Assignment assignment, Long lionId);
 
     List<SubmitAssignment> findByAssignmentId(Long assignmentId);
+
+
 }

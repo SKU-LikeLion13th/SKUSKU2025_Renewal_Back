@@ -18,7 +18,7 @@ public class JoinSubmitAssignmentFileService {
     private final JoinSubmitAssignmentFileRepository joinSubmitAssignmentFileRepository;
 
     @Transactional
-    public void createJoinLectureFiles(SubmitAssignment submitAssignment, List<JoinSubmitAssignmentFileDTO.submitAssignmentFileDTO> files) {
+    public void createJoinSubmitAssignmentFiles(SubmitAssignment submitAssignment, List<JoinSubmitAssignmentFileDTO.submitAssignmentFileDTO> files) {
         List<JoinSubmitAssignmentFile> joinSubmitAssignmentFiles = files.stream()
                 .map(dto -> new JoinSubmitAssignmentFile(
                         submitAssignment,

@@ -31,6 +31,8 @@ public class AssignmentDTO {
         private QuizType quizType;
         @Schema(description = "트랙 타입", example = "BACKEND")
         private TrackType trackType;
+        @Schema(description = "파일", example = "파일 넣어")
+        private List<JoinAssignmentFileDTO.AssignmentFileDTO> files;
     }
 
     @Data
@@ -42,5 +44,6 @@ public class AssignmentDTO {
         @Schema(description = "운영진 확인", example = "PASS")
         private PassNonePass passNonePass;
     }
+
 
 }
