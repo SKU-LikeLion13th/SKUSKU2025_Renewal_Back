@@ -3,7 +3,6 @@ package com.sku_sku.backend.repository;
 
 import com.sku_sku.backend.domain.lecture.Lecture;
 import com.sku_sku.backend.enums.TrackType;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -1,6 +1,5 @@
 package com.sku_sku.backend.exception;
 
-import jakarta.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;

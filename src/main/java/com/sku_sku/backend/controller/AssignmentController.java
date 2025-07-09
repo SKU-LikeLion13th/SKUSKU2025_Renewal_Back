@@ -1,7 +1,8 @@
 package com.sku_sku.backend.controller;
 
 import com.sku_sku.backend.dto.Request.AssignmentDTO;
-import com.sku_sku.backend.dto.Response.AssignmentDTO.*;
+import com.sku_sku.backend.dto.Response.AssignmentDTO.AssignmentDetail;
+import com.sku_sku.backend.dto.Response.AssignmentDTO.AssignmentRes;
 import com.sku_sku.backend.enums.TrackType;
 import com.sku_sku.backend.service.assignment.AssignmentService;
 import io.swagger.v3.oas.annotations.Operation;

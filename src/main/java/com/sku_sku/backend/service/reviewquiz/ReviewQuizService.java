@@ -1,11 +1,16 @@
 package com.sku_sku.backend.service.reviewquiz;
 
 import com.sku_sku.backend.domain.Lion;
-import com.sku_sku.backend.domain.reviewquiz.*;
-import com.sku_sku.backend.dto.Request.ReviewQuizDTO;
+import com.sku_sku.backend.domain.reviewquiz.AnswerChoice;
+import com.sku_sku.backend.domain.reviewquiz.ReviewQuiz;
+import com.sku_sku.backend.domain.reviewquiz.ReviewQuizResponse;
+import com.sku_sku.backend.domain.reviewquiz.ReviewWeek;
 import com.sku_sku.backend.enums.AnswerStatus;
 import com.sku_sku.backend.enums.QuizType;
-import com.sku_sku.backend.repository.*;
+import com.sku_sku.backend.repository.AnswerChoiceRepository;
+import com.sku_sku.backend.repository.ReviewQuizRepository;
+import com.sku_sku.backend.repository.ReviewQuizResponseRepository;
+import com.sku_sku.backend.repository.ReviewWeekRepository;
 import com.sku_sku.backend.service.GeminiService;
 import com.sku_sku.backend.service.LionService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.sku_sku.backend.dto.Request.JoinReviewQuizFileDTO.*;
 import static com.sku_sku.backend.dto.Request.ReviewQuizDTO.*;
 
 @Service

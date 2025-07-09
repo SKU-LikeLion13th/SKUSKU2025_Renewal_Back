@@ -1,6 +1,5 @@
 package com.sku_sku.backend.domain.assignment;
 
-import com.sku_sku.backend.domain.lecture.Lecture;
 import com.sku_sku.backend.enums.AllowedFileType;
 import jakarta.persistence.*;
 import lombok.Getter;

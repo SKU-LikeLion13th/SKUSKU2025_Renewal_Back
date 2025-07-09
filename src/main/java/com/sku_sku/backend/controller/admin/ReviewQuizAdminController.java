@@ -7,11 +7,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
-import static com.sku_sku.backend.dto.Request.ReviewQuizDTO.*;
+import static com.sku_sku.backend.dto.Request.ReviewQuizDTO.AddQuizRequest;
 
 @RestController
 @RequiredArgsConstructor

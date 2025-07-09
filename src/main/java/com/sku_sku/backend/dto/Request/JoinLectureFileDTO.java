@@ -3,7 +3,6 @@ package com.sku_sku.backend.dto.Request;
 import com.sku_sku.backend.enums.AllowedFileType;
 import com.sku_sku.backend.enums.FileStatusType;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
 import lombok.Data;
 
 public class JoinLectureFileDTO {

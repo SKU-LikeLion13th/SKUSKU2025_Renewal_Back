@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.sku_sku.backend.dto.Request.CalendarScheduleDTO.YearAndMonth;
@@ -24,7 +23,7 @@ public class CalendarScheduleController {
     @Operation(summary = "(민규) 캘린더 일정 달별로 조회", description = "쿼리 파라미터로 CalendarSchedule의 year, month 필요",
             responses = @ApiResponse(responseCode = "200", description = "일정 조회 성공"))
     @GetMapping("/schedules")
-    public ResponseEntity<MonthlySchedulesResponse> findMonthlySchedules(@ModelAttribute YearAndMonth req) {
+    public ResponseEntity<MonthlySchedulesResponse> findMonthlySchedules(YearAndMonth req) {
         return ResponseEntity.status(HttpStatus.OK).body(calendarScheduleService.findMonthlySchedules(req));
     }
 }

@@ -1,6 +1,5 @@
 package com.sku_sku.backend.repository;
 
-import com.sku_sku.backend.domain.Lion;
 import com.sku_sku.backend.domain.assignment.Assignment;
 import com.sku_sku.backend.domain.assignment.SubmitAssignment;
 import org.springframework.data.jpa.repository.JpaRepository;

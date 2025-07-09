@@ -4,7 +4,6 @@ package com.sku_sku.backend.service;
 import com.sku_sku.backend.domain.Lion;
 import com.sku_sku.backend.repository.LionRepository;
 import com.sku_sku.backend.security.CustomOAuth2User;
-import com.sku_sku.backend.security.JwtUtility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

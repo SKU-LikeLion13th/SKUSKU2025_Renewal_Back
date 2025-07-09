@@ -5,7 +5,6 @@ import com.sku_sku.backend.enums.QuizType;
 import com.sku_sku.backend.enums.TrackType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 

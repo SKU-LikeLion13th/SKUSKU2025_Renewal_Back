@@ -6,7 +6,8 @@ import lombok.Data;
 
 import java.util.List;
 
-import static com.sku_sku.backend.dto.Request.JoinLectureFileDTO.*;
+import static com.sku_sku.backend.dto.Request.JoinLectureFileDTO.LectureFileDTO;
+import static com.sku_sku.backend.dto.Request.JoinLectureFileDTO.UpdateLectureFileDTO;
 
 public class LectureDTO {
     @Data

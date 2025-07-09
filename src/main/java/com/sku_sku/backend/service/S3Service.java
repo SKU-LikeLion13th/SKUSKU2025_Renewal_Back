@@ -16,14 +16,14 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
-import java.lang.annotation.Documented;
 import java.net.URL;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.sku_sku.backend.dto.Request.S3DTO.*;
+import static com.sku_sku.backend.dto.Request.S3DTO.PresignedUrlRequest;
+import static com.sku_sku.backend.dto.Request.S3DTO.PresignedUrlResponse;
 
 @Service
 public class S3Service {

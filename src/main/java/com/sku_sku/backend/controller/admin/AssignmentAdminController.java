@@ -1,7 +1,9 @@
 package com.sku_sku.backend.controller.admin;
 
-import com.sku_sku.backend.dto.Request.AssignmentDTO.*;
-import com.sku_sku.backend.dto.Response.AssignmentDTO.*;
+import com.sku_sku.backend.dto.Request.AssignmentDTO.CheckSubmittedAssignment;
+import com.sku_sku.backend.dto.Request.AssignmentDTO.UploadAssignment;
+import com.sku_sku.backend.dto.Response.AssignmentDTO.FeedbackDetailRes;
+import com.sku_sku.backend.dto.Response.AssignmentDTO.SubmittedAssignmentLion;
 import com.sku_sku.backend.service.assignment.AssignmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

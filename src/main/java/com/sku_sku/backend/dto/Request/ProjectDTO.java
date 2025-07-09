@@ -2,9 +2,7 @@ package com.sku_sku.backend.dto.Request;
 
 import com.sku_sku.backend.enums.AllowedFileType;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.annotation.Nullable;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 public class ProjectDTO {
 

@@ -3,8 +3,8 @@ package com.sku_sku.backend.service.lecture;
 
 import com.sku_sku.backend.domain.lecture.JoinLectureFile;
 import com.sku_sku.backend.domain.lecture.Lecture;
-import com.sku_sku.backend.dto.Response.JoinLectureFileDTO.LectureFileDTOWithoutFileKey;
 import com.sku_sku.backend.dto.Request.LectureDTO;
+import com.sku_sku.backend.dto.Response.JoinLectureFileDTO.LectureFileDTOWithoutFileKey;
 import com.sku_sku.backend.dto.Response.LectureDTO.ResponseLectureIncludeFileKey;
 import com.sku_sku.backend.enums.FileStatusType;
 import com.sku_sku.backend.enums.TrackType;
@@ -14,17 +14,15 @@ import com.sku_sku.backend.repository.JoinLectureFilesRepository;
 import com.sku_sku.backend.repository.LectureRepository;
 import com.sku_sku.backend.security.JwtUtility;
 import com.sku_sku.backend.service.S3Service;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.sku_sku.backend.dto.Request.JoinLectureFileDTO.*;
-import static com.sku_sku.backend.dto.Response.LectureDTO.*;
+import static com.sku_sku.backend.dto.Request.JoinLectureFileDTO.UpdateLectureFileDTO;
+import static com.sku_sku.backend.dto.Response.LectureDTO.ResponseLecture;
 
 @Service
 @RequiredArgsConstructor

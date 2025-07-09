@@ -1,18 +1,13 @@
 package com.sku_sku.backend.domain.lecture;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.sku_sku.backend.enums.AllowedFileType;
-import com.sku_sku.backend.service.FileUtility;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor
