@@ -28,9 +28,9 @@ import java.util.Collections;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtility jwtUtility;
-    private final OAuth2Service oAuth2Service; // 👈 주입 추가
-    private final RedisTemplate<String, String> redisTemplate; // 👈 주입 추가
-    private final LionService lionService; // 👈 SecurityContext 재설정 위해 필요
+    private final OAuth2Service oAuth2Service; // 주입 추가
+    private final RedisTemplate<String, String> redisTemplate; // 주입 추가
+    private final LionService lionService; // SecurityContext 재설정 위해 필요
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

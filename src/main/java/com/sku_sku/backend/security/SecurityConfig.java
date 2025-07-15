@@ -26,8 +26,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(withDefaults()) // ✅ cors 등록
-                .httpBasic(httpBasic -> httpBasic.disable()) // ✅ 이게 올바른 문법
+                .cors(withDefaults()) // cors 등록
+                .httpBasic(httpBasic -> httpBasic.disable()) // 이게 올바른 문법
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
