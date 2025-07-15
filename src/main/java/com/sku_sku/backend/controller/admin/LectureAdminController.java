@@ -1,5 +1,6 @@
 package com.sku_sku.backend.controller.admin;
 
+import com.sku_sku.backend.domain.Lion;
 import com.sku_sku.backend.dto.Request.LectureDTO;
 import com.sku_sku.backend.service.lecture.LectureService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,9 +27,9 @@ public class LectureAdminController {
     @Operation(summary = "(민규) 강의자료 추가", description = "",
             responses = {@ApiResponse(responseCode = "201", description = "강의자료 생성 성공")})
     @PostMapping("/add")
-    public ResponseEntity<String> uploadFiles(HttpServletRequest header,
+    public ResponseEntity<String> uploadFiles(@AuthenticationPrincipal Lion lion,
                                               @RequestBody LectureDTO.createLectureRequest request) throws IOException {
-        lectureService.createLecture(header, request);
+        lectureService.createLecture(lion, request);
         return ResponseEntity.status(HttpStatus.CREATED).body("강의자료 생성 성공");
     }
 

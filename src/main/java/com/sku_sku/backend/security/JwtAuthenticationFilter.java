@@ -79,11 +79,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private Authentication getAuthentication(String jwt) {
         Claims claims = jwtUtility.getClaimsFromJwt(jwt);
-        String email = claims.getSubject();
+        Lion lion = lionService.findByEmail(claims.getSubject());
         RoleType roleType = RoleType.valueOf(claims.get("role", String.class));
 
         return new UsernamePasswordAuthenticationToken(
-                email,
+                lion,
                 null,
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + roleType.name()))
         );

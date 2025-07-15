@@ -1,6 +1,7 @@
 package com.sku_sku.backend.service.lecture;
 
 
+import com.sku_sku.backend.domain.Lion;
 import com.sku_sku.backend.domain.lecture.JoinLectureFile;
 import com.sku_sku.backend.domain.lecture.Lecture;
 import com.sku_sku.backend.dto.Request.LectureDTO;
@@ -36,9 +37,9 @@ public class LectureService {
     private final JwtUtility jwtUtility;
 
     @Transactional // 강의 안내물 생성 로직
-    public void createLecture(HttpServletRequest header, LectureDTO.createLectureRequest req) {
-        String writer = jwtUtility.getClaimsFromCookies(header).get("name", String.class);
-        Lecture lecture = new Lecture(req.getTrackType(), req.getTitle(), req.getContent(), writer);
+    public void createLecture(Lion lion, LectureDTO.createLectureRequest req) {
+//        String writer = jwtUtility.getClaimsFromCookies(header).get("name", String.class);
+        Lecture lecture = new Lecture(req.getTrackType(), req.getTitle(), req.getContent(), lion.getUsername());
         Lecture persistedLecture = lectureRepository.save(lecture);
         joinLectureFilesService.createJoinLectureFiles(persistedLecture, req.getFiles());
     }
