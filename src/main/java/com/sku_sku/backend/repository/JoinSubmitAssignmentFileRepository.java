@@ -10,6 +10,6 @@ import java.util.Optional;
 
 public interface JoinSubmitAssignmentFileRepository extends JpaRepository<JoinSubmitAssignmentFile, Long> {
     List<JoinSubmitAssignmentFile> findBySubmitAssignment(SubmitAssignment submitAssignment);
-    void deleteAllBySubmitAssignment(SubmitAssignment submitAssignment);
     Optional<JoinSubmitAssignmentFile> findByFileKey(String fileKey);
+    void deleteAllBySubmitAssignmentAndFileKeyIn(SubmitAssignment submitAssignment, List<String> fileKey);
 }

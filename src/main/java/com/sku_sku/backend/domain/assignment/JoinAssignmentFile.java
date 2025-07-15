@@ -37,13 +37,16 @@ public class JoinAssignmentFile {
 
     private LocalDateTime updateDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 과제 첨부 파일 수정일
 
-    public JoinAssignmentFile(Assignment assignment, String fileName, AllowedFileType fileType, Long fileSize, String fileUrl, String fileKey) {
+    private Boolean isUpdate; //수정 여부 // true or false
+
+    public JoinAssignmentFile(Assignment assignment, String fileName, AllowedFileType fileType, Long fileSize, String fileUrl, String fileKey, boolean isUpdate) {
         this.assignment = assignment;
         this.fileName = fileName;
         this.fileType = fileType;
         this.fileSize = fileSize;
         this.fileUrl = fileUrl;
         this.fileKey = fileKey;
+        this.isUpdate = isUpdate;
         this.createDate = LocalDateTime.now();
     }
     public void updateJoinAssignmentFile(Assignment assignment, String fileName, AllowedFileType fileType, Long fileSize, String fileUrl, String fileKey) {

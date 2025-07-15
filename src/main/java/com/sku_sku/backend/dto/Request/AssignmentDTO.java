@@ -37,5 +37,21 @@ public class AssignmentDTO {
         private PassNonePass passNonePass;
     }
 
+    @Data
+    public static class UpdateAssignment{
+        @Schema(description = "업로드 된 과제 id", example = "1")
+        private Long assignmentId;
+        @Schema(description = "과제 제목", example = "1주차 과제")
+        private String title;
+        @Schema(description = "트랙 타입", example = "BACKEND")
+        private TrackType trackType;
+        @Schema(description = "과제 설명", example = "스프링 의존성에 대해 정리해주세요")
+        private String description;
+        @Schema(description = "과제 타입", example = "ESSAY_QUESTION")
+        private QuizType quizType;
+        @Schema(description = "파일", example = "파일 넣어")
+        private List<JoinAssignmentFileDTO.UpdateAssignmentFileDTO> files;
+    }
+
 
 }

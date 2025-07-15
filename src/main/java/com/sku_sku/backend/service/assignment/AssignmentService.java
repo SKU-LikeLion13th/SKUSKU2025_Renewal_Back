@@ -2,15 +2,13 @@ package com.sku_sku.backend.service.assignment;
 
 import com.sku_sku.backend.domain.Lion;
 import com.sku_sku.backend.domain.assignment.*;
-import com.sku_sku.backend.dto.Request.AssignmentDTO;
-import com.sku_sku.backend.dto.Request.JoinAssignmentFileDTO;
-import com.sku_sku.backend.dto.Request.JoinSubmitAssignmentFileDTO;
-import com.sku_sku.backend.dto.Request.SubmitAssignmentDTO;
+import com.sku_sku.backend.dto.Request.*;
 import com.sku_sku.backend.dto.Response.AssignmentDTO.AssignmentDetail;
 import com.sku_sku.backend.dto.Response.AssignmentDTO.AssignmentRes;
 import com.sku_sku.backend.dto.Response.AssignmentDTO.FeedbackDetailRes;
 import com.sku_sku.backend.dto.Response.AssignmentDTO.SubmittedAssignmentLion;
 import com.sku_sku.backend.email.EmailService;
+import com.sku_sku.backend.enums.FileStatusType;
 import com.sku_sku.backend.enums.PassNonePass;
 import com.sku_sku.backend.enums.RoleType;
 import com.sku_sku.backend.enums.TrackType;
@@ -43,8 +41,6 @@ public class AssignmentService {
     private final JoinSubmitAssignmentFileRepository joinSubmitAssignmentFileRepository;
     private final JoinSubmitAssignmentFileService joinSubmitAssignmentFileService;
     private final FeedbackRepository feedbackRepository;
-    private final LionService lionService;
-    private final JwtUtility jwtUtility;
     private final EmailService emailService;
     private final JoinAssignmentFileService joinAssignmentFileService;
     private final JoinAssignmentFileRepository joinAssignmentFileRepository;
@@ -55,8 +51,7 @@ public class AssignmentService {
     @Transactional
     public void uploadAssignment(AssignmentDTO.UploadAssignment request){
 
-        if (request.getTrackType() == null || request.getTitle() == null ||
-                request.getDescription() == null || request.getQuizType() == null) {
+        if (request.getTrackType() == null || request.getDescription() == null || request.getQuizType() == null) {
             throw new IllegalArgumentException("필수값이 누락되었습니다.");
         }
 
@@ -90,7 +85,36 @@ public class AssignmentService {
         assignmentRepository.delete(assignment);
     }
 
+
+    // 업로드된 과제 업데이트 (운영진)
     @Transactional
+    public void updateAssignment(AssignmentDTO.UpdateAssignment req){
+        Assignment assignment = assignmentRepository.findById(req.getAssignmentId())
+                .orElseThrow(()-> new InvalidIdException("해당 과제가 없습니다."));
+
+        assignment.updateAssignment(
+                req.getTitle(),
+                req.getTrackType(),
+                req.getDescription(),
+                req.getQuizType()
+        );
+
+        List<JoinAssignmentFileDTO.UpdateAssignmentFileDTO> files = req.getFiles();
+        if(files != null && !files.isEmpty()){
+            List<String> keyToDelete = files.stream()
+                    .filter(f -> f.getStatus() == FileStatusType.DELETE)
+                    .map(JoinAssignmentFileDTO.UpdateAssignmentFileDTO :: getFileKey)
+                    .toList();
+            s3Service.deleteFiles(keyToDelete);
+            joinAssignmentFileService.deleteJoinAssignmentFiles(assignment, keyToDelete);
+
+            List<JoinAssignmentFileDTO.UpdateAssignmentFileDTO> newFiles = files.stream()
+                    .filter(f -> f.getStatus() == FileStatusType.NEW)
+                    .toList();
+            joinAssignmentFileService.updateJoinAssignmentFiles(assignment, newFiles);
+        }
+    }
+
 
     //과제를 제출한 아기사자 조회 (운영진)
     public List<SubmittedAssignmentLion> getSubmittedAssignmentLion(Long assignmentId){
@@ -174,12 +198,11 @@ public class AssignmentService {
         );
     }
 
+    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+
     // 과제 제출 (아기사자)
     @Transactional
-    public void submitAssignment(HttpServletRequest header, SubmitAssignmentDTO.SubmitAssignment req){
-        String token= jwtUtility.extractTokenFromCookies(header);
-        Lion lion = lionService.tokenToLion(token);
-
+    public void submitAssignment(Lion lion, SubmitAssignmentDTO.SubmitAssignment req){
         Assignment assignment = assignmentRepository.findById(req.getAssignmentId())
                 .orElseThrow(() -> new InvalidIdException("해당 과제가 없습니다."));
 
@@ -188,6 +211,7 @@ public class AssignmentService {
         joinSubmitAssignmentFileService.createJoinSubmitAssignmentFiles(savedSubmitAssignment, req.getFiles());
     }
 
+    //제출된 과제 삭제(아기사자)
     @Transactional
     public void deleteSubmittedAssignment(Long submitAssignmentId){
         SubmitAssignment submitAssignment = submitAssignmentRepository.findById(submitAssignmentId)
@@ -206,18 +230,41 @@ public class AssignmentService {
         submitAssignmentRepository.delete(submitAssignment);
     }
 
-    //트랙별 모든 과제 조회 (아기사자)
-    public List<AssignmentRes> getAssignment(HttpServletRequest header,TrackType trackType){
-        String token=jwtUtility.extractTokenFromCookies(header);
-        Long lionId=lionService.tokenToLion(token).getId();
 
+    // 제출된 과제 업데이트(아기사자)
+    @Transactional
+    public void updateSubmitAssignment(SubmitAssignmentDTO.UpdateSubmitAssignment req){
+        SubmitAssignment submitAssignment = submitAssignmentRepository.findById(req.getSubmitAssignmentId())
+                .orElseThrow(()-> new InvalidIdException("제출된 과제가 없습니다."));
+
+        submitAssignment.updateSubmitAssignment(req.getContent());
+
+        List<JoinSubmitAssignmentFileDTO.UpdateSubmitAssignmentFileDTO> files = req.getFiles();
+        if(files != null && !files.isEmpty()){
+            List<String> keyToDelete = files.stream()
+                    .filter(f -> f.getStatus() == FileStatusType.DELETE)
+                    .map(JoinSubmitAssignmentFileDTO.UpdateSubmitAssignmentFileDTO :: getFileKey)
+                    .toList();
+            s3Service.deleteFiles(keyToDelete);
+            joinSubmitAssignmentFileService.delteJoinSubmitAssignmentFilse(submitAssignment, keyToDelete);
+
+            List<JoinSubmitAssignmentFileDTO.UpdateSubmitAssignmentFileDTO> newFiles = files.stream()
+                    .filter(f -> f.getStatus() == FileStatusType.NEW)
+                    .toList();
+            joinSubmitAssignmentFileService.updateJoinSubmitAssignmentFiles(submitAssignment, newFiles);
+        }
+    }
+
+
+    //트랙별 모든 과제 조회 (아기사자)
+    public List<AssignmentRes> getAssignment(Lion lion,TrackType trackType){
         List<Assignment> assignments=assignmentRepository.findByTrackType(trackType);
         if(assignments.isEmpty()) throw new InvalidAssignmentException("현재 트랙에 과제 없음");
 
 
         return assignments.stream()
                 .map(assignment -> {
-                    Optional<SubmitAssignment> submission = submitAssignmentRepository.findByAssignmentAndLionId(assignment, lionId);
+                    Optional<SubmitAssignment> submission = submitAssignmentRepository.findByAssignmentAndLionId(assignment, lion.getId());
 
                     PassNonePass status = submission
                             .map(SubmitAssignment::getPassNonePass)
@@ -233,6 +280,7 @@ public class AssignmentService {
                 })
                 .toList();
     }
+
 
     //과제 조회 상세페이지 (아기사자)
     public AssignmentDetail getAssignmentDetail(Long assignmentId){

@@ -11,4 +11,6 @@ public interface JoinAssignmentFileRepository extends JpaRepository<JoinAssignme
     List<JoinAssignmentFile> findByAssignment(Assignment assignment);
 
     Optional<JoinAssignmentFile> findByFileKey(String fileKey);
+
+    void deleteAllByAssignmentAndFileKeyIn(Assignment assignment, List<String> fileKey);
 }

@@ -25,7 +25,8 @@ public class JoinAssignmentFileService {
                         dto.getFileType(),
                         dto.getFileSize(),
                         dto.getFileUrl(),
-                        dto.getFileKey()
+                        dto.getFileKey(),
+                        false
                 ))
                 .toList();
         joinAssignmentFileRepository.saveAll(joinAssignmentFiles);
@@ -33,6 +34,24 @@ public class JoinAssignmentFileService {
 
     @Transactional
     public void updateJoinAssignmentFiles(Assignment assignment, List<JoinAssignmentFileDTO.UpdateAssignmentFileDTO> files){
+        List<JoinAssignmentFile> newFiles = files.stream()
+                .map(dto -> new JoinAssignmentFile(
+                        assignment,
+                        dto.getFileName(),
+                        dto.getFileType(),
+                        dto.getFileSize(),
+                        dto.getFileUrl(),
+                        dto.getFileKey(),
+                        true
+                ))
+                .toList();
+        joinAssignmentFileRepository.saveAll(newFiles);
+    }
+
+    @Transactional
+    public void deleteJoinAssignmentFiles(Assignment assignment, List<String> keyToDelete){
+        if (keyToDelete == null || keyToDelete.isEmpty()) throw new IllegalArgumentException("필수값 누락");
+        joinAssignmentFileRepository.deleteAllByAssignmentAndFileKeyIn(assignment, keyToDelete);
 
     }
 

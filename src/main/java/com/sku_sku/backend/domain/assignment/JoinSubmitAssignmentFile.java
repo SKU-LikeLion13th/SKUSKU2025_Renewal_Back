@@ -37,13 +37,16 @@ public class JoinSubmitAssignmentFile {
 
     private LocalDateTime updateDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 제출한 과제 자료 수정일
 
-    public JoinSubmitAssignmentFile(SubmitAssignment submitAssignment, String fileName, AllowedFileType fileType, Long fileSize, String fileUrl, String fileKey){
+    private Boolean isUpdate; //수정 여부 // true or false
+
+    public JoinSubmitAssignmentFile(SubmitAssignment submitAssignment, String fileName, AllowedFileType fileType, Long fileSize, String fileUrl, String fileKey, boolean isUpdate){
         this.submitAssignment = submitAssignment;
         this.fileName = fileName;
         this.fileType = fileType;
         this.fileSize = fileSize;
         this.fileUrl = fileUrl;
         this.fileKey = fileKey;
+        this.isUpdate = isUpdate;
         this.createDate = LocalDateTime.now(); // 생성 당시 시간
     }
 

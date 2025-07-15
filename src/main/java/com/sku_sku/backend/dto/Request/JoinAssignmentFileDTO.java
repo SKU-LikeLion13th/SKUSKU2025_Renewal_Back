@@ -1,6 +1,7 @@
 package com.sku_sku.backend.dto.Request;
 
 import com.sku_sku.backend.enums.AllowedFileType;
+import com.sku_sku.backend.enums.FileStatusType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,6 +35,6 @@ public class JoinAssignmentFileDTO {
         @Schema(description = "프로젝트 사진 저장된 경로", example = "uploads/{uuid}.png")
         private String fileKey;
         @Schema(description = "프로젝트 사진 유지 정보", example = "KEEP or DELETE or NEW")
-        private AllowedFileType status;
+        private FileStatusType status;
     }
 }
