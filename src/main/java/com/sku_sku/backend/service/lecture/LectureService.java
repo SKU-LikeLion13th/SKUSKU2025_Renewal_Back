@@ -31,7 +31,6 @@ public class LectureService {
     private final LectureRepository lectureRepository;
     private final JoinLectureFilesRepository joinLectureFilesRepository;
     private final JoinLectureFilesService joinLectureFilesService;
-    private final JwtUtility jwtUtility;
     private final S3Service s3Service;
 
     @Transactional // 강의 안내물 생성 로직
