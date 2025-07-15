@@ -1,6 +1,7 @@
 package com.sku_sku.backend.controller;
 
 import com.sku_sku.backend.dto.Request.AssignmentDTO;
+import com.sku_sku.backend.dto.Request.SubmitAssignmentDTO;
 import com.sku_sku.backend.dto.Response.AssignmentDTO.AssignmentDetail;
 import com.sku_sku.backend.dto.Response.AssignmentDTO.AssignmentRes;
 import com.sku_sku.backend.enums.TrackType;
@@ -25,15 +26,21 @@ public class AssignmentController {
 
     private final AssignmentService assignmentService;
 
-//    @Operation(summary = "(오현) 아기사자 과제 제출", description = "과제 id, 내용, 파일 제출",
-//            responses = {@ApiResponse(responseCode = "201", description = "제출 완료"),
-//                    @ApiResponse(responseCode = "401", description = "토큰 오류"),
-//                    @ApiResponse(responseCode = "404", description = "해당 과제가 없는 경우")})
-//    @PostMapping("/submit")
-//    public ResponseEntity<Void> submitAssingment(HttpServletRequest header, AssignmentDTO.SubmitAssignment request) throws IOException {
-//        assignmentService.saveSubmittedAssignment(header, request);
-//        return ResponseEntity.status(HttpStatus.CREATED).build();
-//    }
+    @Operation(summary = "(오현) 아기사자 과제 제출", description = "과제 id, 내용, 파일 제출",
+            responses = {@ApiResponse(responseCode = "201", description = "제출 완료"),
+                    @ApiResponse(responseCode = "401", description = "토큰 오류"),
+                    @ApiResponse(responseCode = "404", description = "해당 과제가 없는 경우")})
+    @PostMapping("/submit")
+    public ResponseEntity<Void> submitAssignment(HttpServletRequest header, @RequestBody SubmitAssignmentDTO.SubmitAssignment request){
+        assignmentService.submitAssignment(header, request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/delete/{submitAssignmentId}")
+    public ResponseEntity<Void> deleteSubmitAssignment(@PathVariable Long submitAssignmentId){
+        assignmentService.deleteAssignment(submitAssignmentId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 
     @Operation(summary = "(오현) 아기사자 트랙별 과제 조회", description = "경로로 트랙타입을 받아서 트랙별 모든 과제 조회",
             responses = {@ApiResponse(responseCode = "200", description = "조회 성공"),
@@ -45,7 +52,7 @@ public class AssignmentController {
         return ResponseEntity.status(HttpStatus.OK).body(assignmentList);
     }
 
-    @Operation(summary = "(오현) 아기사자 트랙별 과제 조회", description = "경로로 트랙타입을 받아서 트랙별 모든 과제 조회",
+    @Operation(summary = "(오현) 아기사자 트랙별 과제 상세 조회", description = "경로로 트랙타입을 받아서 트랙별 모든 과제 조회",
             responses = {@ApiResponse(responseCode = "200", description = "조회 성공"),
                     @ApiResponse(responseCode = "404", description = "해당 과제가 없을 경우"),
                     @ApiResponse(responseCode = "400", description = "assignmentId가 올바르지 않은 경우")})

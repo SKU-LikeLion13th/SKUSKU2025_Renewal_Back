@@ -5,6 +5,7 @@ import com.sku_sku.backend.domain.assignment.*;
 import com.sku_sku.backend.dto.Request.AssignmentDTO;
 import com.sku_sku.backend.dto.Request.JoinAssignmentFileDTO;
 import com.sku_sku.backend.dto.Request.JoinSubmitAssignmentFileDTO;
+import com.sku_sku.backend.dto.Request.SubmitAssignmentDTO;
 import com.sku_sku.backend.dto.Response.AssignmentDTO.AssignmentDetail;
 import com.sku_sku.backend.dto.Response.AssignmentDTO.AssignmentRes;
 import com.sku_sku.backend.dto.Response.AssignmentDTO.FeedbackDetailRes;
@@ -19,6 +20,7 @@ import com.sku_sku.backend.repository.*;
 import com.sku_sku.backend.security.JwtUtility;
 import com.sku_sku.backend.service.LionService;
 import com.sku_sku.backend.service.S3Service;
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
@@ -39,6 +41,7 @@ public class AssignmentService {
     private final SubmitAssignmentRepository submitAssignmentRepository;
     private final AssignmentRepository assignmentRepository;
     private final JoinSubmitAssignmentFileRepository joinSubmitAssignmentFileRepository;
+    private final JoinSubmitAssignmentFileService joinSubmitAssignmentFileService;
     private final FeedbackRepository feedbackRepository;
     private final LionService lionService;
     private final JwtUtility jwtUtility;
@@ -50,7 +53,7 @@ public class AssignmentService {
 
     // 과제 업로드 (운영진)
     @Transactional
-    public void uploadAssignment(AssignmentDTO.UploadAssignment request) throws AccessDeniedException {
+    public void uploadAssignment(AssignmentDTO.UploadAssignment request){
 
         if (request.getTrackType() == null || request.getTitle() == null ||
                 request.getDescription() == null || request.getQuizType() == null) {
@@ -68,7 +71,9 @@ public class AssignmentService {
 
     }
 
+
     //업로드된 과제 삭제 (운영진)
+    @Transactional
     public void deleteAssignment(Long assignmentId){
         Assignment assignment = assignmentRepository.findById(assignmentId)
                 .orElseThrow(()->new InvalidIdException("해당 과제를 찾을 수 없음"));
@@ -85,36 +90,10 @@ public class AssignmentService {
         assignmentRepository.delete(assignment);
     }
 
-    //트랙별 모든 과제 조회 (아기사자)
-    public List<AssignmentRes> getAssignment(HttpServletRequest header,TrackType trackType){
-        String token=jwtUtility.extractTokenFromCookies(header);
-        Long lionId=lionService.tokenToLion(token).getId();
-
-        List<Assignment> assignments=assignmentRepository.findByTrackType(trackType);
-        if(assignments.isEmpty()) throw new InvalidAssignmentException("현재 트랙에 과제 없음");
-
-
-        return assignments.stream()
-                .map(assignment -> {
-                    Optional<SubmitAssignment> submission = submitAssignmentRepository.findByAssignmentAndLionId(assignment, lionId);
-
-                    PassNonePass status = submission
-                            .map(SubmitAssignment::getPassNonePass)
-                            .orElse(PassNonePass.UNREVIEWED);
-
-                    return new AssignmentRes(
-                            assignment.getId(),
-                            assignment.getTitle(),
-                            submission.isPresent(),
-                            assignment.getDescription(),
-                            status
-                    );
-                })
-                .toList();
-    }
+    @Transactional
 
     //과제를 제출한 아기사자 조회 (운영진)
-    public List<SubmittedAssignmentLion> getSubmittedAssignmentLion(Long assignmentId) throws AccessDeniedException{
+    public List<SubmittedAssignmentLion> getSubmittedAssignmentLion(Long assignmentId){
 
         List<SubmitAssignment> submitAssignments= submitAssignmentRepository.findByAssignmentId(assignmentId);
         if(submitAssignments.isEmpty()) throw new InvalidAssignmentException("해당 과제에 대한 제출된 과제 없음");
@@ -124,12 +103,12 @@ public class AssignmentService {
                         submitAssignment.getLion().getName(),
                         submitAssignment.getId(),
                         submitAssignment.getPassNonePass()
-                        ))
-                    .collect(Collectors.toList());
+                ))
+                .collect(Collectors.toList());
     }
 
 
-    //제출된 과제 운영진 채점 및 피드백 수정
+    //제출된 과제 운영진 채점 및 피드백 수정(운영진)
     @Transactional
     public void checkOrFeedbackSubmittedAssignment(AssignmentDTO.CheckSubmittedAssignment request){
 
@@ -160,8 +139,8 @@ public class AssignmentService {
 
         String subject = "과제 채점 결과 알림";
         String content = "<h3>과제 채점 결과가 수정되었습니다.</h3>" +
-                        "<p>결과: "+request.getPassNonePass()+"</p>"+
-                        "<p>피드백: "+request.getFeedback()+"</p>";
+                "<p>결과: "+request.getPassNonePass()+"</p>"+
+                "<p>피드백: "+request.getFeedback()+"</p>";
 
         emailService.sendMail(email, subject, content);
     }
@@ -195,6 +174,65 @@ public class AssignmentService {
         );
     }
 
+    // 과제 제출 (아기사자)
+    @Transactional
+    public void submitAssignment(HttpServletRequest header, SubmitAssignmentDTO.SubmitAssignment req){
+        String token= jwtUtility.extractTokenFromCookies(header);
+        Lion lion = lionService.tokenToLion(token);
+
+        Assignment assignment = assignmentRepository.findById(req.getAssignmentId())
+                .orElseThrow(() -> new InvalidIdException("해당 과제가 없습니다."));
+
+        SubmitAssignment submitAssignment = new SubmitAssignment(assignment, lion, req.getContent());
+        SubmitAssignment savedSubmitAssignment = submitAssignmentRepository.save(submitAssignment);
+        joinSubmitAssignmentFileService.createJoinSubmitAssignmentFiles(savedSubmitAssignment, req.getFiles());
+    }
+
+    @Transactional
+    public void deleteSubmittedAssignment(Long submitAssignmentId){
+        SubmitAssignment submitAssignment = submitAssignmentRepository.findById(submitAssignmentId)
+                .orElseThrow(()->new InvalidIdException("제출된 과제가 없습니다."));
+
+        List<String> filekey = joinSubmitAssignmentFileRepository
+                .findBySubmitAssignment(submitAssignment)
+                .stream()
+                .map(JoinSubmitAssignmentFile :: getFileKey)
+                .filter(key -> key != null && !key.isBlank())
+                .toList();
+
+        if(!filekey.isEmpty()){
+            s3Service.deleteFiles(filekey);
+        }
+        submitAssignmentRepository.delete(submitAssignment);
+    }
+
+    //트랙별 모든 과제 조회 (아기사자)
+    public List<AssignmentRes> getAssignment(HttpServletRequest header,TrackType trackType){
+        String token=jwtUtility.extractTokenFromCookies(header);
+        Long lionId=lionService.tokenToLion(token).getId();
+
+        List<Assignment> assignments=assignmentRepository.findByTrackType(trackType);
+        if(assignments.isEmpty()) throw new InvalidAssignmentException("현재 트랙에 과제 없음");
+
+
+        return assignments.stream()
+                .map(assignment -> {
+                    Optional<SubmitAssignment> submission = submitAssignmentRepository.findByAssignmentAndLionId(assignment, lionId);
+
+                    PassNonePass status = submission
+                            .map(SubmitAssignment::getPassNonePass)
+                            .orElse(PassNonePass.UNREVIEWED);
+
+                    return new AssignmentRes(
+                            assignment.getId(),
+                            assignment.getTitle(),
+                            submission.isPresent(),
+                            assignment.getDescription(),
+                            status
+                    );
+                })
+                .toList();
+    }
 
     //과제 조회 상세페이지 (아기사자)
     public AssignmentDetail getAssignmentDetail(Long assignmentId){

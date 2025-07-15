@@ -31,5 +31,10 @@ public class JoinAssignmentFileService {
         joinAssignmentFileRepository.saveAll(joinAssignmentFiles);
     }
 
+    @Transactional
+    public void updateJoinAssignmentFiles(Assignment assignment, List<JoinAssignmentFileDTO.UpdateAssignmentFileDTO> files){
+
+    }
+
 
 }
