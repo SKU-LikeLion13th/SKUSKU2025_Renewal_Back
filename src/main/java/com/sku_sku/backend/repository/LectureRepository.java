@@ -19,5 +19,5 @@ public interface LectureRepository extends JpaRepository<Lecture, Long> {
     // 트랙별 강의 안내물 리스트 내림차순 반환 (강의자료를 제외한)
     List<Lecture> findByTrackOrderByIdDesc(TrackType trackType);
 
-    Optional<List<Lecture>> findByTrackOrderByCreateDateTimeDesc(TrackType trackType);
+    List<Lecture> findByTrackOrderByCreateDateTimeDesc(TrackType trackType);
 }

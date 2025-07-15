@@ -26,44 +26,29 @@ public class JoinLectureFilesService {
                         dto.getFileType(),
                         dto.getFileSize(),
                         dto.getFileUrl(),
-                        dto.getFileKey()
+                        dto.getFileKey(),
+                        false
                 ))
                 .toList();
 
         joinLectureFilesRepository.saveAll(joinLectureFileList);
     }
 
-//    @Transactional
-//    public void updateJoinLectureFiles(Lecture lecture, List<JoinLectureFileDTO.UpdateLectureFileDTO> files) {
-//        List<JoinLectureFile> joinLectureFileList = files.stream()
-//                .map(dto -> new JoinLectureFile(
-//                            lecture,
-//                            dto.getFileName(),
-//                            dto.getFileType(),
-//                            dto.getFileSize(),
-//                            dto.getFileUrl(),
-//                            dto.getFileKey()
-//                    ))
-//                .toList();
-//
-//        joinLectureFilesRepository.saveAll(joinLectureFileList);
-//    }
-
     @Transactional
     public void updateJoinLectureFiles(Lecture lecture, List<JoinLectureFileDTO.UpdateLectureFileDTO> files) {
-        files.forEach(dto -> {
-            JoinLectureFile file = joinLectureFilesRepository.findByFileKey(dto.getFileKey())
-                    .orElseThrow(() -> new IllegalArgumentException("해당 파일 없음: " + dto.getFileKey()));
+        List<JoinLectureFile> newJoinLectureFileList = files.stream()
+                .map(dto -> new JoinLectureFile(
+                        lecture,
+                        dto.getFileName(),
+                        dto.getFileType(),
+                        dto.getFileSize(),
+                        dto.getFileUrl(),
+                        dto.getFileKey(),
+                        true
+                ))
+                .toList();
 
-            file.updateJoinLectureFile(
-                    lecture,
-                    dto.getFileName(),
-                    dto.getFileType(),
-                    dto.getFileSize(),
-                    dto.getFileUrl(),
-                    dto.getFileKey()
-            );
-        });
+        joinLectureFilesRepository.saveAll(newJoinLectureFileList);
     }
 
     public void deleteFilesByKeyList(Lecture lecture, List<String> keysToDelete) {

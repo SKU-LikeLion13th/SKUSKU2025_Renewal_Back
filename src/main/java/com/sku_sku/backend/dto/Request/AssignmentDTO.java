@@ -5,6 +5,7 @@ import com.sku_sku.backend.enums.QuizType;
 import com.sku_sku.backend.enums.TrackType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.NonNull;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class AssignmentDTO {
 
     @Data
     public static class UploadAssignment{
+        @NonNull
         @Schema(description = "과제 제목", example = "1주차 과제")
         private String title;
         @Schema(description = "과제 설명", example = "스프링 의존성에 대해 정리해주세요")

@@ -1,6 +1,7 @@
 package com.sku_sku.backend.service.lecture;
 
 
+import com.sku_sku.backend.domain.Lion;
 import com.sku_sku.backend.domain.lecture.JoinLectureFile;
 import com.sku_sku.backend.domain.lecture.Lecture;
 import com.sku_sku.backend.dto.Request.LectureDTO;
@@ -14,6 +15,7 @@ import com.sku_sku.backend.repository.JoinLectureFilesRepository;
 import com.sku_sku.backend.repository.LectureRepository;
 import com.sku_sku.backend.security.JwtUtility;
 import com.sku_sku.backend.service.S3Service;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -31,20 +33,18 @@ public class LectureService {
     private final LectureRepository lectureRepository;
     private final JoinLectureFilesRepository joinLectureFilesRepository;
     private final JoinLectureFilesService joinLectureFilesService;
-    private final JwtUtility jwtUtility;
     private final S3Service s3Service;
+    private final JwtUtility jwtUtility;
 
     @Transactional // 강의 안내물 생성 로직
-    public void createLecture(OAuth2User oAuth2User, LectureDTO.createLectureRequest req) {
-        String writer = oAuth2User.getName();
-        Lecture lecture = new Lecture(req.getTrackType(), req.getTitle(), req.getContent(), writer);
+    public void createLecture(Lion lion, LectureDTO.createLectureRequest req) {
+        Lecture lecture = new Lecture(req.getTrackType(), req.getTitle(), req.getContent(), lion.getName());
         Lecture persistedLecture = lectureRepository.save(lecture);
         joinLectureFilesService.createJoinLectureFiles(persistedLecture, req.getFiles());
     }
 
     @Transactional
-    public void updateLecture(OAuth2User oAuth2User, LectureDTO.updateLectureRequest req) {
-        String newWriter = oAuth2User.getName();
+    public void updateLecture(Lion lion, LectureDTO.updateLectureRequest req) {
         Lecture lecture = lectureRepository.findById(req.getId())
                 .orElseThrow(() -> new InvalidIdException("lecture"));
 
@@ -52,7 +52,7 @@ public class LectureService {
                 getOrDefault(req.getTrackType(), lecture.getTrack()),
                 getOrDefault(req.getTitle(), lecture.getTitle()),
                 getOrDefault(req.getContent(), lecture.getContent()),
-                newWriter
+                lion.getName()
         );
 
         List<UpdateLectureFileDTO> files = req.getFiles();
@@ -124,15 +124,16 @@ public class LectureService {
     }
 
     public List<ResponseLectureIncludeFileKey> findAllLectureByTrack(TrackType trackType) {
-        List<Lecture> lectures = lectureRepository.findByTrackOrderByCreateDateTimeDesc(trackType)
-                .orElseThrow(EmptyLectureException::new);
+        List<Lecture> lectures = lectureRepository.findByTrackOrderByCreateDateTimeDesc(trackType);
         return lectures.stream()
                 .map(this::convertToResponseLectureWithoutFilesDTO)
                 .toList();
     }
 
     private ResponseLectureIncludeFileKey convertToResponseLectureWithoutFilesDTO(Lecture lecture) {
-        String fileKey = joinLectureFilesRepository.findByLecture(lecture).getFirst().getFileKey();
+        List<JoinLectureFile> files = joinLectureFilesRepository.findByLecture(lecture);
+        String fileKey = files.isEmpty() ? null : files.getFirst().getFileKey();
+
         return new ResponseLectureIncludeFileKey(
                 lecture.getId(),
                 lecture.getTrack(),
