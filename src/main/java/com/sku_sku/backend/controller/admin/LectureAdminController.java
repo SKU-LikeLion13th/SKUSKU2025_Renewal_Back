@@ -5,6 +5,7 @@ import com.sku_sku.backend.service.lecture.LectureService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +26,9 @@ public class LectureAdminController {
     @Operation(summary = "(민규) 강의자료 추가", description = "",
             responses = {@ApiResponse(responseCode = "201", description = "강의자료 생성 성공")})
     @PostMapping("/add")
-    public ResponseEntity<String> uploadFiles(@AuthenticationPrincipal OAuth2User oAuth2User,
-                                               @RequestBody LectureDTO.createLectureRequest request) throws IOException {
-        lectureService.createLecture(oAuth2User, request);
+    public ResponseEntity<String> uploadFiles(HttpServletRequest header,
+                                              @RequestBody LectureDTO.createLectureRequest request) throws IOException {
+        lectureService.createLecture(header, request);
         return ResponseEntity.status(HttpStatus.CREATED).body("강의자료 생성 성공");
     }
 
@@ -35,9 +36,9 @@ public class LectureAdminController {
             responses = {@ApiResponse(responseCode = "201", description = "강의자료 수정 성공"),
                     @ApiResponse(responseCode = "404", description = "그 id에 해당하는 값 없")})
     @PutMapping("/update")
-    public ResponseEntity<String> updateLecture(@AuthenticationPrincipal OAuth2User oAuth2User,
+    public ResponseEntity<String> updateLecture(HttpServletRequest header,
                                                 @RequestBody LectureDTO.updateLectureRequest request) throws IOException {
-        lectureService.updateLecture(oAuth2User, request);
+        lectureService.updateLecture(header, request);
         return ResponseEntity.status(HttpStatus.CREATED).body("강의자료 수정 성공");
     }
 
