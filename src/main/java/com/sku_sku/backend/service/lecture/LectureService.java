@@ -38,15 +38,13 @@ public class LectureService {
 
     @Transactional // 강의 안내물 생성 로직
     public void createLecture(Lion lion, LectureDTO.createLectureRequest req) {
-//        String writer = jwtUtility.getClaimsFromCookies(header).get("name", String.class);
-        Lecture lecture = new Lecture(req.getTrackType(), req.getTitle(), req.getContent(), lion.getUsername());
+        Lecture lecture = new Lecture(req.getTrackType(), req.getTitle(), req.getContent(), lion.getName());
         Lecture persistedLecture = lectureRepository.save(lecture);
         joinLectureFilesService.createJoinLectureFiles(persistedLecture, req.getFiles());
     }
 
     @Transactional
-    public void updateLecture(HttpServletRequest header, LectureDTO.updateLectureRequest req) {
-        String newWriter = jwtUtility.getClaimsFromCookies(header).get("name", String.class);
+    public void updateLecture(Lion lion, LectureDTO.updateLectureRequest req) {
         Lecture lecture = lectureRepository.findById(req.getId())
                 .orElseThrow(() -> new InvalidIdException("lecture"));
 
@@ -54,7 +52,7 @@ public class LectureService {
                 getOrDefault(req.getTrackType(), lecture.getTrack()),
                 getOrDefault(req.getTitle(), lecture.getTitle()),
                 getOrDefault(req.getContent(), lecture.getContent()),
-                newWriter
+                lion.getName()
         );
 
         List<UpdateLectureFileDTO> files = req.getFiles();
