@@ -125,15 +125,16 @@ public class LectureService {
     }
 
     public List<ResponseLectureIncludeFileKey> findAllLectureByTrack(TrackType trackType) {
-        List<Lecture> lectures = lectureRepository.findByTrackOrderByCreateDateTimeDesc(trackType)
-                .orElseThrow(EmptyLectureException::new);
+        List<Lecture> lectures = lectureRepository.findByTrackOrderByCreateDateTimeDesc(trackType);
         return lectures.stream()
                 .map(this::convertToResponseLectureWithoutFilesDTO)
                 .toList();
     }
 
     private ResponseLectureIncludeFileKey convertToResponseLectureWithoutFilesDTO(Lecture lecture) {
-        String fileKey = joinLectureFilesRepository.findByLecture(lecture).getFirst().getFileKey();
+        List<JoinLectureFile> files = joinLectureFilesRepository.findByLecture(lecture);
+        String fileKey = files.isEmpty() ? null : files.getFirst().getFileKey();
+
         return new ResponseLectureIncludeFileKey(
                 lecture.getId(),
                 lecture.getTrack(),
