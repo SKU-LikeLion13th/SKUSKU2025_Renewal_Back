@@ -5,8 +5,9 @@ import com.sku_sku.backend.enums.TrackType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ReviewWeekRepository extends JpaRepository<ReviewWeek, Long> {
-    List<ReviewWeek> findReviewWeekByTrackType(TrackType trackType);
-    ReviewWeek findReviewWeekById(long reviewWeekId);
+    Optional<List<ReviewWeek>> findReviewWeekByTrackType(TrackType trackType);
+    Optional<ReviewWeek> findReviewWeekById(long reviewWeekId);
 }

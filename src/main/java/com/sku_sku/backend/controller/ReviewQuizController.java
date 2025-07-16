@@ -3,6 +3,7 @@ package com.sku_sku.backend.controller;
 import com.sku_sku.backend.domain.Lion;
 import com.sku_sku.backend.dto.Request.ReviewQuizDTO;
 import com.sku_sku.backend.dto.Request.ReviewWeekDTO;
+import com.sku_sku.backend.enums.TrackType;
 import com.sku_sku.backend.security.JwtUtility;
 import com.sku_sku.backend.service.reviewquiz.ReviewQuizService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,15 +25,17 @@ public class ReviewQuizController {
     private final JwtUtility jwtUtility;
 
     //주차별 퀴즈 리스트 조회
-    @GetMapping("/reviewWeek")
-    public List<ReviewWeekDTO.showReviewWeek> reviewWeekView(@AuthenticationPrincipal Lion lion){
-        return reviewQuizService.getReviewWeek(lion);
+    @GetMapping("/reviewWeek/{trackType}")
+    public ResponseEntity<List<ReviewWeekDTO.showReviewWeek>> reviewWeekView(@AuthenticationPrincipal Lion lion, @PathVariable TrackType trackType){
+        return ResponseEntity.status(HttpStatus.OK).body(reviewQuizService.getReviewWeek(lion, trackType));
     }
 
+    @Operation(summary = "(주희)해당 주차 복습 퀴즈 문제 조회", description = "",
+            responses = {@ApiResponse(responseCode = "200", description = "성공")})
     //복습퀴즈 문제들 조회
     @GetMapping("/reviewQuiz/{reviewWeekId}")
-    public List<ReviewQuizDTO.ShowReviewQuizDetails> reviewQuizView(@PathVariable Long reviewWeekId){
-        return reviewQuizService.getReviewQuiz(reviewWeekId);
+    public ResponseEntity<List<ReviewQuizDTO.ShowReviewQuizDetails>> reviewQuizView(@PathVariable Long reviewWeekId){
+        return ResponseEntity.status(HttpStatus.OK).body(reviewQuizService.getReviewQuiz(reviewWeekId));
     }
 
     @Operation(summary = "(주희)복습 퀴즈 풀기", description = "",
@@ -41,10 +44,7 @@ public class ReviewQuizController {
     @PostMapping("/reviewQuiz/solve")
     public ResponseEntity<ReviewQuizDTO.SolveAnswerList> solveReviewQuiz(@AuthenticationPrincipal Lion lion,
                                                                          @RequestBody ReviewQuizDTO.SolveRequest SolveRequest) {
-        //String token = jwtUtility.extractTokenFromCookies(request);
         return ResponseEntity.status(HttpStatus.OK).body(reviewQuizService.solveReviewQuiz(lion,SolveRequest));
-
-
     }
 
 }

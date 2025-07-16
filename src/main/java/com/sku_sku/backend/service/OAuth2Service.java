@@ -84,7 +84,7 @@ public class OAuth2Service {
         response.addHeader("Set-Cookie", cookie.toString());
     }
 
-    public void refreshAccessTokenInJwtAuthenticationFilter(String email, HttpServletResponse response) {
+    public String refreshAccessTokenInJwtAuthenticationFilter(String email, HttpServletResponse response) {
         String redisKey = "refresh:" + email;
         if (!redisTemplate.hasKey(redisKey)) {
             throw new InvalidJwtlException("Refresh");
@@ -102,6 +102,8 @@ public class OAuth2Service {
                 .build();
 
         response.addHeader("Set-Cookie", cookie.toString());
+
+        return newAccessToken;
     }
 
 }
