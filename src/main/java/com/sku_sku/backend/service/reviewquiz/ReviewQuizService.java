@@ -1,18 +1,17 @@
 package com.sku_sku.backend.service.reviewquiz;
 
 import com.sku_sku.backend.domain.Lion;
-import com.sku_sku.backend.domain.reviewquiz.AnswerChoice;
-import com.sku_sku.backend.domain.reviewquiz.ReviewQuiz;
-import com.sku_sku.backend.domain.reviewquiz.ReviewQuizResponse;
-import com.sku_sku.backend.domain.reviewquiz.ReviewWeek;
+import com.sku_sku.backend.domain.reviewquiz.*;
 import com.sku_sku.backend.dto.Request.JoinReviewQuizFileDTO;
 import com.sku_sku.backend.dto.Request.ReviewQuizDTO;
 import com.sku_sku.backend.dto.Request.ReviewWeekDTO;
 import com.sku_sku.backend.enums.AnswerStatus;
 import com.sku_sku.backend.enums.QuizType;
+import com.sku_sku.backend.enums.TrackType;
+import com.sku_sku.backend.exception.InvalidIdException;
 import com.sku_sku.backend.repository.*;
 import com.sku_sku.backend.service.GeminiService;
-import com.sku_sku.backend.service.LionService;
+import com.sku_sku.backend.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,10 +36,10 @@ public class ReviewQuizService  {
     private final ReviewQuizRepository reviewQuizRepository;
     private final JoinReviewQuizFileService joinReviewQuizFileService;
     private final AnswerChoiceRepository answerChoiceRepository;
-    private final LionService lionService;
     private final ReviewQuizResponseRepository reviewQuizResponseRepository;
     private final GeminiService geminiService;
     private final JoinReviewQuizFileRepository joinReviewQuizFileRepository;
+    private final S3Service s3Service;
 
     @Transactional
     public void addQuiz(AddQuizRequest req) {
@@ -140,7 +139,8 @@ public class ReviewQuizService  {
     //답 채점 및 저장
     @Transactional
     public SolveAnswerList solveReviewQuiz(Lion lion, SolveRequest solveRequest) {
-        ReviewWeek reviewWeek = reviewWeekRepository.findReviewWeekById(solveRequest.getReviewWeekId());
+        ReviewWeek reviewWeek = reviewWeekRepository.findReviewWeekById(solveRequest.getReviewWeekId())
+                .orElseThrow(()-> new InvalidIdException("reviewWeekId에 대한 ReviewWeek 없음"));
 
         List<ReviewQuiz> reviewQuizzes = reviewQuizRepository.findByReviewWeek(reviewWeek);
         List<QuizResponse> userAnswers = solveRequest.getQuizResponseList();
@@ -167,64 +167,8 @@ public class ReviewQuizService  {
             solveAnswerList.getQuizAnswerList().add(createQuizAnswerList(quiz));
         }
 
-
-
-//            ReviewQuizResponse existingResponse = reviewQuizResponseRepository.findReviewQuizResponseByLionAndReviewQuiz(lion, quiz);
-//            System.out.println(existingResponse);
-//            ReviewQuizResponse response;
-//
-//
-//            if(existingResponse==null){
-//                //새로 풀때
-//                //response = gradeReviewQuiz(lion, quiz, lionAnswerDTO.getQuizAnswer());
-//                response = new ReviewQuizResponse(lion, quiz, lionAnswerDTO.getQuizAnswer(), quiz.getQuizType());
-//
-//                if (quiz.getQuizType() == QuizType.MULTIPLE_CHOICE) {
-//                    multipleChoiceTotal++;
-//                    System.out.println("정답: " + quiz.getAnswer());
-//                    System.out.println("사용자 답변: " + lionAnswerDTO.getQuizAnswer());
-//                    if (Objects.equals(quiz.getAnswer(), lionAnswerDTO.getQuizAnswer())) {
-//                        response.setAnswerStatus(AnswerStatus.TRUE);
-//                        correctCount++;
-//                        System.out.println(correctCount);
-//                    } else {
-//                        response.setAnswerStatus(AnswerStatus.FALSE);
-//                    }
-//                } else if (quiz.getQuizType() == QuizType.ESSAY_QUESTION) {
-//                    // 주관식 문제인 경우 Gemini API를 사용하여 평가
-//                    AnswerStatus answerStatus = evaluateEssayQuestion(quiz, lionAnswerDTO.getQuizAnswer());
-//                    response.setAnswerStatus(answerStatus);
-//
-//                    if (answerStatus == AnswerStatus.TRUE) {
-//                        correctCount++; // 정답으로 평가되었으면 점수 추가
-//                    }
-//                } else {
-//                    response.setAnswerStatus(AnswerStatus.EMPTY); // 다른 타입(파일 첨부 등)은 채점 안 함
-//                }
-//                reviewQuizResponseRepository.save(response);
-//            }
-//
-//            else{//이미 푼 경우
-//                response = existingResponse;
-//                if (quiz.getQuizType() == QuizType.MULTIPLE_CHOICE) {
-//                    multipleChoiceTotal++;
-//                    if (response.getAnswerStatus() == AnswerStatus.TRUE) {
-//                        correctCount++;
-//                    }
-//                } else if (quiz.getQuizType() == QuizType.ESSAY_QUESTION) {
-//                    AnswerStatus answerStatus = evaluateEssayQuestion(quiz, lionAnswerDTO.getQuizAnswer());
-//
-//                    if (answerStatus == AnswerStatus.TRUE) {
-//                        correctCount++;
-//                    }
-//                }
-//                response.setUpdateDate(LocalDateTime.now());
-//                response.setCount(response.getCount() + 1);
-//            }
-            //정답과 해설 세팅
-
         solveAnswerList.setScore(correctCount);
-        solveAnswerList.setMultipleTotal(total);
+        solveAnswerList.setTotal(total);
         return solveAnswerList;
     }
 
@@ -232,8 +176,9 @@ public class ReviewQuizService  {
 
 
     //주차별 퀴즈 목록 조회
-    public List<ReviewWeekDTO.showReviewWeek> getReviewWeek(Lion lion) {
-        List<ReviewWeek> reviewWeekList = reviewWeekRepository.findReviewWeekByTrackType(lion.getTrackType());//해당 트랙에 있는 복습퀴즈 조회
+    public List<ReviewWeekDTO.showReviewWeek> getReviewWeek(Lion lion, TrackType trackType) {
+        List<ReviewWeek> reviewWeekList = reviewWeekRepository.findReviewWeekByTrackType(trackType)
+                .orElseThrow(()-> new InvalidIdException("트랙타입이 잘못됐습니다."));//해당 트랙에 있는 복습퀴즈 조회
         System.out.println(reviewWeekList);
 
         List<ReviewWeekDTO.showReviewWeek> reviewWeekDTOList = new ArrayList<>();
@@ -263,11 +208,13 @@ public class ReviewQuizService  {
         return reviewWeekDTOList;
     }
 
-    //복습 퀴즈 조회
+    //복습 퀴즈 상세 조회
     public List<ReviewQuizDTO.ShowReviewQuizDetails> getReviewQuiz(Long WeekId) {
-        ReviewWeek reviewWeek = reviewWeekRepository.findReviewWeekById(WeekId);
+        ReviewWeek reviewWeek = reviewWeekRepository.findReviewWeekById(WeekId).
+                orElseThrow(()-> new InvalidIdException("해당 주차에 대한 복습퀴즈를 찾을 수 없습니다."));
         List<ReviewQuiz> reviewQuizzes =  reviewQuizRepository.findByReviewWeek(reviewWeek);
-        List<ShowReviewQuizDetails> result = reviewQuizzes.stream()
+
+        return reviewQuizzes.stream()
                 .map(reviewQuiz -> {
                     ShowReviewQuizDetails dto = new ShowReviewQuizDetails();
                     dto.setId(reviewQuiz.getId()); //문제 아이디
@@ -299,9 +246,102 @@ public class ReviewQuizService  {
 
 
                     dto.setFiles(fileDtos);
+                    dto.setAnswer(reviewQuiz.getAnswer());
+                    dto.setExplanation(reviewQuiz.getExplanation());
                     return dto;
                 }).toList();
-
-        return result;
     }
+
+    //복습퀴즈 수정
+    @Transactional
+    public void updateQuiz(Long weekId,  AddQuizRequest addQuizRequest) {
+        ReviewWeek reviewWeek = reviewWeekRepository.findReviewWeekById(weekId)
+                .orElseThrow(()-> new InvalidIdException("해당 주차에 대한 복습퀴즈를 찾을 수 없습니다."));
+        reviewWeek.update(addQuizRequest.getTrackType(), addQuizRequest.getTitle());
+        reviewWeekRepository.save(reviewWeek);
+
+        List<ReviewQuiz> reviewQuizList = reviewQuizRepository.findByReviewWeek(reviewWeek);
+        if (reviewQuizList.size() != addQuizRequest.getReviewQuizDTOList().size()) {
+            throw new IllegalArgumentException("기존 퀴즈 개수와 수정할 퀴즈 개수가 일치하지 않습니다.");
+        }
+        for (int i = 0; i < reviewQuizList.size(); i++) {
+            ReviewQuiz quiz = reviewQuizList.get(i);
+            reviewQuizDTO dto = addQuizRequest.getReviewQuizDTOList().get(i);
+
+            quiz.setQuizType(dto.getQuizType());
+            quiz.setContent(dto.getContent());
+            quiz.setAnswer(dto.getAnswer());
+            quiz.setExplanation(dto.getExplanation());
+
+            // 객관식이면 기존 보기 삭제 후 새로 등록
+            if (dto.getQuizType() == QuizType.MULTIPLE_CHOICE) {
+                answerChoiceRepository.deleteByReviewQuiz(quiz); // 기존 보기 삭제
+                for (String content : dto.getAnswerChoiceList()) {
+                    answerChoiceRepository.save(new AnswerChoice(quiz, content));
+                }
+            }
+
+            // 기존 파일 삭제 처리
+            List<JoinReviewQuizFile> oldFiles = joinReviewQuizFileRepository.findByReviewQuiz(quiz);
+            List<String> fileKeysToDelete = oldFiles.stream()
+                    .map(JoinReviewQuizFile::getFileKey)
+                    .collect(Collectors.toList());
+
+            // S3에서 삭제
+            if (!fileKeysToDelete.isEmpty()) {
+                s3Service.deleteFiles(fileKeysToDelete);
+            }
+
+            // DB에서 삭제
+            joinReviewQuizFileRepository.deleteAll(oldFiles);
+
+            // 새 파일 저장 (프론트에서 받은 파일 메타데이터 기준)
+            List<JoinReviewQuizFile> files = dto.getFiles().stream()
+                    .map(fileDTO -> new JoinReviewQuizFile(
+                            quiz,
+                            fileDTO.getFileName(),
+                            fileDTO.getFileType(),
+                            fileDTO.getFileSize(),
+                            fileDTO.getFileUrl(),
+                            fileDTO.getFileKey()
+                    ))
+                    .collect(Collectors.toList());
+
+            joinReviewQuizFileRepository.saveAll(files);
+
+        }
+
+    }
+
+
+    @Transactional
+    public void deleteQuiz(Long weekId){
+        ReviewWeek reviewWeek = reviewWeekRepository.findById(weekId)
+                .orElseThrow(()-> new InvalidIdException("해당 주차에 대한 복습퀴즈를 찾을 수 없습니다."));
+        List<ReviewQuiz> reviewQuizList = reviewQuizRepository.findByReviewWeek(reviewWeek);
+        for (ReviewQuiz reviewQuiz : reviewQuizList) {
+            //해당 문제에 대한 파일 메타데이터 삭제
+            List<JoinReviewQuizFile> joinReviewQuizFileList = joinReviewQuizFileRepository.findByReviewQuiz(reviewQuiz);
+
+            if (!joinReviewQuizFileList.isEmpty()) {
+                List<String> keys = joinReviewQuizFileList.stream().map(JoinReviewQuizFile::getFileKey).toList();
+                s3Service.deleteFiles(keys);
+                joinReviewQuizFileRepository.deleteAll(joinReviewQuizFileList);
+            }
+//            //해당 문제가 객관식일 경우 보기 삭제
+//            if (reviewQuiz.getQuizType() == QuizType.MULTIPLE_CHOICE) {
+//                List<AnswerChoice> answerChoiceList = answerChoiceRepository.findByReviewQuiz(reviewQuiz);
+//                answerChoiceRepository.deleteAll(answerChoiceList);
+//            }
+//            //해당 문제에 대한 모든 응답 삭제
+//            List<ReviewQuizResponse> reviewQuizResponseList = reviewQuizResponseRepository.findByReviewQuiz(reviewQuiz);
+//            if(!reviewQuizResponseList.isEmpty()){
+//                reviewQuizResponseRepository.deleteAll(reviewQuizResponseList);
+//            }
+
+        }
+        reviewQuizRepository.deleteAll(reviewQuizList);
+        reviewWeekRepository.delete(reviewWeek);
+    }
+
 }

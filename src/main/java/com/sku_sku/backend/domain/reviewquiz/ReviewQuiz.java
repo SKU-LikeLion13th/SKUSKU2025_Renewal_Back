@@ -4,10 +4,12 @@ import com.sku_sku.backend.enums.QuizType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @Entity // 복습 퀴즈 문제
 public class ReviewQuiz {

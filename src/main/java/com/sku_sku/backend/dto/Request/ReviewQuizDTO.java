@@ -64,6 +64,10 @@ public class ReviewQuizDTO {
         private List<String> answerChoiceList;
         @Schema(description = "운영진이 추가로 올리는 파일(없으면 빈리스트)", example = "계층구조.png")
         private List<JoinReviewQuizFileDTO.JoinReviewQuizFileField> files;
+        @Schema(description = "정답", example = "controller-service-repository")
+        private String answer;
+        @Schema(description = "해설", example = "스프링의 계층구조는 controller-service-repository로 구성되어있습니다.")
+        private String explanation;
     }
 
 
@@ -71,7 +75,7 @@ public class ReviewQuizDTO {
     public static class SolveAnswerList {
         List<QuizAnswerList> quizAnswerList;
         Integer score;  //맞은 개수
-        Integer multipleTotal; //객관식 총 개수
+        Integer total; //총 개수
     }
 
     @Data

@@ -55,13 +55,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     if (refreshToken != null) {
                         // Access 토큰 재발급 및 쿠키 세팅
-                        oAuth2Service.refreshAccessTokenInJwtAuthenticationFilter(email, response);
+                        String newJwt = oAuth2Service.refreshAccessTokenInJwtAuthenticationFilter(email, response);
 
                         // 새 토큰으로 인증 정보 셋팅
-                        Lion lion = lionService.findByEmail(email);
-                        String newJwt = jwtUtility.generateJwt(
-                                lion.getEmail(), lion.getName(), lion.getTrackType(), lion.getRoleType()
-                        );
+//                        Lion lion = lionService.findByEmail(email);
+//                        String newJwt = jwtUtility.generateJwt(
+//                                lion.getEmail(), lion.getName(), lion.getTrackType(), lion.getRoleType()
+//                        );
                         Authentication auth = getAuthentication(newJwt);
                         SecurityContextHolder.getContext().setAuthentication(auth);
                     }

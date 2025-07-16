@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface AnswerChoiceRepository extends JpaRepository<AnswerChoice, Integer> {
     List<AnswerChoice> findByReviewQuiz(ReviewQuiz reviewQuiz);
+    void deleteByReviewQuiz(ReviewQuiz reviewQuiz);
 }
