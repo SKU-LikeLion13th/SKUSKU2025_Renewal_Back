@@ -5,13 +5,12 @@ import com.sku_sku.backend.domain.reviewquiz.AnswerChoice;
 import com.sku_sku.backend.domain.reviewquiz.ReviewQuiz;
 import com.sku_sku.backend.domain.reviewquiz.ReviewQuizResponse;
 import com.sku_sku.backend.domain.reviewquiz.ReviewWeek;
+import com.sku_sku.backend.dto.Request.JoinReviewQuizFileDTO;
+import com.sku_sku.backend.dto.Request.ReviewQuizDTO;
 import com.sku_sku.backend.dto.Request.ReviewWeekDTO;
 import com.sku_sku.backend.enums.AnswerStatus;
 import com.sku_sku.backend.enums.QuizType;
-import com.sku_sku.backend.repository.AnswerChoiceRepository;
-import com.sku_sku.backend.repository.ReviewQuizRepository;
-import com.sku_sku.backend.repository.ReviewQuizResponseRepository;
-import com.sku_sku.backend.repository.ReviewWeekRepository;
+import com.sku_sku.backend.repository.*;
 import com.sku_sku.backend.service.GeminiService;
 import com.sku_sku.backend.service.LionService;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.sku_sku.backend.dto.Request.ReviewQuizDTO.*;
 
@@ -39,6 +40,7 @@ public class ReviewQuizService  {
     private final LionService lionService;
     private final ReviewQuizResponseRepository reviewQuizResponseRepository;
     private final GeminiService geminiService;
+    private final JoinReviewQuizFileRepository joinReviewQuizFileRepository;
 
     @Transactional
     public void addQuiz(AddQuizRequest req) {
@@ -66,38 +68,6 @@ public class ReviewQuizService  {
         }
     }
 
-//    @Transactional
-//    public void addQuiz(AddQuizRequest req) {
-//        ReviewWeek reviewWeek = new ReviewWeek(req.getTrackType(), req.getTitle());
-//        reviewWeekRepository.save(reviewWeek);
-//        for (reviewQuizDTO reviewQuizDTO : req.getReviewQuizDTOList()) {
-//            ReviewQuiz reviewQuiz = new ReviewQuiz(
-//                    reviewWeek,
-//                    reviewQuizDTO.getContent(),
-//                    reviewQuizDTO.getExplanation(),
-//                    reviewQuizDTO.getAnswer(),
-//                    reviewQuizDTO.getQuizType());
-//            reviewQuizRepository.save(reviewQuiz);
-//
-//            if (reviewQuizDTO.getFiles()!=null) {
-//                for (JoinReviewQuizFileField file : reviewQuizDTO.getFiles()) {
-//                    JoinReviewQuizFile joinReviewQuizFile = new JoinReviewQuizFile(
-//                            reviewQuiz,
-//                            file.getFileUrl(),
-//                            file.getFileName(),
-//                            file.getFileType(),
-//                            file.getFileSize());
-//                    joinReviewQuizFileRepository.save(joinReviewQuizFile);
-//                }
-//            }
-//            if (reviewQuizDTO.getQuizType()== QuizType.MULTIPLE_CHOICE){
-//                for(String StringAnswerChoice : reviewQuizDTO.getAnswerChoiceList()){
-//                    AnswerChoice answerChoice = new AnswerChoice(reviewQuiz, StringAnswerChoice);
-//                    answerChoiceRepository.save(answerChoice);
-//                }
-//            }
-//        }
-//    }
     //이미 푼 퀴즈 새로 응답 저장 or 응답 업데이트
     private ReviewQuizResponse getOrCreateResponse(Lion lion, ReviewQuiz quiz, String userAnswer) {
         ReviewQuizResponse existingResponse = reviewQuizResponseRepository.findReviewQuizResponseByLionAndReviewQuiz(lion, quiz);
@@ -169,10 +139,10 @@ public class ReviewQuizService  {
 
     //답 채점 및 저장
     @Transactional
-    public SolveAnswerList solveReviewQuiz(String email, SolveRequest solveRequest) {
-        Lion lion = lionService.findByEmail(email);
+    public SolveAnswerList solveReviewQuiz(Lion lion, SolveRequest solveRequest) {
+        ReviewWeek reviewWeek = reviewWeekRepository.findReviewWeekById(solveRequest.getReviewWeekId());
 
-        List<ReviewQuiz> reviewQuizzes = reviewQuizRepository.findByTrackTypeAndReviewWeek(lion.getTrackType(),solveRequest.getReviewWeekId());
+        List<ReviewQuiz> reviewQuizzes = reviewQuizRepository.findByReviewWeek(reviewWeek);
         List<QuizResponse> userAnswers = solveRequest.getQuizResponseList();
 
         SolveAnswerList solveAnswerList = new SolveAnswerList();
@@ -262,8 +232,7 @@ public class ReviewQuizService  {
 
 
     //주차별 퀴즈 목록 조회
-    public List<ReviewWeekDTO.showReviewWeek> getReviewWeek(String email) {
-        Lion lion = lionService.findByEmail(email);//아기사자 찾기
+    public List<ReviewWeekDTO.showReviewWeek> getReviewWeek(Lion lion) {
         List<ReviewWeek> reviewWeekList = reviewWeekRepository.findReviewWeekByTrackType(lion.getTrackType());//해당 트랙에 있는 복습퀴즈 조회
         System.out.println(reviewWeekList);
 
@@ -275,7 +244,7 @@ public class ReviewQuizService  {
             ReviewWeekDTO.showReviewWeek dto = new ReviewWeekDTO.showReviewWeek();
             dto.setReviewWeekId(reviewWeek.getId());
             dto.setTitle(reviewWeek.getTitle());
-            List<ReviewQuiz> reviewQuizzes = reviewQuizRepository.findByTrackTypeAndReviewWeek(lion.getTrackType(),reviewWeek.getId());
+            List<ReviewQuiz> reviewQuizzes = reviewQuizRepository.findByReviewWeek(reviewWeek);
             for(ReviewQuiz reviewQuiz : reviewQuizzes) {
                 ReviewQuizResponse existingResponse = reviewQuizResponseRepository.findReviewQuizResponseByLionAndReviewQuiz(lion,reviewQuiz);
                 if (existingResponse == null) {
@@ -294,8 +263,45 @@ public class ReviewQuizService  {
         return reviewWeekDTOList;
     }
 
-//    //복습 퀴즈 조회
-//    public ReviewQuizDTO.ShowReviewQuizDetails getReviewQuiz(TrackType trackType, Long WeekId) {
-//        reviewWeekRepository
-//    }
+    //복습 퀴즈 조회
+    public List<ReviewQuizDTO.ShowReviewQuizDetails> getReviewQuiz(Long WeekId) {
+        ReviewWeek reviewWeek = reviewWeekRepository.findReviewWeekById(WeekId);
+        List<ReviewQuiz> reviewQuizzes =  reviewQuizRepository.findByReviewWeek(reviewWeek);
+        List<ShowReviewQuizDetails> result = reviewQuizzes.stream()
+                .map(reviewQuiz -> {
+                    ShowReviewQuizDetails dto = new ShowReviewQuizDetails();
+                    dto.setId(reviewQuiz.getId()); //문제 아이디
+                    dto.setQuizType(reviewQuiz.getQuizType());//문제 타입
+                    dto.setContent(reviewQuiz.getContent());//문제 내용
+                    // 객관식일 때만 보기 리스트 설정
+                    if (reviewQuiz.getQuizType() == QuizType.MULTIPLE_CHOICE) {
+                        List<String> answerChoices = answerChoiceRepository.findByReviewQuiz(reviewQuiz).stream()
+                                .map(AnswerChoice::getContent)
+                                .collect(Collectors.toList());
+                        dto.setAnswerChoiceList(answerChoices);
+                    } else {
+                        dto.setAnswerChoiceList(Collections.emptyList());
+                    }
+                    // 첨부 파일 DTO 매핑
+                    List<JoinReviewQuizFileDTO.JoinReviewQuizFileField> fileDtos =
+                            joinReviewQuizFileRepository.findByReviewQuiz(reviewQuiz).stream()
+                                    .map(file -> {
+                                        JoinReviewQuizFileDTO.JoinReviewQuizFileField fileDto =
+                                                new JoinReviewQuizFileDTO.JoinReviewQuizFileField();
+                                        fileDto.setFileName(file.getFileName());
+                                        fileDto.setFileType(file.getFileType());
+                                        fileDto.setFileSize(file.getFileSize());
+                                        fileDto.setFileUrl(file.getFileUrl());
+                                        fileDto.setFileKey(file.getFileKey());
+                                        return fileDto;
+                                    })
+                                    .collect(Collectors.toList());
+
+
+                    dto.setFiles(fileDtos);
+                    return dto;
+                }).toList();
+
+        return result;
+    }
 }

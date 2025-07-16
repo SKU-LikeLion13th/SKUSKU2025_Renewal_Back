@@ -1,5 +1,6 @@
 package com.sku_sku.backend.controller;
 
+import com.sku_sku.backend.domain.Lion;
 import com.sku_sku.backend.dto.Request.ReviewQuizDTO;
 import com.sku_sku.backend.dto.Request.ReviewWeekDTO;
 import com.sku_sku.backend.security.JwtUtility;
@@ -24,24 +25,24 @@ public class ReviewQuizController {
 
     //주차별 퀴즈 리스트 조회
     @GetMapping("/reviewWeek")
-    public List<ReviewWeekDTO.showReviewWeek> reviewWeekView(@AuthenticationPrincipal String email){
-        return reviewQuizService.getReviewWeek(email);
+    public List<ReviewWeekDTO.showReviewWeek> reviewWeekView(@AuthenticationPrincipal Lion lion){
+        return reviewQuizService.getReviewWeek(lion);
     }
 
     //복습퀴즈 문제들 조회
     @GetMapping("/reviewQuiz/{reviewWeekId}")
-    public ReviewQuizDTO.ShowReviewQuizDetails reviewQuizView(@PathVariable Long reviewWeekId){
-        return null;
+    public List<ReviewQuizDTO.ShowReviewQuizDetails> reviewQuizView(@PathVariable Long reviewWeekId){
+        return reviewQuizService.getReviewQuiz(reviewWeekId);
     }
 
     @Operation(summary = "(주희)복습 퀴즈 풀기", description = "",
             responses = {@ApiResponse(responseCode = "200", description = "성공")})
     //@ApiResponse(responseCode = "409", description = "그 title 이미 있")})
     @PostMapping("/reviewQuiz/solve")
-    public ResponseEntity<ReviewQuizDTO.SolveAnswerList> solveReviewQuiz(@AuthenticationPrincipal String email,
+    public ResponseEntity<ReviewQuizDTO.SolveAnswerList> solveReviewQuiz(@AuthenticationPrincipal Lion lion,
                                                                          @RequestBody ReviewQuizDTO.SolveRequest SolveRequest) {
         //String token = jwtUtility.extractTokenFromCookies(request);
-        return ResponseEntity.status(HttpStatus.OK).body(reviewQuizService.solveReviewQuiz(email,SolveRequest));
+        return ResponseEntity.status(HttpStatus.OK).body(reviewQuizService.solveReviewQuiz(lion,SolveRequest));
 
 
     }

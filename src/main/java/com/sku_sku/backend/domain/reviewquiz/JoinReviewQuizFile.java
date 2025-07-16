@@ -20,7 +20,7 @@ public class JoinReviewQuizFile {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reviewquiz_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private ReviewQuiz ReviewQuiz; // 과제
+    private ReviewQuiz reviewQuiz; // 과제
 
     private String fileName; // 강의 자료 이름
 
@@ -38,7 +38,7 @@ public class JoinReviewQuizFile {
     private LocalDateTime updateDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 퀴즈 첨부 파일 수정일
 
     public JoinReviewQuizFile(ReviewQuiz reviewQuiz, String fileName, AllowedFileType fileType, Long fileSize, String fileUrl, String fileKey) {
-        this.ReviewQuiz = reviewQuiz;
+        this.reviewQuiz = reviewQuiz;
         this.fileName = fileName;
         this.fileType = fileType;
         this.fileSize = fileSize;
@@ -48,7 +48,7 @@ public class JoinReviewQuizFile {
     }
 
     public void updateJoinReviewQuizFile(ReviewQuiz reviewQuiz, String fileName, AllowedFileType fileType, Long fileSize, String fileUrl, String fileKey) {
-        this.ReviewQuiz = reviewQuiz;
+        this.reviewQuiz = reviewQuiz;
         this.fileName = fileName;
         this.fileType = fileType;
         this.fileSize = fileSize;
