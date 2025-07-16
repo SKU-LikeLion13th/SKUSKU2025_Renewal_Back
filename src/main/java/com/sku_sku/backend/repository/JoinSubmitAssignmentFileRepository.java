@@ -12,4 +12,5 @@ public interface JoinSubmitAssignmentFileRepository extends JpaRepository<JoinSu
     List<JoinSubmitAssignmentFile> findBySubmitAssignment(SubmitAssignment submitAssignment);
     Optional<JoinSubmitAssignmentFile> findByFileKey(String fileKey);
     void deleteAllBySubmitAssignmentAndFileKeyIn(SubmitAssignment submitAssignment, List<String> fileKey);
+    void deleteAllBySubmitAssignment(SubmitAssignment submitAssignment);
 }
