@@ -81,7 +81,7 @@ public class AssignmentService {
         if(!fileKey.isEmpty()){
             s3Service.deleteFiles(fileKey);
         }
-
+        joinAssignmentFileRepository.deleteAllByAssignment(assignment);
         assignmentRepository.delete(assignment);
     }
 
@@ -227,6 +227,7 @@ public class AssignmentService {
         if(!filekey.isEmpty()){
             s3Service.deleteFiles(filekey);
         }
+        joinSubmitAssignmentFileRepository.deleteAllBySubmitAssignment(submitAssignment);
         submitAssignmentRepository.delete(submitAssignment);
     }
 
