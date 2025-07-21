@@ -61,7 +61,7 @@ public class AssignmentController {
             responses = {@ApiResponse(responseCode = "200", description = "조회 성공"),
                     @ApiResponse(responseCode = "404", description = "현재 트랙에 과제가 없을 경우"),
                     @ApiResponse(responseCode = "400", description = "trackType이 올바르지 않은 경우")})
-    @GetMapping("/{trackType}")
+    @GetMapping("/track/{trackType}")
     public ResponseEntity<List<AssignmentRes>> getAllAssignmentByTrack(@AuthenticationPrincipal Lion lion, @PathVariable TrackType trackType){
         List<AssignmentRes> assignmentList = assignmentService.getAssignment(lion, trackType);
         return ResponseEntity.status(HttpStatus.OK).body(assignmentList);
