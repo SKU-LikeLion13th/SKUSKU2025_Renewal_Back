@@ -78,7 +78,7 @@ public class AssignmentController {
     }
 
     @GetMapping("/submit/{submitAssignmentId}")
-    public ResponseEntity<AssignmentDTO.FeedbackDetailRes> getSubmitassignment(@PathVariable Long submitAssignmentId){
+    public ResponseEntity<AssignmentDTO.FeedbackDetailRes> getSubmitAssignment(@PathVariable Long submitAssignmentId){
         AssignmentDTO.FeedbackDetailRes feedbackDetailRes = assignmentService.getFeedbackDetail(submitAssignmentId);
         return ResponseEntity.status(HttpStatus.OK).body(feedbackDetailRes);
     }
