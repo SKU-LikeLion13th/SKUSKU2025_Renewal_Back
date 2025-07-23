@@ -44,6 +44,8 @@ public class AssignmentDTO {
         private String title;
         @Schema(description = "과제 설명", example = "과제 안내 드려요 스프링 의존성~")
         private String description;
+        @Schema(description = "제출한 과제 주과식 답변", example = "이건 이거에요")
+        private String content;
         @Schema(description = "피드백", example = "이 부분은 살짝 부족한거같네요")
         private String feedback;
         @Schema(description = "파일", example = "파일 조회")

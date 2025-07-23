@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.sku_sku.backend.dto.Response.AssignmentDTO.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -170,7 +171,7 @@ public class AssignmentService {
     }
 
 
-    //과제 채점 상세 페이지 (운영진)
+    //과제 채점 상세 페이지 (운영진) and 아기사자 본인이 제출한 과제 조회 (아기사자)
     public FeedbackDetailRes getFeedbackDetail(Long submitAssignmentId){
 
         SubmitAssignment submitAssignment=submitAssignmentRepository.findById(submitAssignmentId)
@@ -191,8 +192,10 @@ public class AssignmentService {
                 ))
                 .toList();
 
-        return new FeedbackDetailRes(assignment.getTitle(),
+        return new FeedbackDetailRes(
+                assignment.getTitle(),
                 assignment.getDescription(),
+                submitAssignment.getContent(),
                 feedback.map(Feedback::getContent).orElse(null),
                 files
         );
@@ -255,7 +258,6 @@ public class AssignmentService {
             joinSubmitAssignmentFileService.updateJoinSubmitAssignmentFiles(submitAssignment, newFiles);
         }
     }
-
 
     //트랙별 모든 과제 조회 (아기사자)
     public List<AssignmentRes> getAssignment(Lion lion,TrackType trackType){

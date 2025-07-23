@@ -1,8 +1,8 @@
 package com.sku_sku.backend.controller;
 
 import com.sku_sku.backend.domain.Lion;
-import com.sku_sku.backend.dto.Request.AssignmentDTO;
 import com.sku_sku.backend.dto.Request.SubmitAssignmentDTO;
+import com.sku_sku.backend.dto.Response.AssignmentDTO;
 import com.sku_sku.backend.dto.Response.AssignmentDTO.AssignmentDetail;
 import com.sku_sku.backend.dto.Response.AssignmentDTO.AssignmentRes;
 import com.sku_sku.backend.enums.TrackType;
@@ -75,6 +75,12 @@ public class AssignmentController {
     public ResponseEntity<AssignmentDetail> getAssignmentDetail(@PathVariable Long assignmentId){
         AssignmentDetail assignmentDetail = assignmentService.getAssignmentDetail(assignmentId);
         return ResponseEntity.status(HttpStatus.OK).body(assignmentDetail);
+    }
+
+    @GetMapping("/submit/{submitAssignmentId}")
+    public ResponseEntity<AssignmentDTO.FeedbackDetailRes> getSubmitassignment(@PathVariable Long submitAssignmentId){
+        AssignmentDTO.FeedbackDetailRes feedbackDetailRes = assignmentService.getFeedbackDetail(submitAssignmentId);
+        return ResponseEntity.status(HttpStatus.OK).body(feedbackDetailRes);
     }
 
 }
