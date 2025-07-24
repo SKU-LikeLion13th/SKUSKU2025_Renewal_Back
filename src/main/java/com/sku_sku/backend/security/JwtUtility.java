@@ -53,7 +53,8 @@ public class JwtUtility {
                     .parseSignedClaims(jwt); // 주어진 JWT 토큰 파싱하여 서명을 검증
             return true; // 올바르면 true 반환
         } catch (ExpiredJwtException e) {
-            throw new HandleJwtException("만료된 JWT");
+            throw e;
+//            throw new HandleJwtException("만료된 JWT");
         } catch (UnsupportedJwtException e) {
             throw new HandleJwtException("지원되지 않는 JWT 형식");
         } catch (MalformedJwtException e) {
