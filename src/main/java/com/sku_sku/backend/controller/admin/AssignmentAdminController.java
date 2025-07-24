@@ -51,7 +51,7 @@ public class AssignmentAdminController {
     }
 
 
-    @Operation(summary = "(오현) 제출된 과제 삭제", description = "제출된 과제 id, title, tracktype, description, quiztype, 파일 받음",
+    @Operation(summary = "(오현) 제출된 과제 업데이트", description = "제출된 과제 id, title, tracktype, description, quiztype, 파일 받음",
             responses = {@ApiResponse(responseCode = "204", description = "과제 삭제 성공"),
                     @ApiResponse(responseCode = "401", description = "토큰 오류"),
                     @ApiResponse(responseCode = "403", description = "관리자 권한이 없는 사용자일 경우"),

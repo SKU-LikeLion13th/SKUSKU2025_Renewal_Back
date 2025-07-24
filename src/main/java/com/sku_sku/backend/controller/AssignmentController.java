@@ -77,10 +77,13 @@ public class AssignmentController {
         return ResponseEntity.status(HttpStatus.OK).body(assignmentDetail);
     }
 
-    @GetMapping("/submit/{submitAssignmentId}")
-    public ResponseEntity<AssignmentDTO.FeedbackDetailRes> getSubmitAssignment(@PathVariable Long submitAssignmentId){
-        AssignmentDTO.FeedbackDetailRes feedbackDetailRes = assignmentService.getFeedbackDetail(submitAssignmentId);
-        return ResponseEntity.status(HttpStatus.OK).body(feedbackDetailRes);
+    @Operation(summary = "(오현) 아기사자 제출한 과제 조회", description = "경로로 해당 과제id를 받아서 본인이 제출한 과제 조회",
+            responses = {@ApiResponse(responseCode = "200", description = "조회 성공"),
+                    @ApiResponse(responseCode = "404", description = "해당 과제가 없을 경우 or 제출한 과제가 없을경우")})
+    @GetMapping("/submit/{assignmentId}")
+    public ResponseEntity<AssignmentDTO.SubmitAssigmentRes> getSubmitAssignment(@AuthenticationPrincipal Lion lion, @PathVariable Long assignmentId){
+        AssignmentDTO.SubmitAssigmentRes  submitAssigmentRes = assignmentService.getSubmitAssignment(lion, assignmentId);
+        return ResponseEntity.status(HttpStatus.OK).body(submitAssigmentRes);
     }
 
 }

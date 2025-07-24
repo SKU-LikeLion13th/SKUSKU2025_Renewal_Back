@@ -61,4 +61,11 @@ public class AssignmentDTO {
         private List<JoinAssignmentFileDTO.AssignmentFileDTO> files;
     }
 
+    @Data
+    @AllArgsConstructor
+    public static class SubmitAssigmentRes{
+        private String content;
+        private String feedback;
+        private List<JoinSubmitAssignmentFileDTO.submitAssignmentFileDTO> files;
+    }
 }

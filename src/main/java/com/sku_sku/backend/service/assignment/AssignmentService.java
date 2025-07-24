@@ -18,6 +18,7 @@ import com.sku_sku.backend.repository.*;
 import com.sku_sku.backend.security.JwtUtility;
 import com.sku_sku.backend.service.LionService;
 import com.sku_sku.backend.service.S3Service;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -307,5 +308,29 @@ public class AssignmentService {
                 ))
                 .toList()
         );
+    }
+
+    public SubmitAssigmentRes getSubmitAssignment(Lion lion, Long assignmentId){
+        Assignment assignment = assignmentRepository.findById(assignmentId)
+                .orElseThrow(() -> new InvalidIdException("해당과제를 찾을 수 없음"));
+
+        SubmitAssignment submitAssignment = submitAssignmentRepository.findByAssignmentAndLionId(assignment, lion.getId())
+                .orElseThrow(() -> new EntityNotFoundException(lion.getName() + "의 제출물이 존재하지 않습니다."));
+
+        Feedback feedback = feedbackRepository.findBySubmitAssignmentId(submitAssignment.getId())
+                .orElseThrow(() -> new InvalidIdException("제출과제에 대한 피드백이 없습니다."));
+
+        List<JoinSubmitAssignmentFileDTO.submitAssignmentFileDTO> files = joinSubmitAssignmentFileRepository.findBySubmitAssignment(submitAssignment)
+                .stream()
+                .map(dto -> new JoinSubmitAssignmentFileDTO.submitAssignmentFileDTO(
+                        dto.getFileName(),
+                        dto.getFileType(),
+                        dto.getFileSize(),
+                        dto.getFileUrl(),
+                        dto.getFileKey()
+                ))
+                .toList();
+
+        return new SubmitAssigmentRes(submitAssignment.getContent(), feedback.getContent(), files);
     }
 }
