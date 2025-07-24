@@ -37,7 +37,8 @@ public class JwtUtility {
                 .add("track", trackType.name()) // JWT 토큰에 트랙 설정
                 .add("role", roleType.name()) // JWT 토큰에 역할 설정
                 .issuedAt(Date.from(now)) // JWT 발행 시간 설정
-                .expiration(Date.from(now.plusMillis(expirationTime))) // JWT 만료 시간 설정
+//                .expiration(Date.from(now.plusMillis(expirationTime))) // JWT 만료 시간 설정
+                .expiration(Date.from(now.plusSeconds(30)))
                 .and() // claims() 닫기
                 .signWith(secretKey) // 지정된 알고리즘과 비밀키를 사용하여 JWT 토큰 서명
                 .compact(); // JWT 문자열 생성

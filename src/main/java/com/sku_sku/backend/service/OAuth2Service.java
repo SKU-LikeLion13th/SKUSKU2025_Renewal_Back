@@ -98,7 +98,8 @@ public class OAuth2Service {
                 .secure(isSecure)
                 .sameSite(isSameSite)
                 .path("/")
-                .maxAge(Duration.ofHours(1))
+//                .maxAge(Duration.ofHours(1))
+                .maxAge(Duration.ofSeconds(30))
                 .build();
 
         response.addHeader("Set-Cookie", cookie.toString());
