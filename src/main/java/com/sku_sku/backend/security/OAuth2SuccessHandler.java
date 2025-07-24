@@ -63,7 +63,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // ADMIN_LION일 경우만 Refresh Token 발급
         if (lion.getRoleType() == RoleType.ADMIN_LION) {
             String refreshToken = UUID.randomUUID().toString();
-            redisTemplate.opsForValue().set("refresh:" + email, refreshToken, Duration.ofDays(14));
+            redisTemplate.opsForValue().set("refresh:" + email, refreshToken, Duration.ofDays(30));
         }
 
         // 유저가 로그인 시도하기 전에 요청했던 URL로 리디렉트
