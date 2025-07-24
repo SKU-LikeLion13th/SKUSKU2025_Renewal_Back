@@ -49,13 +49,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String email = claims.getSubject();
                 String role = claims.get("role", String.class);
 
+                System.out.println("Access Token 만료, email: " + email + ", role: " + role);
+
                 if ("ADMIN_LION".equals(role)) {
                     String redisKey = "refresh:" + email;
                     String refreshToken = redisTemplate.opsForValue().get(redisKey);
+                    System.out.println("Redis에서 찾은 refreshToken: " + refreshToken);
 
                     if (refreshToken != null) {
                         // Access 토큰 재발급 및 쿠키 세팅
                         String newJwt = oAuth2Service.refreshAccessTokenInJwtAuthenticationFilter(email, response);
+                        System.out.println("새 accessToken 재발급 완료!");
 
                         // 새 토큰으로 인증 정보 셋팅
 //                        Lion lion = lionService.findByEmail(email);
@@ -64,7 +68,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //                        );
                         Authentication auth = getAuthentication(newJwt);
                         SecurityContextHolder.getContext().setAuthentication(auth);
+                    } else {
+                        System.out.println("Redis에 refresh 토큰 없음!");
                     }
+                } else {
+                    System.out.println("ADMIN_LION이 아님!");
                 }
                 // else: 다른 유저는 그냥 인증 없이 통과 → controller에서 401
             } catch (HandleJwtException e) {
