@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/auth/**").permitAll()
                         .requestMatchers("/admin/lecture/**").hasRole("ADMIN_LION")
+                        .requestMatchers("/admin/schedule/**").hasRole("ADMIN_LION")
                         .requestMatchers("/admin/reviewQuiz/**").hasRole("ADMIN_LION")
                         .requestMatchers("/oauth2/redirect").permitAll()
 //                        .anyRequest().authenticated()
