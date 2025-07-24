@@ -53,7 +53,6 @@ public class JwtUtility {
             return true; // 올바르면 true 반환
         } catch (ExpiredJwtException e) {
             throw e;
-//            throw new HandleJwtException("만료된 JWT");
         } catch (UnsupportedJwtException e) {
             throw new HandleJwtException("지원되지 않는 JWT 형식");
         } catch (MalformedJwtException e) {
