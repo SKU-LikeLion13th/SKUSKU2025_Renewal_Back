@@ -29,14 +29,56 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final LionRepository lionRepository;
     private final RedisTemplate<String, String> redisTemplate;
 
-    @Value("${custom.frontend-url}")
-    private String frontendRedirectUrl;
+    @Value("${custom.local_frontend-url}")
+    private String localFrontendRedirectUrl;
+
+    @Value("${custom.server_frontend-url}")
+    private String serverFrontendRedirectUrl;
+
 
     @Value("${cookie.secure}")
     private boolean isSecure;
 
     @Value("${cookie.sameSite}")
     private String isSameSite;
+
+//    @Override
+//    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+//            throws IOException {
+//
+//        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+//        String email = oAuth2User.getAttribute("email");
+//
+//        Lion lion = lionRepository.findByEmail(email).orElseThrow(EmptyLionException::new);
+//
+//        String jwt = jwtUtility.generateJwt(email, lion.getName(), lion.getTrackType(), lion.getRoleType());
+//
+//        // JWT를 HttpOnly Cookie에 저장
+//        ResponseCookie cookie = ResponseCookie.from("access_token", jwt)
+//                .httpOnly(true)
+//                .secure(isSecure)
+//                .sameSite(isSameSite)
+//                .path("/")
+//                .maxAge(Duration.ofHours(1))
+//                .build();
+//
+//        response.addHeader("Set-Cookie", cookie.toString());
+//
+//        // ADMIN_LION일 경우만 Refresh Token 발급
+//        if (lion.getRoleType() == RoleType.ADMIN_LION) {
+//            String refreshToken = UUID.randomUUID().toString();
+//            redisTemplate.opsForValue().set("refresh:" + email, refreshToken, Duration.ofDays(30));
+//        }
+//
+//        // 유저가 로그인 시도하기 전에 요청했던 URL로 리디렉트
+//        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+//        if (savedRequest != null) {
+//            String targetUrl = savedRequest.getRedirectUrl();
+//            response.sendRedirect(targetUrl);
+//        } else {
+//            response.sendRedirect(frontendRedirectUrl); // 없으면 기본값
+//        }
+//    }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
@@ -57,7 +99,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 .path("/")
                 .maxAge(Duration.ofHours(1))
                 .build();
-
         response.addHeader("Set-Cookie", cookie.toString());
 
         // ADMIN_LION일 경우만 Refresh Token 발급
@@ -66,14 +107,23 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             redisTemplate.opsForValue().set("refresh:" + email, refreshToken, Duration.ofDays(30));
         }
 
+        // 동적 리다이렉트 URL 선택
+        String referer = request.getHeader("referer");
+        String dynamicRedirectUrl;
+        if (referer != null && referer.contains("localhost:5173")) {
+            dynamicRedirectUrl = localFrontendRedirectUrl;
+        } else {
+            dynamicRedirectUrl = serverFrontendRedirectUrl; // 배포 프론트 URL
+        }
+
         // 유저가 로그인 시도하기 전에 요청했던 URL로 리디렉트
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         if (savedRequest != null) {
-            String targetUrl = savedRequest.getRedirectUrl();
-            response.sendRedirect(targetUrl);
+            response.sendRedirect(savedRequest.getRedirectUrl());
         } else {
-            response.sendRedirect(frontendRedirectUrl); // 없으면 기본값
+            response.sendRedirect(dynamicRedirectUrl);
         }
     }
+
 
 }
