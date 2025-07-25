@@ -110,6 +110,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // 동적 리다이렉트 URL 선택
         String referer = request.getHeader("referer");
         String dynamicRedirectUrl;
+        System.out.println("referer: " + referer);
         if (referer != null && referer.contains("localhost:5173")) {
             dynamicRedirectUrl = localFrontendRedirectUrl;
         } else {
