@@ -55,8 +55,8 @@ public class JoinSubmitAssignmentFileService {
     }
 
     @Transactional
-    public void delteJoinSubmitAssignmentFilse(SubmitAssignment submitAssignment , List<String> keyToDelete){
-        if(keyToDelete == null || keyToDelete.isEmpty()) throw new IllegalArgumentException("필수값 누락");
+    public void deleteJoinSubmitAssignmentFiles(SubmitAssignment submitAssignment , List<String> keyToDelete){
+        if(keyToDelete == null || keyToDelete.isEmpty()) return;
         joinSubmitAssignmentFileRepository.deleteAllBySubmitAssignmentAndFileKeyIn(submitAssignment, keyToDelete);
     }
 }
