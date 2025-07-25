@@ -18,6 +18,8 @@ import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.UUID;
 
@@ -109,9 +111,11 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         // 1. state 파라미터 기반 동적 리다이렉트
         String state = request.getParameter("state");
+        String decodedState = URLDecoder.decode(state, StandardCharsets.UTF_8);
         String redirectTarget = serverFrontendRedirectUrl; // 기본값 (배포)
-        System.out.println("stat: " + state);
-        if (state != null && (state.contains("localhost") || state.contains("127.0.0.1"))) {
+        System.out.println("state: " + state);
+        System.out.println("decodedState: " + decodedState);
+        if (decodedState != null && (decodedState.contains("localhost") || decodedState.contains("127.0.0.1"))) {
             redirectTarget = localFrontendRedirectUrl;
         }
 
