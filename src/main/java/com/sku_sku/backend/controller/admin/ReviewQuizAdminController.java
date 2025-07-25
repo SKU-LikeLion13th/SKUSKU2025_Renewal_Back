@@ -1,6 +1,7 @@
 package com.sku_sku.backend.controller.admin;
 
 
+import com.sku_sku.backend.dto.Request.ReviewQuizDTO;
 import com.sku_sku.backend.service.reviewquiz.ReviewQuizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -32,8 +33,8 @@ public class ReviewQuizAdminController {
     @Operation(summary = "(주희)복습퀴즈 수정", description = "",
             responses = {@ApiResponse(responseCode = "200", description = "성공")})
     @PutMapping("reviewQuiz/update/{weekId}")
-    public ResponseEntity<String> updateReviewQuiz(@RequestBody AddQuizRequest req, @PathVariable Long weekId) {
-        reviewQuizService.updateQuiz(weekId,req);
+    public ResponseEntity<String> updateReviewQuiz(@RequestBody ReviewQuizDTO.EditQuizRequest req, @PathVariable Long weekId) {
+        reviewQuizService.updateQuizByStatus(weekId,req);
         return ResponseEntity.status(HttpStatus.OK).body("복습퀴즈 수정 완료");
     }
 
