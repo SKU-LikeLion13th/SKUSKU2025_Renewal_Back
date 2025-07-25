@@ -121,13 +121,14 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // 프론트에서 state에 redirectUri를 담아준 경우 처리
         String state = request.getParameter("state");
         String decodedRedirectUrl = (state != null) ? URLDecoder.decode(state, StandardCharsets.UTF_8) : null;
+
         System.out.println("state: " + state);
         System.out.println("decodedRedirectUrl: " + decodedRedirectUrl);
+
         if (decodedRedirectUrl != null && !decodedRedirectUrl.isBlank()) {
-            response.sendRedirect(localFrontendRedirectUrl);
+            response.sendRedirect(decodedRedirectUrl); // 실제 state로 리디렉트
         } else {
             response.sendRedirect(serverFrontendRedirectUrl); // fallback
         }
     }
-
 }
