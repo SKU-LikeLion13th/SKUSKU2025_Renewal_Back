@@ -2,6 +2,7 @@ package com.sku_sku.backend.dto.Request;
 
 import com.sku_sku.backend.enums.QuizType;
 import com.sku_sku.backend.enums.TrackType;
+import com.sku_sku.backend.enums.UpdateQuizStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -19,6 +20,15 @@ public class ReviewQuizDTO {
         private List<reviewQuizDTO> reviewQuizDTOList;
     }
 
+    @Data
+    public static class UpdateQuizRequest {
+        @Schema(description = "복습퀴즈 메인 제목", example="1주차 복습퀴즈")
+        private String title;
+        @Schema(description = "트랙-복습퀴즈", example = "BACKEND")
+        private TrackType trackType;
+        @Schema(description = "복습퀴즈 문제들")
+        private List<ShowReviewQuizDetails> showReviewQuizDTOList;
+    }
 
     @Data
     public static class reviewQuizDTO {
@@ -97,5 +107,50 @@ public class ReviewQuizDTO {
         String quizAnswer;
 
     }
+
+    @Data
+    public static class reviewQuizEditDTO {
+        @Schema(description = "기존 문제 ID (신규 등록일 경우 null)", example = "402")
+        private Long reviewQuizId;
+
+        @Schema(description = "처리 상태 (CREATE / UPDATE / DELETE)", example = "UPDATE")
+        private UpdateQuizStatus status;
+
+        @Schema(description = "문제 타입(객관식, 주관식)", example = "MULTIPLE_CHOICE / ESSAY_QUESTION")
+        private QuizType quizType;
+
+        @Schema(description = "문제 내용", example = "스프링의 계층구조는?")
+        private String content;
+
+        @Schema(description = "보기 리스트(객관식일 경우 필수)", example = """
+        [
+          "controller-service-repository",
+          "model-view-controller",
+          "model-template-view"
+        ]""")
+        private List<String> answerChoiceList;
+
+        @Schema(description = "정답", example = "controller-service-repository")
+        private String answer;
+
+        @Schema(description = "첨부 파일 리스트", example = "계층구조.png")
+        private List<JoinReviewQuizFileDTO.JoinReviewQuizFileField> files;
+
+        @Schema(description = "해설", example = "controller-service-repository 구조입니다.")
+        private String explanation;
+    }
+
+    @Data
+    public static class EditQuizRequest {
+        @Schema(description = "복습퀴즈 메인 제목", example="10주차 복습퀴즈")
+        private String title;
+
+        @Schema(description = "트랙 타입", example="FRONTEND")
+        private TrackType trackType;
+
+        @Schema(description = "문제 리스트 (status 포함)", required = true)
+        private List<reviewQuizEditDTO> reviewQuizDTOList;
+    }
+
 
 }

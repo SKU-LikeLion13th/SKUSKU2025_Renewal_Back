@@ -76,6 +76,7 @@ public class ReviewQuizService  {
         } else {
             existingResponse.setUpdateDate(LocalDateTime.now());
             existingResponse.setCount(existingResponse.getCount() + 1);
+
             return existingResponse;
         }
     }
@@ -252,51 +253,161 @@ public class ReviewQuizService  {
                 }).toList();
     }
 
-    //복습퀴즈 수정
+//    //복습퀴즈 수정
+//    @Transactional
+//    public void updateQuiz(Long weekId,  AddQuizRequest addQuizRequest) {
+//        ReviewWeek reviewWeek = reviewWeekRepository.findReviewWeekById(weekId)
+//                .orElseThrow(()-> new InvalidIdException("해당 주차에 대한 복습퀴즈를 찾을 수 없습니다."));
+//        reviewWeek.update(addQuizRequest.getTrackType(), addQuizRequest.getTitle());
+//        reviewWeekRepository.save(reviewWeek);
+//
+//        List<ReviewQuiz> reviewQuizList = reviewQuizRepository.findByReviewWeek(reviewWeek);
+//        if (reviewQuizList.size() != addQuizRequest.getReviewQuizDTOList().size()) {
+//            deleteQuiz(weekId);
+//
+//            // 재등록을 위해 기존 weekId와 title을 그대로 재사용
+//            AddQuizRequest newRequest = new AddQuizRequest();
+//            newRequest.setTrackType(addQuizRequest.getTrackType());
+//            newRequest.setTitle(addQuizRequest.getTitle());
+//            newRequest.setReviewQuizDTOList(addQuizRequest.getReviewQuizDTOList());
+//
+//            addQuiz(newRequest);
+//
+//            //throw new IllegalArgumentException("기존 퀴즈 개수와 수정할 퀴즈 개수가 일치하지 않습니다.");
+//        }
+//        else {
+//
+//
+//            for (int i = 0; i < reviewQuizList.size(); i++) {
+//                ReviewQuiz quiz = reviewQuizList.get(i);
+//                reviewQuizDTO dto = addQuizRequest.getReviewQuizDTOList().get(i);
+//
+//                quiz.setQuizType(dto.getQuizType());
+//                quiz.setContent(dto.getContent());
+//                quiz.setAnswer(dto.getAnswer());
+//                quiz.setExplanation(dto.getExplanation());
+//
+//                // 객관식이면 기존 보기 삭제 후 새로 등록
+//                if (dto.getQuizType() == QuizType.MULTIPLE_CHOICE) {
+//                    answerChoiceRepository.deleteByReviewQuiz(quiz); // 기존 보기 삭제
+//                    for (String content : dto.getAnswerChoiceList()) {
+//                        answerChoiceRepository.save(new AnswerChoice(quiz, content));
+//                    }
+//                }
+//
+//                // 기존 파일 삭제 처리
+//                List<JoinReviewQuizFile> oldFiles = joinReviewQuizFileRepository.findByReviewQuiz(quiz);
+//                List<String> fileKeysToDelete = oldFiles.stream()
+//                        .map(JoinReviewQuizFile::getFileKey)
+//                        .collect(Collectors.toList());
+//
+//                // S3에서 삭제
+//                if (!fileKeysToDelete.isEmpty()) {
+//                    s3Service.deleteFiles(fileKeysToDelete);
+//                }
+//
+//                // DB에서 삭제
+//                joinReviewQuizFileRepository.deleteAll(oldFiles);
+//
+//                // 새 파일 저장 (프론트에서 받은 파일 메타데이터 기준)
+//                List<JoinReviewQuizFile> files = dto.getFiles().stream()
+//                        .map(fileDTO -> new JoinReviewQuizFile(
+//                                quiz,
+//                                fileDTO.getFileName(),
+//                                fileDTO.getFileType(),
+//                                fileDTO.getFileSize(),
+//                                fileDTO.getFileUrl(),
+//                                fileDTO.getFileKey()
+//                        ))
+//                        .collect(Collectors.toList());
+//
+//                joinReviewQuizFileRepository.saveAll(files);
+//
+//            }
+//        }
+//    }
+
     @Transactional
-    public void updateQuiz(Long weekId,  AddQuizRequest addQuizRequest) {
+    public void updateQuizByStatus(Long weekId, EditQuizRequest request) {
         ReviewWeek reviewWeek = reviewWeekRepository.findReviewWeekById(weekId)
-                .orElseThrow(()-> new InvalidIdException("해당 주차에 대한 복습퀴즈를 찾을 수 없습니다."));
-        reviewWeek.update(addQuizRequest.getTrackType(), addQuizRequest.getTitle());
+                .orElseThrow(() -> new InvalidIdException("해당 주차에 대한 복습퀴즈를 찾을 수 없습니다."));
+
+        // 주차 제목, 트랙 정보 업데이트
+        reviewWeek.update(request.getTrackType(), request.getTitle());
         reviewWeekRepository.save(reviewWeek);
 
-        List<ReviewQuiz> reviewQuizList = reviewQuizRepository.findByReviewWeek(reviewWeek);
-        if (reviewQuizList.size() != addQuizRequest.getReviewQuizDTOList().size()) {
-            throw new IllegalArgumentException("기존 퀴즈 개수와 수정할 퀴즈 개수가 일치하지 않습니다.");
+        for (reviewQuizEditDTO dto : request.getReviewQuizDTOList()) {
+            switch (dto.getStatus()) {
+                case UPDATE -> handleUpdate(dto);
+                case DELETE -> handleDelete(dto);
+                case CREATE -> handleCreate(dto, reviewWeek);
+                default -> throw new IllegalArgumentException("잘못된 상태입니다: " + dto.getStatus());
+            }
         }
-        for (int i = 0; i < reviewQuizList.size(); i++) {
-            ReviewQuiz quiz = reviewQuizList.get(i);
-            reviewQuizDTO dto = addQuizRequest.getReviewQuizDTOList().get(i);
+    }
 
-            quiz.setQuizType(dto.getQuizType());
-            quiz.setContent(dto.getContent());
-            quiz.setAnswer(dto.getAnswer());
-            quiz.setExplanation(dto.getExplanation());
+    private void handleCreate(reviewQuizEditDTO dto, ReviewWeek reviewWeek) {
+        ReviewQuiz newQuiz = new ReviewQuiz(
+                reviewWeek,
+                dto.getContent(),
+                dto.getExplanation(),
+                dto.getAnswer(),
+                dto.getQuizType()
+        );
+        reviewQuizRepository.save(newQuiz);
 
-            // 객관식이면 기존 보기 삭제 후 새로 등록
-            if (dto.getQuizType() == QuizType.MULTIPLE_CHOICE) {
-                answerChoiceRepository.deleteByReviewQuiz(quiz); // 기존 보기 삭제
-                for (String content : dto.getAnswerChoiceList()) {
-                    answerChoiceRepository.save(new AnswerChoice(quiz, content));
-                }
+        if (dto.getQuizType() == QuizType.MULTIPLE_CHOICE && dto.getAnswerChoiceList() != null) {
+            for (String choice : dto.getAnswerChoiceList()) {
+                answerChoiceRepository.save(new AnswerChoice(newQuiz, choice));
             }
+        }
 
-            // 기존 파일 삭제 처리
-            List<JoinReviewQuizFile> oldFiles = joinReviewQuizFileRepository.findByReviewQuiz(quiz);
-            List<String> fileKeysToDelete = oldFiles.stream()
-                    .map(JoinReviewQuizFile::getFileKey)
-                    .collect(Collectors.toList());
-
-            // S3에서 삭제
-            if (!fileKeysToDelete.isEmpty()) {
-                s3Service.deleteFiles(fileKeysToDelete);
-            }
-
-            // DB에서 삭제
-            joinReviewQuizFileRepository.deleteAll(oldFiles);
-
-            // 새 파일 저장 (프론트에서 받은 파일 메타데이터 기준)
+        if (dto.getFiles() != null) {
             List<JoinReviewQuizFile> files = dto.getFiles().stream()
+                    .map(fileDTO -> new JoinReviewQuizFile(
+                            newQuiz,
+                            fileDTO.getFileName(),
+                            fileDTO.getFileType(),
+                            fileDTO.getFileSize(),
+                            fileDTO.getFileUrl(),
+                            fileDTO.getFileKey()
+                    )).toList();
+            joinReviewQuizFileRepository.saveAll(files);
+        }
+    }
+
+    private void handleUpdate(reviewQuizEditDTO dto) {
+        ReviewQuiz quiz = reviewQuizRepository.findById(dto.getReviewQuizId())
+                .orElseThrow(() -> new InvalidIdException("수정할 퀴즈가 존재하지 않습니다."));
+
+        quiz.setQuizType(dto.getQuizType());
+        quiz.setContent(dto.getContent());
+        quiz.setAnswer(dto.getAnswer());
+        quiz.setExplanation(dto.getExplanation());
+
+        // 기존 응답 삭제
+        List<ReviewQuizResponse> responses = reviewQuizResponseRepository.findByReviewQuiz(quiz);
+        reviewQuizResponseRepository.deleteAll(responses);
+
+        // 객관식 보기 업데이트
+        answerChoiceRepository.deleteByReviewQuiz(quiz);
+        if (dto.getQuizType() == QuizType.MULTIPLE_CHOICE && dto.getAnswerChoiceList() != null) {
+            for (String content : dto.getAnswerChoiceList()) {
+                answerChoiceRepository.save(new AnswerChoice(quiz, content));
+            }
+        }
+
+        // 기존 파일 삭제
+        List<JoinReviewQuizFile> oldFiles = joinReviewQuizFileRepository.findByReviewQuiz(quiz);
+        if (!oldFiles.isEmpty()) {
+            List<String> fileKeys = oldFiles.stream().map(JoinReviewQuizFile::getFileKey).toList();
+            s3Service.deleteFiles(fileKeys);
+            joinReviewQuizFileRepository.deleteAll(oldFiles);
+        }
+
+        // 새 파일 저장
+        if (dto.getFiles() != null) {
+            List<JoinReviewQuizFile> newFiles = dto.getFiles().stream()
                     .map(fileDTO -> new JoinReviewQuizFile(
                             quiz,
                             fileDTO.getFileName(),
@@ -304,13 +415,32 @@ public class ReviewQuizService  {
                             fileDTO.getFileSize(),
                             fileDTO.getFileUrl(),
                             fileDTO.getFileKey()
-                    ))
-                    .collect(Collectors.toList());
+                    )).toList();
+            joinReviewQuizFileRepository.saveAll(newFiles);
+        }
+    }
 
-            joinReviewQuizFileRepository.saveAll(files);
+    private void handleDelete(reviewQuizEditDTO dto) {
+        ReviewQuiz quiz = reviewQuizRepository.findById(dto.getReviewQuizId())
+                .orElseThrow(() -> new InvalidIdException("삭제할 퀴즈가 존재하지 않습니다."));
 
+        // 보기 삭제
+        answerChoiceRepository.deleteByReviewQuiz(quiz);
+
+        // 파일 삭제
+        List<JoinReviewQuizFile> files = joinReviewQuizFileRepository.findByReviewQuiz(quiz);
+        if (!files.isEmpty()) {
+            List<String> fileKeys = files.stream().map(JoinReviewQuizFile::getFileKey).toList();
+            s3Service.deleteFiles(fileKeys);
+            joinReviewQuizFileRepository.deleteAll(files);
         }
 
+        // 응답 삭제
+        List<ReviewQuizResponse> responses = reviewQuizResponseRepository.findByReviewQuiz(quiz);
+        reviewQuizResponseRepository.deleteAll(responses);
+
+        // 퀴즈 삭제
+        reviewQuizRepository.delete(quiz);
     }
 
 
