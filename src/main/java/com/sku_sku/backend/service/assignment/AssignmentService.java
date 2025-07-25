@@ -251,7 +251,7 @@ public class AssignmentService {
                     .map(JoinSubmitAssignmentFileDTO.UpdateSubmitAssignmentFileDTO :: getFileKey)
                     .toList();
             s3Service.deleteFiles(keyToDelete);
-            joinSubmitAssignmentFileService.delteJoinSubmitAssignmentFilse(submitAssignment, keyToDelete);
+            joinSubmitAssignmentFileService.deleteJoinSubmitAssignmentFiles(submitAssignment, keyToDelete);
 
             List<JoinSubmitAssignmentFileDTO.UpdateSubmitAssignmentFileDTO> newFiles = files.stream()
                     .filter(f -> f.getStatus() == FileStatusType.NEW)
@@ -317,8 +317,8 @@ public class AssignmentService {
         SubmitAssignment submitAssignment = submitAssignmentRepository.findByAssignmentAndLionId(assignment, lion.getId())
                 .orElseThrow(() -> new EntityNotFoundException(lion.getName() + "의 제출물이 존재하지 않습니다."));
 
-        Feedback feedback = feedbackRepository.findBySubmitAssignmentId(submitAssignment.getId())
-                .orElseThrow(() -> new InvalidIdException("제출과제에 대한 피드백이 없습니다."));
+        String feedbackContent = feedbackRepository.findBySubmitAssignmentId(submitAssignment.getId())
+                .map(Feedback :: getContent).orElse(null);
 
         List<JoinSubmitAssignmentFileDTO.submitAssignmentFileDTO> files = joinSubmitAssignmentFileRepository.findBySubmitAssignment(submitAssignment)
                 .stream()
@@ -331,6 +331,6 @@ public class AssignmentService {
                 ))
                 .toList();
 
-        return new SubmitAssigmentRes(submitAssignment.getContent(), feedback.getContent(), files);
+        return new SubmitAssigmentRes(submitAssignment.getContent(), feedbackContent, files);
     }
 }
