@@ -107,24 +107,20 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             redisTemplate.opsForValue().set("refresh:" + email, refreshToken, Duration.ofDays(30));
         }
 
-        // 동적 리다이렉트 URL 선택
-        String referer = request.getHeader("referer");
-        String dynamicRedirectUrl;
-        System.out.println("referer: " + referer);
-        if (referer != null && referer.contains("localhost:5173")) {
-            dynamicRedirectUrl = localFrontendRedirectUrl;
-        } else {
-            dynamicRedirectUrl = serverFrontendRedirectUrl; // 배포 프론트 URL
+        // 1. state 파라미터 기반 동적 리다이렉트
+        String state = request.getParameter("state");
+        String redirectTarget = serverFrontendRedirectUrl; // 기본값 (배포)
+        System.out.println("stat: " + state);
+        if (state != null && (state.contains("localhost") || state.contains("127.0.0.1"))) {
+            redirectTarget = localFrontendRedirectUrl;
         }
 
-        // 유저가 로그인 시도하기 전에 요청했던 URL로 리디렉트
+        // 2. SavedRequest가 있으면 우선 사용
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         if (savedRequest != null) {
             response.sendRedirect(savedRequest.getRedirectUrl());
         } else {
-            response.sendRedirect(dynamicRedirectUrl);
+            response.sendRedirect(redirectTarget);
         }
     }
-
-
 }
