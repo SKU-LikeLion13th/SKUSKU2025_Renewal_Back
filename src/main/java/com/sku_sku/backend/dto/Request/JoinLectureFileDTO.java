@@ -35,5 +35,5 @@ public class JoinLectureFileDTO {
         private String fileKey;
         @Schema(description = "프로젝트 사진 유지 정보", example = "KEEP or DELETE or NEW")
         private FileStatusType status;
-}
+    }
 }
