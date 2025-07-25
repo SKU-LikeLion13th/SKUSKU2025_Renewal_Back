@@ -75,7 +75,12 @@ public class ReviewQuizService  {
             return new ReviewQuizResponse(lion, quiz, userAnswer, quiz.getQuizType());
         } else {
             existingResponse.setUpdateDate(LocalDateTime.now());
-            existingResponse.setCount(existingResponse.getCount() + 1);
+            if(existingResponse.getCount()==0){
+                existingResponse.setCount(1);
+            }
+            else{
+                existingResponse.setCount(existingResponse.getCount() + 1);
+            }
             return existingResponse;
         }
     }
