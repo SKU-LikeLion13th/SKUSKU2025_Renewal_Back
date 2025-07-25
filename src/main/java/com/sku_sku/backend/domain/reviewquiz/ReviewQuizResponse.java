@@ -42,7 +42,7 @@ public class ReviewQuizResponse {
     private QuizType quizType; // 문제 유형 MULTIPLE_CHOICE or ESSAY_QUESTION
 
     @Setter
-    private int count = 1; // 다시 푼 횟수 // 맨 처음 응답은 다시 푼 횟수가 아니라서 기본 값 0으로
+    private int count; // 푼 횟수
 
     public ReviewQuizResponse(Lion lion, ReviewQuiz reviewQuiz, String answer, QuizType quizType) {
         this.lion = lion;
@@ -51,5 +51,6 @@ public class ReviewQuizResponse {
         this.createDate = LocalDateTime.now();
         this.updateDate = this.createDate;
         this.quizType = quizType;
+        this.count=1;
     }
 }
