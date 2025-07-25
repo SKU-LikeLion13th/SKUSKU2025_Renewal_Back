@@ -76,6 +76,7 @@ public class ReviewQuizService  {
         } else {
             existingResponse.setUpdateDate(LocalDateTime.now());
             existingResponse.setCount(existingResponse.getCount() + 1);
+
             return existingResponse;
         }
     }
