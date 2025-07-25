@@ -341,6 +341,9 @@ public class ReviewQuizService  {
                 case UPDATE -> handleUpdate(dto);
                 case DELETE -> handleDelete(dto);
                 case CREATE -> handleCreate(dto, reviewWeek);
+                case KEEP -> {
+                    // 아무것도 하지 않음 (유지)
+                }
                 default -> throw new IllegalArgumentException("잘못된 상태입니다: " + dto.getStatus());
             }
         }
