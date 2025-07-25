@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -109,19 +111,22 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             redisTemplate.opsForValue().set("refresh:" + email, refreshToken, Duration.ofDays(30));
         }
 
-        // state 파라미터에서 redirect URL 꺼내기
-        String state = request.getParameter("state");
-        String decodedRedirectUrl = (state != null) ? java.net.URLDecoder.decode(state, java.nio.charset.StandardCharsets.UTF_8) : null;
-        System.out.println("state: " + state);
-        System.out.println("decodedRedirectUrl: " + decodedRedirectUrl);
-        // 유저가 로그인 시도하기 전에 요청했던 URL로 리디렉트
+        // 우선 SavedRequest 우선 처리
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         if (savedRequest != null) {
             response.sendRedirect(savedRequest.getRedirectUrl());
-        } else if (decodedRedirectUrl != null && !decodedRedirectUrl.isBlank()) {
+            return;
+        }
+
+        // 프론트에서 state에 redirectUri를 담아준 경우 처리
+        String state = request.getParameter("state");
+        String decodedRedirectUrl = (state != null) ? URLDecoder.decode(state, StandardCharsets.UTF_8) : null;
+
+        if (decodedRedirectUrl != null && !decodedRedirectUrl.isBlank()) {
             response.sendRedirect(decodedRedirectUrl);
         } else {
-            response.sendRedirect(serverFrontendRedirectUrl); // 최후의 fallback
+            response.sendRedirect(serverFrontendRedirectUrl); // fallback
         }
     }
+
 }
