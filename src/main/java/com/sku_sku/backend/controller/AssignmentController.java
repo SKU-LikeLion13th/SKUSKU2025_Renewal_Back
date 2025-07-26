@@ -47,13 +47,13 @@ public class AssignmentController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @Operation(summary = "(오현) 제출된 과제 업데이트", description = "제출된 과제 id, content, file 받음",
+    @Operation(summary = "(오현) 제출된 과제 업데이트", description = " 운영진이 올린 과제 id, content, file 받음",
             responses = {@ApiResponse(responseCode = "204", description = "과제 업데이트 성공"),
                     @ApiResponse(responseCode = "401", description = "토큰 오류"),
-                    @ApiResponse(responseCode = "404", description = "해당 과제가 없을 경우")})
+                    @ApiResponse(responseCode = "404", description = "해당 과제가 없을 경우 or 제출된 과제가 없을 경우")})
     @PutMapping("/update")
-    public ResponseEntity<Void> updateSubmitAssignment(@RequestBody SubmitAssignmentDTO.UpdateSubmitAssignment req){
-        assignmentService.updateSubmitAssignment(req);
+    public ResponseEntity<Void> updateSubmitAssignment(@AuthenticationPrincipal Lion lion, @RequestBody SubmitAssignmentDTO.UpdateSubmitAssignment req){
+        assignmentService.updateSubmitAssignment(lion,req);
         return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
