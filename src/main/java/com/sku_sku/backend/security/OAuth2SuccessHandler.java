@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -20,8 +18,6 @@ import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.UUID;
 
@@ -33,15 +29,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final LionRepository lionRepository;
     private final RedisTemplate<String, String> redisTemplate;
 
-    @Value("${custom.local_frontend-url}")
-    private String localFrontendRedirectUrl;
-
-    @Value("${custom.server_frontend-url}")
-    private String serverFrontendRedirectUrl;
-
     @Value("${custom.frontend-url}")
     private String frontendRedirectUrl;
-
 
     @Value("${cookie.secure}")
     private boolean isSecure;
@@ -76,6 +65,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             String refreshToken = UUID.randomUUID().toString();
             redisTemplate.opsForValue().set("refresh:" + email, refreshToken, Duration.ofDays(30));
         }
+
+        String clientIp = request.getRemoteUser();
+        String clientHost = request.getRemoteHost();
+        System.out.println("ip: " + clientIp + ", host: " + clientHost);
 
         // 유저가 로그인 시도하기 전에 요청했던 URL로 리디렉트
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
