@@ -71,7 +71,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         String clientIp = request.getRemoteUser();
         String clientHost = request.getRemoteHost();
-        System.out.println("ip: " + clientIp + ", host: " + clientHost);
+        String xForwardedForHeader = request.getHeader("X-Forwarded-For");
+        System.out.println("ip: " + clientIp + ", host: " + clientHost + ", header: " + xForwardedForHeader);
 
         // 유저가 로그인 시도하기 전에 요청했던 URL로 리디렉트
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
