@@ -76,6 +76,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         // 유저가 로그인 시도하기 전에 요청했던 URL로 리디렉트
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+        System.out.println("saveRequest: " + savedRequest);
         if (savedRequest != null) {
             String targetUrl = savedRequest.getRedirectUrl();
             System.out.println("targetUrl: " + targetUrl);
