@@ -29,8 +29,11 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final LionRepository lionRepository;
     private final RedisTemplate<String, String> redisTemplate;
 
-    @Value("${custom.frontend-url}")
-    private String frontendRedirectUrl;
+    @Value("${custom.local_frontend-url}")
+    private String localFrontendRedirectUrl;
+
+    @Value("${custom.server_frontend-url}")
+    private String serverFrontendRedirectUrl;
 
     @Value("${cookie.secure}")
     private boolean isSecure;
@@ -74,9 +77,14 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         if (savedRequest != null) {
             String targetUrl = savedRequest.getRedirectUrl();
+            System.out.println("targetUrl: " + targetUrl);
             response.sendRedirect(targetUrl);
         } else {
-            response.sendRedirect(frontendRedirectUrl); // 없으면 기본값
+            if (clientHost != null && (clientHost.contains("localhost") || clientHost.contains("127.0.0.1"))) {
+                response.sendRedirect(localFrontendRedirectUrl);
+            } else {
+                response.sendRedirect(serverFrontendRedirectUrl);
+            }
         }
     }
 }
