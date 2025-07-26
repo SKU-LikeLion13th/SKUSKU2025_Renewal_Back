@@ -29,6 +29,7 @@ public class SubmitAssignment {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Lion lion; // 제출한 아기사자
 
+    @Lob
     private String content; // 제출한 내용
 
     @Setter

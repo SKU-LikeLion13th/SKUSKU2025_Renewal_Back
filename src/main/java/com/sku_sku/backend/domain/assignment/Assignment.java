@@ -21,6 +21,7 @@ public class Assignment {
 
     private String title; // 과제 제목
 
+    @Lob
     private String description; // 과제 설명
 
     private QuizType quizType; // 과제 제출 유형 // 주관식이랑 파일첨부만 사용 ESSAY_QUESTION or FILE_ATTACHMENT

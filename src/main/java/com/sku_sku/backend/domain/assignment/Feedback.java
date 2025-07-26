@@ -21,6 +21,7 @@ public class Feedback {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private SubmitAssignment submitAssignment; // 피드백할 과제
 
+    @Lob
     private String content; // 피드백 내용
 
     private LocalDateTime createDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 피드백 생성일
