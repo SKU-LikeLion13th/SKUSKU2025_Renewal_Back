@@ -29,9 +29,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final LionRepository lionRepository;
     private final RedisTemplate<String, String> redisTemplate;
 
-    @Value("${custom.local_frontend-url}")
-    private String localFrontendRedirectUrl;
-
     @Value("${custom.server_frontend-url}")
     private String serverFrontendRedirectUrl;
 
@@ -69,22 +66,14 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             redisTemplate.opsForValue().set("refresh:" + email, refreshToken, Duration.ofDays(30));
         }
 
-        String redirectUrl = request.getParameter("state"); // "/lecture/123"
+        String redirectUrl = request.getParameter("state");
         System.out.println("redirectUrl: " + redirectUrl);
 
         // 유저가 로그인 시도하기 전에 요청했던 URL로 리디렉트
-        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
-        System.out.println("saveRequest: " + savedRequest);
-        if (savedRequest != null) {
-            String targetUrl = savedRequest.getRedirectUrl();
-            System.out.println("targetUrl: " + targetUrl);
-            response.sendRedirect(targetUrl);
+        if (redirectUrl != null && (redirectUrl.contains("localhost") || redirectUrl.contains("127.0.0.1"))) {
+            response.sendRedirect(redirectUrl);
         } else {
-            if (redirectUrl != null && (redirectUrl.contains("localhost") || redirectUrl.contains("127.0.0.1"))) {
-                response.sendRedirect(redirectUrl);
-            } else {
-                response.sendRedirect(serverFrontendRedirectUrl + redirectUrl);
-            }
+            response.sendRedirect(serverFrontendRedirectUrl + redirectUrl);
         }
     }
 }
