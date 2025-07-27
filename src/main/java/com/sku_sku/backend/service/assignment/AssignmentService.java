@@ -238,9 +238,11 @@ public class AssignmentService {
 
     // 제출된 과제 업데이트(아기사자)
     @Transactional
-    public void updateSubmitAssignment(SubmitAssignmentDTO.UpdateSubmitAssignment req){
-        SubmitAssignment submitAssignment = submitAssignmentRepository.findById(req.getSubmitAssignmentId())
-                .orElseThrow(()-> new InvalidIdException("제출된 과제가 없습니다."));
+    public void updateSubmitAssignment(Lion lion, SubmitAssignmentDTO.UpdateSubmitAssignment req){
+        Assignment assignment = assignmentRepository.findById(req.getAssignmentId())
+                .orElseThrow(() -> new InvalidIdException("해당 과제를 찾을 수 없습니다."));
+        SubmitAssignment submitAssignment = submitAssignmentRepository.findByAssignmentAndLionId(assignment,lion.getId())
+                .orElseThrow(()-> new EntityNotFoundException("제출된 과제가 없습니다."));
 
         submitAssignment.updateSubmitAssignment(req.getContent());
 
