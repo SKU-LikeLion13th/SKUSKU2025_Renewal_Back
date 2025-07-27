@@ -69,10 +69,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             redisTemplate.opsForValue().set("refresh:" + email, refreshToken, Duration.ofDays(30));
         }
 
-        String clientIp = request.getRemoteUser();
-        String clientHost = request.getRemoteHost();
-        String xForwardedForHeader = request.getHeader("X-Forwarded-For");
-        System.out.println("ip: " + clientIp + ", host: " + clientHost + ", header: " + xForwardedForHeader);
+        String redirectUrl = request.getParameter("state"); // "/lecture/123"
+        System.out.println("redirectUrl: " + redirectUrl);
 
         // 유저가 로그인 시도하기 전에 요청했던 URL로 리디렉트
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
@@ -82,7 +80,11 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             System.out.println("targetUrl: " + targetUrl);
             response.sendRedirect(targetUrl);
         } else {
-            response.sendRedirect(localFrontendRedirectUrl);
+            if (redirectUrl != null && (redirectUrl.contains("localhost") || redirectUrl.contains("127.0.0.1"))) {
+                response.sendRedirect(localFrontendRedirectUrl);
+            } else {
+                response.sendRedirect(serverFrontendRedirectUrl);
+            }
         }
     }
 }
