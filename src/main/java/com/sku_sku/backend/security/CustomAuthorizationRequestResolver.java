@@ -36,16 +36,18 @@ public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRe
     private OAuth2AuthorizationRequest customize(OAuth2AuthorizationRequest request, HttpServletRequest servletRequest) {
         if (request == null) return null;
 
-        // 프론트에서 넘긴 state 파라미터 읽기
         String customState = servletRequest.getParameter("state");
 
-        Map<String, Object> additionalParams = new HashMap<>(request.getAdditionalParameters());
-        if (customState != null) {
-            additionalParams.put(OAuth2ParameterNames.STATE, customState); // 여기에 커스텀 state 반영
+        // 필수 처리: null 또는 빈 문자열이면 기본값 주입
+        if (customState == null || customState.isBlank()) {
+            customState = "/";
         }
 
+        Map<String, Object> additionalParams = new HashMap<>(request.getAdditionalParameters());
+        additionalParams.put(OAuth2ParameterNames.STATE, customState);
+
         return OAuth2AuthorizationRequest.from(request)
-                .state(customState) // 여기 핵심!
+                .state(customState)
                 .additionalParameters(additionalParams)
                 .build();
     }
