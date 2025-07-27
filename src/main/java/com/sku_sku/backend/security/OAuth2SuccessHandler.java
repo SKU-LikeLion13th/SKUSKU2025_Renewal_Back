@@ -81,9 +81,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             response.sendRedirect(targetUrl);
         } else {
             if (redirectUrl != null && (redirectUrl.contains("localhost") || redirectUrl.contains("127.0.0.1"))) {
-                response.sendRedirect(localFrontendRedirectUrl);
+                response.sendRedirect(redirectUrl);
             } else {
-                response.sendRedirect(serverFrontendRedirectUrl);
+                response.sendRedirect(serverFrontendRedirectUrl + redirectUrl);
             }
         }
     }
