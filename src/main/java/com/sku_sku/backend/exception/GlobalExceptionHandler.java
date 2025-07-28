@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidLoginlException.class)
     public ResponseEntity<String> invalidLogin(InvalidLoginlException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 안 되어 있음");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }
 
     @ExceptionHandler(InvalidJwtlException.class)
