@@ -40,12 +40,17 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authorize -> authorize
                                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/auth/**").permitAll()
-                                .requestMatchers("/admin/lecture/**").hasRole("ADMIN_LION")
-                                .requestMatchers("/admin/schedule/**").hasRole("ADMIN_LION")
-                                .requestMatchers("/admin/reviewQuiz/**").hasRole("ADMIN_LION")
+                                // ADMIN_LION
+                                .requestMatchers("/admin/assignment/**",
+                                                "/admin/schedule/**",
+                                                "/admin/lecture/**",
+                                                "/admin/project/**",
+                                                "/admin/reviewQuiz/**").hasRole("ADMIN_LION")
+                                // ALL
+                                .requestMatchers("/project/all").permitAll()
                                 .requestMatchers("/oauth2/redirect").permitAll()
-//                        .anyRequest().authenticated()
-                                .anyRequest().permitAll()
+                                .anyRequest().authenticated()
+//                                .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
