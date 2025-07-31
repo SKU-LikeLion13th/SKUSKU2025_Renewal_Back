@@ -47,6 +47,8 @@ public class ReviewQuizAdminController {
     }
 
 
+    @Operation(summary = "(주희)복습퀴즈 아기사자 목록 조회", description = "조회",
+            responses = {@ApiResponse(responseCode = "200", description = "성공")})
     @GetMapping("reviewQuiz/{weekId}")
     public ResponseEntity<ReviewQuizDTO.GetLionReviewQuiz> GetLionReviewQuiz(@PathVariable Long weekId) {
         return ResponseEntity.status(HttpStatus.OK).body(reviewQuizService.getLionReviewQuiz(weekId));
