@@ -10,4 +10,5 @@ import java.util.List;
 public interface ReviewQuizResponseRepository extends JpaRepository<ReviewQuizResponse, Long> {
     ReviewQuizResponse findReviewQuizResponseByLionAndReviewQuiz(Lion lion, ReviewQuiz reviewQuiz);
     List<ReviewQuizResponse> findByReviewQuiz(ReviewQuiz reviewQuiz);
+    List<ReviewQuizResponse> findByReviewQuizIn(List<ReviewQuiz> quizzes);
 }

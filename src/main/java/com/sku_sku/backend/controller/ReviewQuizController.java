@@ -34,8 +34,8 @@ public class ReviewQuizController {
             responses = {@ApiResponse(responseCode = "200", description = "성공")})
     //복습퀴즈 문제들 조회
     @GetMapping("/reviewQuiz/{reviewWeekId}")
-    public ResponseEntity<List<ReviewQuizDTO.ShowReviewQuizDetails>> reviewQuizView(@PathVariable Long reviewWeekId){
-        return ResponseEntity.status(HttpStatus.OK).body(reviewQuizService.getReviewQuiz(reviewWeekId));
+    public ResponseEntity<List<ReviewQuizDTO.ShowReviewQuizDetails>> reviewQuizView(@AuthenticationPrincipal Lion lion,@PathVariable Long reviewWeekId){
+        return ResponseEntity.status(HttpStatus.OK).body(reviewQuizService.getReviewQuiz(reviewWeekId,lion));
     }
 
     @Operation(summary = "(주희)복습 퀴즈 풀기", description = "",

@@ -31,6 +31,7 @@ public class ReviewQuizResponse {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ReviewQuiz reviewQuiz; // 푼 복습 퀴즈
 
+    @Setter
     private String answer; // 작성한 답
 
     private LocalDateTime createDate; // YYYY-MM-DD HH:MM:SS.nnnnnn // 복습 퀴즈 제출한 시간

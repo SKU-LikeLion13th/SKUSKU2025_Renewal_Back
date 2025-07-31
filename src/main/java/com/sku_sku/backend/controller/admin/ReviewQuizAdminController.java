@@ -47,4 +47,8 @@ public class ReviewQuizAdminController {
     }
 
 
+    @GetMapping("reviewQuiz/{weekId}")
+    public ResponseEntity<ReviewQuizDTO.GetLionReviewQuiz> GetLionReviewQuiz(@PathVariable Long weekId) {
+        return ResponseEntity.status(HttpStatus.OK).body(reviewQuizService.getLionReviewQuiz(weekId));
+    }
 }
