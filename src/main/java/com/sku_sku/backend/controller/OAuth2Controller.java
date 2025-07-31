@@ -24,8 +24,8 @@ public class OAuth2Controller {
     private final OAuth2Service oAuth2Service;
 
     @Operation(summary = "(민규) 로그인 상태", description = "로그인 한 상태면 로그인한 유저의 정보를, 로그인이 안 된 상태면 에러 반환",
-            responses = {@ApiResponse(responseCode = "200", description = "강의자료 수정 성공"),
-                    @ApiResponse(responseCode = "404", description = "그 id에 해당하는 값 없")})
+            responses = {@ApiResponse(responseCode = "200"),
+                    @ApiResponse(responseCode = "404")})
     @GetMapping("/status")
     public ResponseEntity<?> loginStatus(Authentication authentication) {
         return ResponseEntity.status(HttpStatus.OK).body(oAuth2Service.getLoginStatus(authentication));

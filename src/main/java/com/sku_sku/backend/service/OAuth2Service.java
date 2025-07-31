@@ -31,7 +31,7 @@ public class OAuth2Service {
 
     public Map<String, Object> getLoginStatus(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new InvalidLoginlException();
+            throw new InvalidLoginlException("로그인이 안 되어 있음");
         }
 
         String email = authentication.getName();
