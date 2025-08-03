@@ -19,7 +19,15 @@ public enum AllowedFileType {
     PPTX("pptx", List.of("application/vnd.openxmlformats-officedocument.presentationml.presentation")),
     TXT("txt", List.of("text/plain")),
 
-    ZIP("zip", List.of("application/zip", "application/x-zip-compressed", "application/octet-stream")),
+    ZIP("zip", List.of(
+            "application/zip",
+            "application/x-zip-compressed",
+            "application/octet-stream",
+            "x-zip-compressed",
+            "X-ZIP-COMPRESSED",
+            "application/x-compressed",
+            "multipart/x-zip"
+    )),
     RAR("rar", List.of("application/vnd.rar")),
     SEVEN_Z("7z", List.of("application/x-7z-compressed"));
 
