@@ -21,6 +21,7 @@ public class Lecture {
 
     private String title; // 강의 안내물 제목
 
+    @Lob
     private String content; // 강의 안내물 내용
 
     private String writer; // 강의 안내물 작성자
