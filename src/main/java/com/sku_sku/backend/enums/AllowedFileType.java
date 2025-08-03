@@ -4,38 +4,39 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Arrays;
+import java.util.List;
 
 public enum AllowedFileType {
-    JPG("jpg", "image/jpeg"),
-    JPEG("jpeg", "image/jpeg"),
-    PNG("png", "image/png"),
-    GIF("gif", "image/gif"),
-    WEBP("webp", "image/webp"),
+    JPG("jpg", List.of("image/jpeg")),
+    JPEG("jpeg", List.of("image/jpeg")),
+    PNG("png", List.of("image/png")),
+    GIF("gif", List.of("image/gif")),
+    WEBP("webp", List.of("image/webp")),
 
-    PDF("pdf", "application/pdf"),
-    DOCX("docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
-    XLSX("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
-    PPTX("pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation"),
-    TXT("txt", "text/plain"),
+    PDF("pdf", List.of("application/pdf")),
+    DOCX("docx", List.of("application/vnd.openxmlformats-officedocument.wordprocessingml.document")),
+    XLSX("xlsx", List.of("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")),
+    PPTX("pptx", List.of("application/vnd.openxmlformats-officedocument.presentationml.presentation")),
+    TXT("txt", List.of("text/plain")),
 
-    ZIP("zip", "application/zip"),
-    RAR("rar", "application/vnd.rar"),
-    SEVEN_Z("7z", "application/x-7z-compressed");
+    ZIP("zip", List.of("application/zip", "application/x-zip-compressed", "application/octet-stream")),
+    RAR("rar", List.of("application/vnd.rar")),
+    SEVEN_Z("7z", List.of("application/x-7z-compressed"));
 
     private final String extension;
-    private final String mimeType;
+    private final List<String> mimeTypes;
 
-    AllowedFileType(String extension, String mimeType) {
+    AllowedFileType(String extension, List<String> mimeTypes) {
         this.extension = extension;
-        this.mimeType = mimeType;
+        this.mimeTypes = mimeTypes;
     }
 
     public String getExtension() {
         return extension;
     }
 
-    public String getMimeType() {
-        return mimeType;
+    public List<String> getMimeTypes() {
+        return mimeTypes;
     }
 
     @JsonCreator
@@ -46,7 +47,7 @@ public enum AllowedFileType {
                 .filter(type ->
                         type.name().equalsIgnoreCase(input) ||
                                 type.extension.equalsIgnoreCase(input) ||
-                                type.mimeType.equalsIgnoreCase(input))
+                                type.mimeTypes.stream().anyMatch(m -> m.equalsIgnoreCase(input)))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("허용되지 않은 파일 타입: " + input));
     }
@@ -58,7 +59,7 @@ public enum AllowedFileType {
 
     public static boolean isAllowedMimeType(String mime) {
         return Arrays.stream(values())
-                .anyMatch(type -> type.mimeType.equalsIgnoreCase(mime));
+                .anyMatch(type -> type.mimeTypes.stream().anyMatch(m -> m.equalsIgnoreCase(mime)));
     }
 
     public static boolean isAllowedExtension(String ext) {
@@ -68,7 +69,8 @@ public enum AllowedFileType {
 
     public static boolean isAllowed(String ext, String mime) {
         return Arrays.stream(values())
-                .anyMatch(type -> type.extension.equalsIgnoreCase(ext)
-                        && type.mimeType.equalsIgnoreCase(mime));
+                .anyMatch(type ->
+                        type.extension.equalsIgnoreCase(ext) &&
+                                type.mimeTypes.stream().anyMatch(m -> m.equalsIgnoreCase(mime)));
     }
 }
